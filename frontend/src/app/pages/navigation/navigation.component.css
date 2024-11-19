@@ -1,0 +1,18 @@
+.navbar-custom {
+    background-color: #28a745; 
+    padding: 10px 10px; 
+  }
+  .navbar-nav .nav-link {
+    color: white; 
+    transition: color 0.3s ease; 
+  }
+  .navbar-nav .nav-link:hover {
+    color: #a9dfbf; 
+  }
+  .navbar-nav .nav-link.active {
+    color: white; 
+  }
+  
+  .navbar-nav .nav-link.active:hover {
+    color: #a9dfbf; 
+  }

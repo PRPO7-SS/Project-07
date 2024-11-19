@@ -1,0 +1,162 @@
+/* General Styles */
+body {
+    background-color: #e2e8f0; /* Light grey background for contrast */
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Top Section Styles */
+.top-section {
+    padding: 50px 0;
+}
+
+html, body {
+    height: 100%; /* Ensures the page takes up full height */
+    margin: 0;
+}
+
+.navbar-custom {
+    background-color: #28a745; 
+    padding: 10px 10px; 
+}
+.navbar-nav .nav-link {
+    color: white; 
+    transition: color 0.3s ease; 
+}
+.navbar-nav .nav-link:hover {
+    color: #a9dfbf; 
+}
+.navbar-nav .nav-link.active {
+    color: white; 
+}
+
+.navbar-nav .nav-link.active:hover {
+    color: #a9dfbf; 
+}
+
+.bottom-section {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+}
+
+.week-selector {
+    font-size: 0.9rem; /* Smaller font size */
+}
+
+.week-selector button {
+    padding: 4px 8px; /* Smaller buttons */
+    font-size: 0.85rem; /* Slightly smaller text */
+}
+
+
+.app-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.lead {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+/* Card Styling */
+.card {
+    border: none; /* Remove card border */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #fff;
+}
+
+/* Card Title Styling */
+.card-title {
+    font-size: 1.8rem;
+    color: #057c1b; /* Bootstrap primary color */
+}
+
+/* Form Field Styling */
+.form-control {
+    border-radius: 8px; /* Round input fields */
+    border: 1px solid #ced4da; /* Subtle border */
+}
+
+.form-select {
+    border-radius: 8px;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #057c1b; /* Bootstrap primary color */
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 10px 0;
+}
+
+.btn-primary:hover {
+    background-color: #057c1b; /* Darker on hover */
+}
+
+.btn-outline-secondary {
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa; /* Light background on hover */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .top-section {
+        text-align: center;
+    }
+
+    .bottom-section {
+        text-align: center;
+    }
+
+    .card {
+        max-width: 90%; /* Adjust card width for mobile */
+    }
+}
+
+/* General Styles */
+body {
+    background-color: #e2e8f0;; /* Light grey background for contrast */
+    font-family: 'Roboto', sans-serif;
+}
+
+.transaction-calendar .day-summary button {
+    padding: 8px 12px; /* Smaller padding */
+    font-size: 1rem; /* Slightly smaller font size */
+    line-height: 1.2; /* Reduce line height for compact look */
+}
+
+.transaction-calendar .day-summary h5 {
+    font-size: 1.1rem; /* Reduce font size of day titles */
+    margin-bottom: 2px; /* Less space below the day title */
+}
+
+.transaction-calendar .day-summary p {
+    font-size: 0.9rem; /* Smaller font for the amounts */
+    margin-bottom: 0; /* No extra margin below the amount */
+}
+
+.day-summary {
+    margin-bottom: 10px; /* Less space between each day */
+}
+
+.modal-body h6 {
+    font-size: 1rem; /* Slightly smaller headings in the modal */
+    margin-bottom: 10px; /* Less margin below modal headings */
+}
+
+.modal-body ul {
+    padding-left: 0;
+    font-size: 0.9rem; /* Smaller font size for transactions */
+}

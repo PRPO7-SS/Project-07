@@ -1,0 +1,135 @@
+/* Page Layout Styles */
+body, html {
+    height: 100%; /* Ensure full height for both body and HTML */
+    margin: 0; /* Remove default margin */
+}
+
+/* Top Section - 80% of viewport height */
+.top-section {
+    height: 100vh; /* Full viewport height */
+    background-color: #e9ecef; /* Light gray background color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bottom Section - 20% of viewport height */
+.bottom-section {
+    height: 20vh; /* 20% of the viewport height */
+    background-color: white; /* White background color */
+}
+
+/* Hide Bottom Section for Smaller Screens */
+@media (max-width: 991.98px) {
+    .bottom-section {
+        display: none; /* Hide bottom section for smaller screens */
+    }
+
+    .top-section {
+        height: 100vh; /* Expand top section to take full viewport height */
+    }
+}
+
+/* Custom Styles for Large Screens */
+@media (min-width: 992px) {
+    .container {
+        padding-top: 30px; /* Add top padding for large screens */
+        padding-bottom: 30px; /* Add bottom padding */
+    }
+
+    .row {
+        margin-top: -20px; /* Move the row slightly upwards */
+    }
+
+    .col-lg-6 {
+        padding: 10px; /* Reduce space between columns */
+    }
+
+    .app-name {
+        text-align: left; /* Align left for larger screens */
+        font-size: 3rem; /* Larger font size for prominence */
+    }
+}
+
+/* Lost Password Link Style */
+.lost-password {
+    text-decoration: none; /* Remove underline */
+    color: #007bff; /* Default blue color */
+}
+
+.lost-password:hover {
+    text-decoration: underline; /* Add underline on hover */
+    color: #0056b3; /* Darker blue on hover */
+}
+
+/* Center App Name on Smaller Screens */
+@media (max-width: 991.98px) {
+    .app-name {
+        text-align: center; /* Center align for smaller screens */
+        font-size: 2.5rem; /* Increase font size slightly for smaller screens */
+    }
+}
+
+/* Divider Line Style */
+.divider {
+    width: 100%;
+    height: 1px;
+    background-color: #ddd; /* Light gray color for the divider */
+    margin: 20px 0; /* Add vertical spacing around the divider */
+}
+
+/* Login Button - Green Style */
+button.btn-login {
+    background-color: #28a745; /* Green background */
+    border-color: #28a745; /* Green border */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Add padding for better spacing */
+    font-size: 1rem; /* Standard font size */
+    border-radius: 5px; /* Slightly rounded corners */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth hover transition */
+}
+
+button.btn-login:hover {
+    background-color: #218838; /* Darker green on hover */
+    border-color: #1e7e34; /* Darker border on hover */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Buttons - Common Style */
+button {
+    font-family: 'Arial', sans-serif; /* Use a clean, sans-serif font */
+    outline: none; /* Remove outline */
+}
+
+/* Adjust Form Input Styles */
+input {
+    border-radius: 5px; /* Rounded input fields */
+    border: 1px solid #ccc; /* Light gray border */
+    padding: 10px; /* Add padding */
+    width: 100%; /* Full width */
+    font-size: 1rem; /* Standard font size */
+}
+
+input:focus {
+    border-color: #28a745; /* Green border on focus */
+    outline: none; /* Remove outline on focus */
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Subtle green glow on focus */
+}
+
+/* Form Labels */
+label {
+    font-weight: bold; /* Make labels bold */
+    font-size: 1rem; /* Standard font size */
+}
+
+/* General Typography */
+h1, h2, h3, h4, h5, h6 {
+    margin: 0; /* Remove default margins */
+    font-family: 'Arial', sans-serif; /* Use sans-serif font */
+}
+
+p {
+    margin: 0; /* Remove default margins for paragraphs */
+    font-size: 1rem; /* Standard font size */
+    color: #6c757d; /* Subtle text color */
+}

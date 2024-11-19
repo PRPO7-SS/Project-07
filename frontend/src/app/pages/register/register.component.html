@@ -1,1 +1,84 @@
-<p>register works!</p>
+<app-navigation></app-navigation>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Name of the App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS File -->
+    <link rel="stylesheet" href="register.component.css"> <!-- Using the same CSS as login page for consistent styling -->
+</head>
+<body>
+
+    <!-- Main Section: Holds the centered content -->
+    <div class="top-section">
+        <div class="container d-flex flex-column align-items-center justify-content-start">
+            
+            <!-- App Name -->
+            <h1 class="app-name text-center mb-4">Name of the App</h1>
+
+            <!-- Registration Card -->
+            <div class="card p-2 shadow" style="width: 100%; max-width: 450px;">
+                <div class="card-body">
+                    <!-- Register Title -->
+                    <h3 class="card-title text-center mb-2">Register</h3>
+                    <hr class="mb-5">
+
+                    <form>
+                        <!-- Full Name Fields (First Name and Last Name) -->
+                        <div class="row mb-2">
+                            <!-- First Name Field (Takes Half Width) -->
+                            <div class="col-6">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="First name" required>
+                            </div>
+                            
+                            <!-- Last Name Field (Takes Half Width) -->
+                            <div class="col-6">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Last name" required>
+                            </div>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="mb-2">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                        </div>
+
+                        <!-- Username Field -->
+                        <div class="mb-2">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-2">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                        </div>
+
+                        <!-- Register Button -->
+                        <button type="submit" class="btn btn-success w-100 mb-2">Register</button>
+
+                        <div class="text-center">
+                            <a href="#" class="text-muted">Already have an account?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,1 +1,73 @@
-<p>login works!</p>
+<app-navigation></app-navigation>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Login Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS File -->
+    <link rel="stylesheet" href="login.component.css"> <!-- External CSS for styling -->
+</head>
+<body>
+
+    <!-- Top Section: Holds the two-column layout -->
+    <div class="top-section">
+        <div class="container">
+            <div class="row w-100">
+
+                <!-- Left column: App name and extra content -->
+                <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center order-1 order-lg-1">
+                    <div class="p-4">
+                        <h1 class="app-name">Name of the App</h1>
+                        <p class="lead mt-3">All of your finances in one place</p>
+                        <!-- Add more content if needed, like images or other descriptions -->
+                    </div>
+                </div>
+
+                <!-- Right column: Login form -->
+                <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center order-2 order-lg-2">
+                    <div class="card p-4" style="width: 100%; max-width: 400px;">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">Login</h3>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                                </div>
+                                <!-- Green Login Button -->
+                                <button type="submit" class="btn btn-login w-100">Login</button>
+                                
+                                <!-- Lost Password Link -->
+                                <div class="text-center mt-3">
+                                    <a href="#" class="text-muted lost-password">Lost your password?</a>
+                                </div>
+                                
+                                <!-- Divider Line -->
+                                <div class="divider"></div>
+                                
+                                <!-- Make an Account Button -->
+                                <div class="text-center">
+                                    <a href="#" class="btn btn-outline-secondary w-100">Make an Account</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="bottom-section"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

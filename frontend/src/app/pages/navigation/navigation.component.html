@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" >FinanceBro</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" routerLink="/finance" routerLinkActive="active">Pregled</a>
+          </li>
+          <!-- Investicije dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" routerLink="/investments"  routerLinkActive="active" id="investDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Investicije
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="investDropdown">
+              <li><a class="dropdown-item" >Delnice</a></li>
+              <li><a class="dropdown-item" >Crypto</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" >Poročilo</a>
+          </li>
+        </ul>
+        <!-- Right-aligned profile dropdown -->
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" routerLink="/settings" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Osebni profil / Nastavitve
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#">Nastavitve</a></li>
+              <li><a class="dropdown-item" href="#">Jezik</a></li>
+              <li><a class="dropdown-item" href="#">Odjava</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>

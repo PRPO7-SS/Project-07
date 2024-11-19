@@ -1,1 +1,169 @@
-<p>finance works!</p>
+<app-navigation></app-navigation>
+<!-- Top Section -->
+<div class="top-section" style="padding-top: 20px;">
+    <div class="container">
+        <div class="row">
+            <!-- Left Column: Overview and Calendar -->
+            <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-start">
+                <div class="p-4">
+                    <h1 class="app-name">Track Your Finances</h1>
+                    <p class="lead mt-3">Easily manage your income and spending in one place.</p>
+                    <!-- Week Selector Section -->
+                    <div class="week-selector d-flex justify-content-center align-items-center mb-4">
+                        <button id="prev-week" class="btn btn-outline-secondary btn-sm me-3">&lt;</button>
+                        <div id="week-range" class="fw-bold">Oct 23, 2024 - Oct 29, 2024</div>
+                        <button id="next-week" class="btn btn-outline-secondary btn-sm ms-3">&gt;</button>
+                    </div>
+                    
+                    <!-- Calendar Section -->
+                    <div class="transaction-calendar mt-4">
+                        <!-- Display totals for each day -->
+                        <div class="day-summary mb-4">
+                            <button class="btn btn-light w-100 text-start">
+                                <h5>Monday | <span id="monday-date"></span></h5>
+                                <p>Spent: €50 | Earned: €100</p>
+                            </button>
+                        </div>
+                        <div class="day-summary mb-4">
+                            <button class="btn btn-light w-100 text-start">
+                                <h5>Tuesday | <span id="tuesday-date"></span></h5>
+                                <p>Spent: €30 | Earned: €80</p>
+                            </button>
+                        </div>
+                        <div class="day-summary mb-4">
+                            <button class="btn btn-light w-100 text-start">
+                                <h5>Wednesday | <span id="wednesday-date"></span></h5>
+                                <p>Spent: €50 | Earned: €100</p>
+                            </button>
+                        </div>
+                        <div class="day-summary mb-4">
+                            <button class="btn btn-light w-100 text-start">
+                                <h5>Thursday | <span id="thursday-date"></span></h5>
+                                <p>Spent: €30 | Earned: €80</p>
+                            </button>
+                        </div>
+                        <div class="day-summary mb-4">
+                            <button class="btn btn-light w-100 text-start">
+                                <h5>Friday | <span id="friday-date"></span></h5>
+                                <p>Spent: €50 | Earned: €100</p>
+                            </button>
+                        </div>
+                        <div class="day-summary mb-4">
+                            <button class="btn btn-light w-100 text-start">
+                                <h5>Saturday | <span id="saturday-date"></span></h5>
+                                <p>Spent: €30 | Earned: €80</p>
+                            </button>
+                        </div>
+                        <div class="day-summary mb-4">
+                            <button class="btn btn-light w-100 text-start">
+                                <h5>Sunday | <span id="sunday-date"></span></h5>
+                                <p>Spent: €30 | Earned: €80</p>
+                            </button>
+                        </div>
+                        <!-- Repeat for other days -->
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Finance Form and Tip of the Day -->
+            <div class="col-12 col-lg-6 d-flex flex-column align-items-start justify-content-start">
+                <div class="card p-4 mb-4" style="width: 100%; max-width: 500px;">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">Add Transaction</h3>
+                        <form>
+                            <!-- Input for Income or Spending -->
+                            <div class="mb-3">
+                                <label for="transactionType" class="form-label">Transaction Type</label>
+                                <select class="form-select" id="transactionType" required>
+                                    <option value="income">Income</option>
+                                    <option value="spending">Spending</option>
+                                </select>
+                            </div>
+                            <!-- Spending Section -->
+                            <div id="spending-section" class="transaction-section">
+                                <!-- Amount for Spending -->
+                                <div class="mb-3">
+                                    <label for="amount" class="form-label">Amount (€)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">€</span>
+                                        <input type="number" step="0.01" min="0" class="form-control" id="spending-amount" placeholder="Enter the amount" required>
+                                    </div>
+                                </div>
+                                
+                                <!-- Spending Description -->
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Spending Category</label>
+                                    <select class="form-select" id="spending-description" required>
+                                        <option value="groceries">Groceries</option>
+                                        <option value="clothes">Clothes</option>
+                                        <option value="school">School</option>
+                                        <option value="transportation">Transportation</option>
+                                        <option value="gifts">Gifts</option>
+                                        <option value="subscriptions">Subscriptions</option>
+                                        <option value="eating_out">Eating out</option>
+                                        <option value="health">Health</option>
+                                        <option value="selfcare">Selfcare</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Income Section -->
+                            <div id="income-section" class="transaction-section" style="display:none;">
+                                <!-- Amount for Income -->
+                                <div class="mb-3">
+                                    <label for="amount" class="form-label">Amount (€)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">€</span>
+                                        <input type="number" step="0.01" min="0" class="form-control" id="income-amount" placeholder="Enter the amount" required>
+                                    </div>
+                                </div>
+                                
+                                <!-- Income Description -->
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Income Category</label>
+                                    <select class="form-select" id="income-description" required>
+                                        <option value="salary">Salary</option>
+                                        <option value="scholarship">Scholarship</option>
+                                        <option value="gifts">Gifts</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Date of Transaction -->
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="date" required>
+                            </div>
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary w-100">Add Transaction</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Financial Tip of the Day -->
+                <div class="card p-4" style="width: 100%; max-width: 500px;">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Tip of the Day</h5>
+                        <p class="card-text align-items-center text-center">"Start tracking your daily expenses to avoid overspending on unnecessary purchases!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bottom Section for Summary or Navigation -->
+<div class="bottom-section py-3 text-center">
+    <a href="#" class="btn btn-outline-secondary">View Summary</a>
+    <a href="#" class="btn btn-outline-secondary">Go to Dashboard</a>
+</div>
+<!-- Include Modals from the external file -->
+<div id="modals-container">
+    <script>
+        // This script can dynamically fetch the modals.html file if required.
+        fetch('/modals.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('modals-container').innerHTML = html;
+            })
+            .catch(error => console.error('Error loading modals:', error));
+    </script>
+</div>
+<script src="/javascript/finance.js"></script>

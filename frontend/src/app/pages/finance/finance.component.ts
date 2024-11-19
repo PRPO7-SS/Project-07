@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
+import { NavigationComponent } from '../navigation/navigation.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-finance',
   standalone: true,
-  imports: [],
+  imports: [NavigationComponent, CommonModule], // Import NavigationComponent here
   templateUrl: './finance.component.html',
-  styleUrl: './finance.component.css'
+  styleUrls: ['./finance.component.css']
 })
-export class FinanceComponent {
-
-}
+export class FinanceComponent {}
