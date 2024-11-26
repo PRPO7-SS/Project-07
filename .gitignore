@@ -1,8 +1,8 @@
 # Maven build output
 backend/target/
-backed/user-service/target/
-backed/common/target/
-backed/transaction-service/target/
+backed/user-service/target/*
+backed/common/target/*
+backed/transaction-service/target/*
 
 # Node.js modules
 frontend/node_modules/
