@@ -1,0 +1,4 @@
+ss/finance/services/InvestmentBean.class
+ss/finance/services/InvestmentDTO.class
+ss/finance/entities/Investment.class
+ss/finance/rest/InvestmentApi.class

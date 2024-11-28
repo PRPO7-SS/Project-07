@@ -1,14 +1,16 @@
 package ss.finance;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.enterprise.context.ApplicationScoped;
+
+import org.bson.Document;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import ss.finance.utils.MongoDBConnection;
-import org.bson.Document;
-import javax.inject.Inject;
 
-import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
-import java.util.List;
+import ss.finance.utils.MongoDBConnection;
 
 @ApplicationScoped
 public class TransactionZrno {

@@ -14,6 +14,7 @@
         <module>common</module>
         <module>transaction-service</module>
         <module>user-service</module>
+        <module>investment-service</module>
     </modules>
 
 
@@ -87,6 +88,12 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>ss.finance</groupId>
+                <artifactId>investment-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 
