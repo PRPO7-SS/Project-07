@@ -14,6 +14,11 @@
         <module>common</module>
         <module>transaction-service</module>
         <module>user-service</module>
+<<<<<<< Updated upstream
+=======
+        <module>investment-service</module>
+        <module>savingsGoal-service</module>
+>>>>>>> Stashed changes
     </modules>
 
 

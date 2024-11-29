@@ -1,0 +1,5 @@
+ss/finance/services/SavingsGoalDTO.class
+ss/finance/entities/SavingsGoal.class
+ss/finance/rest/SavingsGoalApi.class
+ss/finance/services/SavingsGoalBean.class
+ss/finance/Main.class
