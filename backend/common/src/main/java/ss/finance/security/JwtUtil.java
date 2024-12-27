@@ -18,8 +18,8 @@ import ss.finance.environment.Config;
 @ApplicationScoped
 public class JwtUtil {
 
-    private String secretKey = Config.getEnv("JWT_SECRET");
-    private String refreshSecretKey = Config.getEnv("REFRESH_TOKEN_SECRET");
+    private String secretKey = System.getenv("JWT_SECRET");
+    private String refreshSecretKey = System.getenv("REFRESH_TOKEN_SECRET");
     private static final long EXPIRATION_TIME = 3600000; // Default to 1h
     private static final long REFRESH_EXPIRATION_TIME = 86400000; // Default to 1day
 

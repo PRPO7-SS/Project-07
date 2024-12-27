@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb_new
+    ports:
+      - "27017:27017"  # Maps MongoDB port to the host for local access
+    environment:
+      MONGO_URI: mongodb://mongodb_new:27017
+    networks:
+      - my_network  # Connects MongoDB to the custom network
+
+  user-service:
+    build:
+      context: user-service  # Path to your microservice's Dockerfile
+    container_name: user-service
+    ports:
+      - "8080:8080"  # Maps your microservice port to the host
+    environment:
+      MONGO_URI: mongodb://mongodb:27017  # Use MongoDB container name as the host
+      JWT_SECRET: aU0Gx6LJbYukM9DJmcFZjx0q3wx+TnpRkmRu2F7rx3Y=
+      REFRESH_TOKEN_SECRET: g5gXa5lqbEVX2DVOGPJcOSbeBH9QD51istNulnB1tJZdIlP6ZWVS5YuJcua2Hg9dd7Dw35n7AV9dWOTXPGIb2g
+    depends_on:
+      - mongodb  # Ensures MongoDB starts before the microservice
+    networks:
+      - my_network  # Connects the microservice to the custom network
+
+networks:
+  my_network:
+    driver: bridge

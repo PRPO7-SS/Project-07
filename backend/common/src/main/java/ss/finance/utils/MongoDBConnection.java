@@ -12,7 +12,9 @@ public class MongoDBConnection {
 
     public static MongoClient getMongoClient() {
         if (mongoClient == null) {
-            mongoClient = MongoClients.create("mongodb://localhost:27017");
+            String mongoUri = System.getenv("MONGO_URI");
+            mongoClient = MongoClients.create(mongoUri);
+            //mongoClient = MongoClients.create("mongodb://localhost:27017");
         }
         return mongoClient;
     }
