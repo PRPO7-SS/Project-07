@@ -1,0 +1,147 @@
+package ss.finance.rest;
+
+import ss.finance.services.UserBean;
+import ss.finance.entities.User;
+import ss.finance.security.JwtUtil;
+import org.mindrot.jbcrypt.BCrypt;
+
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import io.jsonwebtoken.Claims;
+import javax.ws.rs.core.NewCookie;
+import org.bson.types.ObjectId;
+import java.util.UUID;
+import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.time.ZoneId;
+
+@Path("/auth")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class AuthApi {
+    @Inject
+    private UserBean userBean;
+
+    @Inject
+    private JwtUtil jwtUtil;
+
+    // Register User
+    @POST
+    @Path("/register")
+    public Response addUser(User user) {
+        try {
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+            user.setPassword(hashedPassword);
+
+            userBean.addUser(user);
+
+            String token = jwtUtil.generateToken(userBean.getUserId(user.getEmail()), user.getEmail());
+
+            return Response.status(Response.Status.CREATED)
+                    .entity("{\"message\": \"User created successfully\", \"token\": \"" + token + "\"}")
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Error creating user\"}")
+                    .build();
+        }
+    }
+
+    // Validate User Login
+    @POST
+    @Path("/login")
+    public Response loginUser(User user) {
+        try {
+            User validUser = userBean.validateUser(user.getEmail(), user.getPassword());
+
+            if (validUser != null) {
+                ObjectId userId = userBean.getUserId(validUser.getEmail());
+                String accessToken = jwtUtil.generateToken(userId, validUser.getEmail());
+                String refreshToken = jwtUtil.generateRefreshToken(userId, validUser.getEmail());
+
+                // Create cookies for tokens
+                NewCookie accessTokenCookie = new NewCookie("auth_token", accessToken, "/", null, "Access token", 3600, false);
+                NewCookie refreshTokenCookie = new NewCookie("refresh_token", refreshToken, "/", null, "Refresh token", 24 * 3600, true);
+
+                return Response.status(Response.Status.OK)
+                        .cookie(accessTokenCookie, refreshTokenCookie)
+                        .entity("{\"message\": \"Login successful\"} " + accessToken)
+                        .build();
+            } else {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"message\": \"Invalid credentials\"}")
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\": \"Server error\"}")
+                    .build();
+        }
+    }
+
+
+    // Logout User
+    @POST
+    @Path("/logout")
+    public Response logOut() {
+        NewCookie expiredAccessToken = new NewCookie("auth_token", "", "/", null, "auth_token", 0, false);
+        NewCookie expiredRefreshToken = new NewCookie("refresh_token", "", "/", null, "refresh_token", 0, false);
+
+        return Response.status(Response.Status.OK)
+                .cookie(expiredAccessToken, expiredRefreshToken)
+                .entity("{\"message\": \"Logout successful\"}")
+                .build();
+    }
+
+
+    @POST
+    @Path("/token/refresh")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response refreshToken(@CookieParam("refresh_token") String refreshToken) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"message\": \"Refresh token not found.\"}")
+                    .build();
+        }
+
+        try {
+            Claims claims = jwtUtil.extractClaims(refreshToken);
+            String userId = claims.get("userId", String.class);
+
+            // Optionally check if the user still exists
+            User user = userBean.getUserById(new ObjectId(userId));
+            if (user == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"message\": \"User not found.\"}")
+                        .build();
+            }
+
+            // Generate a new access token
+            String newAccessToken = jwtUtil.generateToken(new ObjectId(userId), user.getEmail());
+
+            // Create a cookie for the new access token
+            NewCookie accessTokenCookie = new NewCookie("auth_token", newAccessToken, "/", null, "Access token", 3600, false);
+
+            return Response.ok("{\"message\": \"Token refreshed successfully\"}")
+                    .cookie(accessTokenCookie)
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"message\": \"Invalid refresh token.\"}")
+                    .build();
+        }
+    }
+
+
+
+
+
+
+
+}

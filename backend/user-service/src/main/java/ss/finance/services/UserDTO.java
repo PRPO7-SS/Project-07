@@ -16,10 +16,8 @@ public class UserDTO {
     private Date dateOfBirth;
     private String currency;
     private String accountStatus;
-    private String theme;
     private double savingsGoal;
     private double income;
-    private boolean twoFactorEnabled;
     private List<String> roles;
     private Date lastLogin;
 
@@ -155,14 +153,6 @@ public class UserDTO {
         this.accountStatus = accountStatus;
     }
 
-    public String getTheme() {
-        return theme;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
-
     public double getSavingsGoal() {
         return savingsGoal;
     }
@@ -177,14 +167,6 @@ public class UserDTO {
 
     public void setIncome(double income) {
         this.income = income;
-    }
-
-    public boolean isTwoFactorEnabled() {
-        return twoFactorEnabled;
-    }
-
-    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
-        this.twoFactorEnabled = twoFactorEnabled;
     }
 
     public List<String> getRoles() {

@@ -1,7 +1,9 @@
 package ss.finance;
 import java.util.Date;
+import org.bson.types.ObjectId;
 
 public class TransactionDTO {
+    private ObjectId userId;
     private String type;
     private int amount;
     private String category;
@@ -9,7 +11,8 @@ public class TransactionDTO {
 
     public TransactionDTO() {}
     // Constructor
-    public TransactionDTO(String type, int amount, String category, Date date) {
+    public TransactionDTO(ObjectId userId, String type, int amount, String category, Date date) {
+        this.userId = userId;
         this.type = type;
         this.amount = amount;
         this.category = category;
@@ -17,6 +20,15 @@ public class TransactionDTO {
     }
 
     // Getters and Setters
+
+    public ObjectId getUserId() {
+        return userId;
+    }
+
+    public void setUserId(ObjectId userId) {
+        this.userId = userId;
+    }
+
     public String getType() {
         return type;
     }

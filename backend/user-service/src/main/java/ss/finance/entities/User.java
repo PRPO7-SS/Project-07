@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 public class User {
-    private ObjectId id;
     private String username;
     private String fullName;
     private String email;
@@ -17,31 +16,23 @@ public class User {
     private List<ObjectId> transactions;
     private String avatar;
     private Date dateOfBirth;
-    private Address address;
     private String currency;
     private String accountStatus;
-    private String theme;
     private double savingsGoal;
     private double income;
-    private boolean twoFactorEnabled;
     private String recoveryEmail;
     private List<String> roles;
     private Date createdAt;
     private Date updatedAt;
     private Date lastLogin;
+    private String resetToken;
+    private Date resetTokenExpiry;
 
     public User() {
-        this.id = new ObjectId(); // Manually setting the id
+
     }
+
     // Getters and Setters for User fields
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -122,13 +113,7 @@ public class User {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Address getAddress() {
-        return address;
-    }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
 
     public String getCurrency() {
         return currency;
@@ -146,14 +131,6 @@ public class User {
         this.accountStatus = accountStatus;
     }
 
-    public String getTheme() {
-        return theme;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
-
     public double getSavingsGoal() {
         return savingsGoal;
     }
@@ -168,14 +145,6 @@ public class User {
 
     public void setIncome(double income) {
         this.income = income;
-    }
-
-    public boolean isTwoFactorEnabled() {
-        return twoFactorEnabled;
-    }
-
-    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
-        this.twoFactorEnabled = twoFactorEnabled;
     }
 
     public String getRecoveryEmail() {
@@ -218,44 +187,18 @@ public class User {
         this.lastLogin = lastLogin;
     }
 
-    // Nested Address class
-    public static class Address {
-        private String street;
-        private String city;
-        private String postalCode;
-        private String country;
+    public String getResetToken() {
+        return resetToken;
+    }
+    public void setResetToken(String token){
+        resetToken = token;
+    }
 
-        // Getters and Setters for Address fields
-        public String getStreet() {
-            return street;
-        }
+    public Date getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
 
-        public void setStreet(String street) {
-            this.street = street;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getPostalCode() {
-            return postalCode;
-        }
-
-        public void setPostalCode(String postalCode) {
-            this.postalCode = postalCode;
-        }
-
-        public String getCountry() {
-            return country;
-        }
-
-        public void setCountry(String country) {
-            this.country = country;
-        }
+    public void setResetTokenExpiry(Date resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
     }
 }

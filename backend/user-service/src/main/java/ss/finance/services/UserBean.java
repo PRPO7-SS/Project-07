@@ -29,31 +29,45 @@ public class UserBean {
 
     public void addUser(User user) {
         try {
+            // Check if the user already exists by email
             Document existingUser = collection.find(new Document("email", user.getEmail())).first();
+
             if (existingUser != null) {
-                throw new IllegalArgumentException("User with this email already exists.");
-            }
-            else if (!isValidEmail(user.getEmail())) {
+                // If the user exists, use their existing email as userId
+                logger.info("User already exists with this email: " + user.getEmail());
+            } else if (!isValidEmail(user.getEmail())) {
                 throw new IllegalArgumentException("Invalid email format.");
+            } else {
+                user.setCreatedAt(new java.util.Date());
+                user.setUpdatedAt(new java.util.Date());
+
+
+                Document userDoc = toDocument(user);
+                collection.insertOne(userDoc);
+
+                // Log the successful user creation
+                logger.info("User added successfully");
             }
 
-            user.setCreatedAt(new java.util.Date());
-            user.setUpdatedAt(new java.util.Date());
-
-            Document userDoc = toDocument(user);
-            collection.insertOne(userDoc);
-
-            // Retrieve the generated ID and set it to the User object
-            ObjectId generatedId = userDoc.getObjectId("_id");
-            user.setId(generatedId);
-
-            logger.info("User added successfully with ID: " + generatedId);
             logger.info("User added successfully: " + user.getEmail());
         } catch (Exception e) {
             logger.severe("Error adding user: " + e.getMessage());
             throw new RuntimeException("Error adding user", e);
         }
     }
+
+    public ObjectId getUserId(String email) {
+        Document userDoc = collection.find(new Document("email", email)).first();
+        if (userDoc != null) {
+            // Access the _id field
+            return userDoc.getObjectId("_id");
+        } else {
+            logger.severe("User not found for email: " + email);
+            return null;
+        }
+    }
+
+
 
     private boolean isValidEmail(String email) {
         return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
@@ -90,33 +104,93 @@ public class UserBean {
         return users;
     }
 
-    public void deleteUser(String userId) {
-        collection.deleteOne(new Document("_id", userId));
+    public boolean deleteUser(ObjectId userId) {
+        Document existingUser = collection.find(new Document("_id", userId)).first();
+        if (existingUser != null) {
+            collection.deleteOne(new Document("_id", userId));
+            return true;
+        }
+        else
+            return false;
     }
 
-    public void updateUser(String userId, User updatedUser) {
+    public void updateUser(ObjectId userId, User updatedUser) {
         try {
             Document updateFields = toDocument(updatedUser);
             updateFields.append("updatedAt", new java.util.Date()); // Set updated timestamp
 
             collection.updateOne(
-                    new Document("_id", new ObjectId(userId)),
+                    new Document("_id", userId),
                     new Document("$set", updateFields)
             );
 
-            logger.info("User updated successfully with ID: " + userId);
+            logger.info("User updated successfully");
         } catch (Exception e) {
             logger.severe("Error updating user: " + e.getMessage());
             throw new RuntimeException("Error updating user", e);
         }
     }
 
+    public User getUserById(ObjectId userId) {
+        try {
+            Document doc = collection.find(new Document("_id", userId)).first();
+            if (doc != null) {
+                return toUser(doc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error retrieving user by ID", e);
+        }
+        return null;
+    }
+
+    public User getUserByEmail(String email) {
+        try {
+            Document doc = collection.find(new Document("email", email)).first();
+            if (doc != null) {
+                return toUser(doc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error retrieving user by email", e);
+        }
+        return null;
+    }
+
+    public User getUserByResetToken(String resetToken) {
+        try {
+            Document doc = collection.find(new Document("resetToken", resetToken)).first();
+            if (doc != null) {
+                return toUser(doc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error retrieving user by email", e);
+        }
+        return null;
+    }
+
+    public ObjectId getUserId(User user) {
+        try {
+            // Query the database to find the user by email
+            Document query = new Document("email", user.getEmail());
+            Document userDocument = collection.find(query).first();
+
+            if (userDocument == null) {
+                throw new RuntimeException("User not found");
+            }
+
+            return userDocument.getObjectId("_id"); // Assuming the user ID is stored in the "_id" field
+        } catch (Exception e) {
+            logger.severe("Error retrieving user ID");
+            throw new RuntimeException("Error retrieving user ID");
+        }
+    }
+
+
 
     private Document toDocument(User user) {
         Document document = new Document();
-        if (user.getId() != null) {
-            document.append("_id", user.getId()); // Preserve ID if explicitly set
-        }
         return document.append("username", user.getUsername())
                 .append("fullName", user.getFullName())
                 .append("email", user.getEmail())
@@ -126,20 +200,16 @@ public class UserBean {
                 .append("notifications", user.getNotifications())
                 .append("avatar", user.getAvatar())
                 .append("dateOfBirth", user.getDateOfBirth())
-                .append("address", new Document("street", user.getAddress().getStreet())
-                        .append("city", user.getAddress().getCity())
-                        .append("postalCode", user.getAddress().getPostalCode())
-                        .append("country", user.getAddress().getCountry()))
                 .append("currency", user.getCurrency())
                 .append("accountStatus", user.getAccountStatus())
-                .append("theme", user.getTheme())
                 .append("savingsGoal", user.getSavingsGoal())
                 .append("income", user.getIncome())
-                .append("twoFactorEnabled", user.isTwoFactorEnabled())
                 .append("roles", user.getRoles())
                 .append("createdAt", user.getCreatedAt())
                 .append("updatedAt", user.getUpdatedAt())
-                .append("lastLogin", user.getLastLogin());
+                .append("lastLogin", user.getLastLogin())
+                .append("resetToken", user.getResetToken())
+                .append("resetTokenExpiry", user.getResetTokenExpiry());
     }
 
     private User toUser(Document doc) {
@@ -153,27 +223,16 @@ public class UserBean {
         user.setNotifications(doc.getList("notifications", String.class) != null ? doc.getList("notifications", String.class) : new ArrayList<>());
         user.setAvatar(doc.getString("avatar"));
         user.setDateOfBirth(doc.getDate("dateOfBirth"));
-
-        User.Address address = new User.Address();
-        Document addressDoc = doc.get("address", Document.class);
-        if (addressDoc != null) {
-            address.setStreet(addressDoc.getString("street"));
-            address.setCity(addressDoc.getString("city"));
-            address.setPostalCode(addressDoc.getString("postalCode"));
-            address.setCountry(addressDoc.getString("country"));
-        }
-        user.setAddress(address);
-
         user.setCurrency(doc.getString("currency"));
         user.setAccountStatus(doc.getString("accountStatus"));
-        user.setTheme(doc.getString("theme"));
         user.setSavingsGoal(doc.getDouble("savingsGoal"));
         user.setIncome(doc.getDouble("income"));
-        user.setTwoFactorEnabled(doc.getBoolean("twoFactorEnabled"));
         user.setRoles(doc.getList("roles", String.class));
         user.setCreatedAt(doc.getDate("createdAt"));
         user.setUpdatedAt(doc.getDate("updatedAt"));
         user.setLastLogin(doc.getDate("lastLogin"));
+        user.setResetToken(doc.getString("resetToken"));
+        user.setResetTokenExpiry(doc.getDate("resetTokenExpiry"));
 
         return user;
     }

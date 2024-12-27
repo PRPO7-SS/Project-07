@@ -1,7 +1,7 @@
 kumuluzee:
   server:
     http:
-      port: 8080
+      port: 8083
     context-path: /
   logs:
     level: INFO
@@ -16,7 +16,7 @@ kumuluzee:
       jwt:
         key: "aU0Gx6LJbYukM9DJmcFZjx0q3wx+TnpRkmRu2F7rx3Y="
         algorithm: HS256
-        issuer: "user-service"
+        issuer: "common-service"
         audience: "finance-frontend"
         claims:
           roles: "roles"

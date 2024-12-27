@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import ss.finance.utils.MongoDBConnection;
 import org.bson.Document;
 import javax.inject.Inject;
+import org.bson.types.ObjectId;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
@@ -25,18 +26,19 @@ public class TransactionZrno {
         collection.insertOne(transaction.toDocument());
     }
 
-    public List<TransactionDTO> getAllTransactions() {
-            List<TransactionDTO> transactions = new ArrayList<>();
-                    for (Document doc : collection.find()) {
-                        TransactionDTO transactionDTO = new TransactionDTO(
-                                doc.getString("type"),
-                                doc.getInteger("amount"),
-                                doc.getString("category"),
-                                doc.getDate("date")
-                        );
-                        transactions.add(transactionDTO);
-                    }
-                    return transactions;
+    public List<TransactionDTO> getAllTransactions(ObjectId userId) {
+        List<TransactionDTO> transactions = new ArrayList<>();
+        for (Document doc : collection.find(new Document("userId",  userId))) {
+            TransactionDTO transactionDTO = new TransactionDTO(
+                    doc.getObjectId("userId"),
+                    doc.getString("type"),
+                    doc.getInteger("amount"),
+                    doc.getString("category"),
+                    doc.getDate("date")
+            );
+            transactions.add(transactionDTO);
+        }
+        return transactions;
     }
 
 }
