@@ -10,7 +10,7 @@ kumuluzee:
   datasource:
     mongodb:
       connectionString: "mongodb://localhost:27017"
-      database: "users"
+      database: "financeApp"
   security:
     providers:
       jwt:
@@ -20,3 +20,16 @@ kumuluzee:
         audience: "finance-frontend"
         claims:
           roles: "roles"
+  cors:
+    enabled: true
+    allow-origins:
+      - http://localhost:4200
+    allow-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+    allow-headers:
+      - Content-Type
+      - Authorization
+    allow-credentials: true
