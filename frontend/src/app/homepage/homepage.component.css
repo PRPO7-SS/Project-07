@@ -1,0 +1,28 @@
+.homepage-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.homepage-container h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.homepage-container p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.homepage-container button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.homepage-container button:hover {
+  background-color: #0056b3;
+}

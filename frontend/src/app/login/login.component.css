@@ -1,0 +1,14 @@
+.login-container {
+  width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.login-container h2 {
+  text-align: center;
+}
+.login-container .error {
+  color: red;
+  text-align: center;
+}
