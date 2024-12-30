@@ -1,0 +1,82 @@
+body {
+    background-color: #e9ecef; /* Ensure it matches body */
+    overflow: hidden; /* Prevent margin collapse */
+    overflow-y: auto; /* Ensure scrolling works if content overflows */
+}
+
+.top-section {
+    margin-top: 50px; /* Adjust this value to move the section down */
+    background-color: #e9ecef ;
+}
+
+@media (max-width: 768px) {
+    .top-section {
+        background-color: #e9ecef;
+        margin-top: 30px; /* Reduced margin for smaller screens */
+    }
+}
+
+.custom-green-btn {
+    background-color: #22c548; /* Green shade, adjust as needed */
+    border-color: #28a745; /* Same as background for consistency */
+    color: white; /* Ensure text is readable */
+}
+
+.custom-green-btn:hover {
+    background-color: #218838; /* Darker shade for hover effect */
+    border-color: #1e7e34; /* Darker border for hover */
+}
+
+button {
+    margin-top: 15px; /* Adjust the value as needed */
+}
+
+.highlight-green {
+    color: #28a745; /* Green color */
+    font-weight: bold; /* Optional: Make it bold */
+}
+
+.app-name {
+    font-family: 'Raleway', sans-serif;
+
+    font-size: 3rem; /* Adjust font size */
+    text-align: center; /* Center-align the text */
+}
+
+label .bi-question-circle {
+    color: #6c757d; /* Gray color for the icon */
+    font-size: 0.9rem; /* Slightly smaller font size */
+    margin-left: 5px; /* Add space between text and the icon */
+}
+label .bi-question-circle:hover {
+    color: #343a40; /* Darker color on hover */
+}
+
+.clickable-text {
+    color: #007bff; /* Blue text */
+    cursor: pointer; /* Pointer cursor */
+    text-decoration: underline; /* Underline to mimic a link */
+}
+
+.clickable-text:hover {
+    color: #0056b3; /* Darker blue on hover */
+}
+
+.custom-alert {
+    padding: 10px 15px; /* Smaller padding */
+    display: inline-block; /* Shrink the box to fit the content */
+    max-width: fit-content; /* Ensure the box fits the text */
+    font-size: 1rem; /* Optional: Adjust font size */
+}
+
+.custom-alert p {
+    margin-bottom: 0; /* Remove or reduce the default margin of the <p> tag */
+}
+
+
+.card.p-2.shadow {
+  max-height: 100vh; /* Limit the card's height to 90% of the viewport */
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
+}
+
+

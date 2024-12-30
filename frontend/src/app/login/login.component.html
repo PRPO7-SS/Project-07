@@ -6,7 +6,7 @@
       <input
         type="email"
         id="email"
-        [(ngModel)]="email"
+        [(ngModel)]="formData.email"
         name="email"
         required
       />
@@ -16,10 +16,13 @@
       <input
         type="password"
         id="password"
-        [(ngModel)]="password"
+        [(ngModel)]="formData.password"
         name="password"
         required
       />
+    </div>
+    <div *ngIf="message" class="alert alert-danger" role="alert">
+      <span [innerHTML]="message"></span>
     </div>
     <button type="submit">Login</button>
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
