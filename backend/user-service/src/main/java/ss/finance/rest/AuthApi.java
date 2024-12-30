@@ -15,6 +15,7 @@ import javax.ws.rs.core.NewCookie;
 import org.bson.types.ObjectId;
 import java.util.UUID;
 import java.util.Map;
+import java.util.HashMap;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.time.ZoneId;
@@ -55,6 +56,7 @@ public class AuthApi {
     // Validate User Login
     @POST
     @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON) // Ensure JSON response type
     public Response loginUser(User user) {
         try {
             User validUser = userBean.validateUser(user.getEmail(), user.getPassword());
@@ -68,22 +70,32 @@ public class AuthApi {
                 NewCookie accessTokenCookie = new NewCookie("auth_token", accessToken, "/", null, "Access token", 3600, false);
                 NewCookie refreshTokenCookie = new NewCookie("refresh_token", refreshToken, "/", null, "Refresh token", 24 * 3600, true);
 
+                // Properly format JSON response
+                Map<String, Object> responseBody = new HashMap<>();
+                responseBody.put("message", "Login successful");
+                responseBody.put("accessToken", accessToken);
+                responseBody.put("refreshToken", refreshToken);
+
                 return Response.status(Response.Status.OK)
                         .cookie(accessTokenCookie, refreshTokenCookie)
-                        .entity("{\"message\": \"Login successful\"} " + accessToken)
+                        .entity(responseBody) // JAX-RS will serialize the Map to JSON
                         .build();
             } else {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"message\": \"Invalid credentials\"}")
+                        .header("Content-Type", "application/json")
                         .build();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"message\": \"Server error\"}")
+                    .header("Content-Type", "application/json")
                     .build();
         }
     }
+
+
 
 
     // Logout User
