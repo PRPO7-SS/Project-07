@@ -9,7 +9,6 @@ export interface User {
 
     // Optional Fields
     telephone?: string | null; // Telephone number, nullable
-    language?: string; // Preferred language, defaults to 'en'
     notifications?: string[]; // Notification settings ('on' or 'off'), default to ['off', 'off', 'off', 'off']
     transactions?: Transaction[]; // Array of transactions (as strings)
 

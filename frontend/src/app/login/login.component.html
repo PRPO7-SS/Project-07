@@ -1,31 +1,47 @@
-<div class="login-container">
-  <h2>Login</h2>
-  <form (ngSubmit)="onLogin()">
-    <div>
-      <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        [(ngModel)]="formData.email"
-        name="email"
-        required
-      />
-    </div>
-    <div>
-      <label for="password">Password</label>
-      <input
-        type="password"
-        id="password"
-        [(ngModel)]="formData.password"
-        name="password"
-        required
-      />
-    </div>
-    <div *ngIf="message" class="alert alert-danger" role="alert">
-      <span [innerHTML]="message"></span>
-    </div>
-    <button type="submit">Login</button>
-    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-  </form>
-</div>
+<div class="top-section" >
+        <div class="container">
+          <div class="row w-100">
+      <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center order-1 order-lg-1">
+        <div class="p-4">
+          <h1 class="app-name">
+            Finance<span class="highlight-green">Bro</span>
+          </h1>
+          <p class="lead mt-3">Welcome to the application. Please log in to continue.</p>
+        </div>
+      </div>
+
+      <div class="login-container">
+        <h2>Login</h2>
+        <form (ngSubmit)="onLogin()">
+          <div>
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              [(ngModel)]="formData.email"
+              name="email"
+              required
+            />
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter password"
+              [(ngModel)]="formData.password"
+              name="password"
+              required
+            />
+          </div>
+          <div *ngIf="message" class="alert alert-danger" role="alert">
+            <span [innerHTML]="message"></span>
+          </div>
+          <button type="submit">Login</button>
+          <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+        </form>
+      </div>
+      </div>
+  </div>
 

@@ -23,7 +23,7 @@ public class AccessControlResponseFilter implements ContainerResponseFilter {
         if (requestedHeaders != null) {
             headers.add("Access-Control-Allow-Headers", requestedHeaders);
         } else {
-            headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie");
         }
 
     }

@@ -1,82 +1,152 @@
-body {
-    background-color: #e9ecef; /* Ensure it matches body */
-    overflow: hidden; /* Prevent margin collapse */
-    overflow-y: auto; /* Ensure scrolling works if content overflows */
+/* Page Layout Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
 }
 
+/* Top Section - App Name and Register Form */
 .top-section {
-    margin-top: 50px; /* Adjust this value to move the section down */
-    background-color: #e9ecef ;
+    height: 82vh; /* 82% viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Ensure responsive wrapping */
+    background-color: #e9ecef; /* Light gray background */
+    padding: 2rem;
 }
 
-@media (max-width: 768px) {
-    .top-section {
-        background-color: #e9ecef;
-        margin-top: 30px; /* Reduced margin for smaller screens */
-    }
-}
-
-.custom-green-btn {
-    background-color: #22c548; /* Green shade, adjust as needed */
-    border-color: #28a745; /* Same as background for consistency */
-    color: white; /* Ensure text is readable */
-}
-
-.custom-green-btn:hover {
-    background-color: #218838; /* Darker shade for hover effect */
-    border-color: #1e7e34; /* Darker border for hover */
-}
-
-button {
-    margin-top: 15px; /* Adjust the value as needed */
-}
-
-.highlight-green {
-    color: #28a745; /* Green color */
-    font-weight: bold; /* Optional: Make it bold */
+/* App Name Styles */
+.app-name-section {
+    flex: 1; /* Take equal space */
+    text-align: center; /* Center-align text */
+    padding: 2rem;
 }
 
 .app-name {
     font-family: 'Raleway', sans-serif;
-
-    font-size: 3rem; /* Adjust font size */
-    text-align: center; /* Center-align the text */
+    font-size: 3.5rem; /* Large font size */
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
 }
 
-label .bi-question-circle {
-    color: #6c757d; /* Gray color for the icon */
-    font-size: 0.9rem; /* Slightly smaller font size */
-    margin-left: 5px; /* Add space between text and the icon */
-}
-label .bi-question-circle:hover {
-    color: #343a40; /* Darker color on hover */
+.highlight-green {
+    color: #28a745; /* Highlight the "Bro" in green */
 }
 
-.clickable-text {
-    color: #007bff; /* Blue text */
-    cursor: pointer; /* Pointer cursor */
-    text-decoration: underline; /* Underline to mimic a link */
+.lead {
+    font-size: 1.2rem; /* Slightly smaller font size */
+    line-height: 1.6;
+    color: #6c757d; /* Subtle gray text */
 }
 
-.clickable-text:hover {
-    color: #0056b3; /* Darker blue on hover */
+/* Register Form Container */
+.register-container {
+    flex: 1; /* Take equal space */
+    max-width: 400px; /* Limit form width */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-.custom-alert {
-    padding: 10px 15px; /* Smaller padding */
-    display: inline-block; /* Shrink the box to fit the content */
-    max-width: fit-content; /* Ensure the box fits the text */
-    font-size: 1rem; /* Optional: Adjust font size */
+.register-container h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
 }
 
-.custom-alert p {
-    margin-bottom: 0; /* Remove or reduce the default margin of the <p> tag */
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Space between form fields */
 }
 
-
-.card.p-2.shadow {
-  max-height: 100vh; /* Limit the card's height to 90% of the viewport */
-  overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
+form label {
+    font-weight: bold;
+    font-size: 1rem;
 }
 
+form input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
 
+form input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Subtle green glow */
+    outline: none;
+}
+
+/* Button Styles */
+button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Error Message */
+.alert {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 0.75rem;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .top-section {
+        flex-direction: column; /* Stack elements vertically on smaller screens */
+        height: 100vh; /* Full viewport height */
+        padding: 2rem 1rem;
+    }
+
+    .app-name-section {
+        margin-bottom: 2rem; /* Add spacing between sections */
+    }
+
+    .register-container {
+        width: 100%; /* Full width on smaller screens */
+        max-width: none;
+    }
+}
+
+@media (min-width: 992px) {
+    .top-section {
+        flex-direction: row; /* Place elements side by side */
+        padding: 0 2rem; /* Add horizontal padding */
+    }
+
+    .app-name-section {
+        padding-right: 2rem; /* Space between sections */
+    }
+
+    .register-container {
+        margin-top: 0; /* No top margin on large screens */
+    }
+}

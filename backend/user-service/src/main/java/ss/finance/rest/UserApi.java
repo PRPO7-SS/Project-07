@@ -10,6 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 import io.jsonwebtoken.Claims;
 import javax.ws.rs.core.NewCookie;
 import org.bson.types.ObjectId;
@@ -34,17 +35,19 @@ public class UserApi {
     }
 
 
-    @POST
+    @PUT
     @Path("/change-password")
-    public Response changePassword(@HeaderParam("Authorization") String authToken, @QueryParam("oldPassword") String oldPassword, @QueryParam("newPassword") String newPassword) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response changePassword(@CookieParam("auth_token") String token, Map<String, String> payload) {
+        String oldPassword = payload.get("oldPassword");
+        String newPassword = payload.get("newPassword");
         try {
 
-            if (authToken == null || !authToken.startsWith("Bearer ")) {
+            if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"message\": \"Authorization header missing or invalid\"}")
+                        .entity("{\"message\": \"Cookie is missing or invalid\"}")
                         .build();
             }
-            String token = authToken.substring(7);
             ObjectId userId = jwtUtil.extractUserId(token);
             User user = userBean.getUserById(userId);
             // Step 1: Validate input parameters
@@ -125,20 +128,21 @@ public class UserApi {
 
     @GET
     @Path("/profile")
-    public Response getUserProfile(@HeaderParam("Authorization") String authHeader) {
+    public Response getUserProfile(@CookieParam("auth_token") String token) {
         try {
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("Received token: " + token);
+            if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"message\": \"Authorization header missing or invalid\"}")
+                        .entity("{\"message\": \"Token is missing or invalid\"}")
                         .build();
             }
 
-            String token = authHeader.substring(7);
-            Claims claims = jwtUtil.extractClaims(token);
-            String userId = claims.get("userId", String.class);  // Extract email as userId from JWT token
+            // Extract claims from the JWT token
+            //Claims claims = jwtUtil.extractClaims(token);
+            ObjectId userId = jwtUtil.extractUserId(token); // Extract userId from JWT token
 
-            // Fetch the user using the email (userId)
-            User user = userBean.getUserById(new ObjectId(userId));
+            // Fetch the user using the userId
+            User user = userBean.getUserById(userId);
             if (user != null) {
                 return Response.ok(user).build();
             } else {
@@ -154,17 +158,19 @@ public class UserApi {
         }
     }
 
+
     @PUT
     @Path("/profile")
-    public Response updateUser(@HeaderParam("Authorization") String authHeader, User updatedUser) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(@CookieParam("auth_token")  String token, User updatedUser) {
         try {
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"message\": \"Authorization header missing or invalid\"}")
+                        .entity("{\"message\": \"Cookie is missing or invalid\"}")
                         .build();
             }
 
-            String token = authHeader.substring(7);
             ObjectId userId = jwtUtil.extractUserId(token);
 
             // Fetch the existing user
@@ -175,7 +181,7 @@ public class UserApi {
                         .build();
             }
 
-            userBean.updateUser(userId, existingUser);
+            userBean.updateUser(userId, updatedUser);
 
             return Response.status(Response.Status.OK)
                     .entity("{\"message\": \"User updated successfully\"}")
