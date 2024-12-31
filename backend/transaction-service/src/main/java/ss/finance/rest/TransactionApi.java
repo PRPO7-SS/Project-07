@@ -47,11 +47,13 @@ public class TransactionApi {
             ObjectId userId = jwtUtil.extractUserId(token);
             logger.info("Extracted userId: " + userId);
 
+            // Create and add transaction
             Transaction transaction = new Transaction(
                     userId,
                     transactionDTO.getType(),
                     transactionDTO.getAmount(),
-                    transactionDTO.getCategory()
+                    transactionDTO.getCategory(),
+                    transactionDTO.getDate() // Pass the date field
             );
 
             transactionZrno.addTransaction(transaction);

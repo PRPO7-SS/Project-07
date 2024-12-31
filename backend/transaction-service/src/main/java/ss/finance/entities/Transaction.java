@@ -6,36 +6,28 @@ import org.bson.types.ObjectId;
 
 public class Transaction {
     private ObjectId id;
-    private ObjectId userId; // Reference to the user who made the transaction
-    private String type; // income or spending
-    private double amount; // Transaction amount
-    private String category; // Transaction category
+    private ObjectId userId;
+    private String type; // "income" or "spending"
+    private double amount;
+    private String category; // e.g., "groceries", "salary"
     private Date date; // Date of the transaction
-    private String description; // Optional description of the transaction
-    private String currency; // Currency of the transaction
-    private Date createdAt; // Timestamp when the transaction was created
-    private Date updatedAt; // Timestamp when the transaction was last updated
+    private String currency; // e.g., "EUR"
+    private Date createdAt;
+    private Date updatedAt;
 
-    public Transaction() {
-        this.createdAt = new Date(); // Default createdAt to current date
-        this.updatedAt = new Date(); // Default updatedAt to current date
-    }
+    public Transaction() {}
 
-    public Transaction(ObjectId userId, String type, double amount, String category, String description, String currency) {
-        this.id = new ObjectId();
+    public Transaction(ObjectId userId, String type, double amount, String category, Date date) {
         this.userId = userId;
         this.type = type;
         this.amount = amount;
         this.category = category;
-        this.description = description;
-        this.currency = currency;
-        this.date = new Date();
+        this.date = date != null ? date : new Date(); // Ensure the date is set
         this.createdAt = new Date();
         this.updatedAt = new Date();
-    }
+    }    
 
     // Getters and Setters
-
     public ObjectId getId() {
         return id;
     }
@@ -82,14 +74,6 @@ public class Transaction {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getCurrency() {
