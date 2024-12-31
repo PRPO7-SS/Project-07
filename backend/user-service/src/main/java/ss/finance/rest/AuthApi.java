@@ -36,23 +36,41 @@ public class AuthApi {
     @Path("/register")
     public Response addUser(User user) {
         try {
+            // Validate mandatory fields
+            if (user.getUsername() == null || user.getUsername().isEmpty() ||
+                    user.getFullName() == null || user.getFullName().isEmpty() ||
+                    user.getEmail() == null || user.getEmail().isEmpty() ||
+                    user.getPassword() == null || user.getPassword().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"message\": \"Missing required fields\"}")
+                        .build();
+            }
+
+            // Check if user with this email already exists
+            if (userBean.existingUser(user.getEmail())) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("{\"message\": \"A user with this email already exists\"}")
+                        .build();
+            }
+
+            // Hash the password
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             user.setPassword(hashedPassword);
 
+            // Add the user
             userBean.addUser(user);
 
-            String token = jwtUtil.generateToken(userBean.getUserId(user.getEmail()), user.getEmail());
-
             return Response.status(Response.Status.CREATED)
-                    .entity("{\"message\": \"User created successfully\", \"token\": \"" + token + "\"}")
+                    .entity("{\"message\": \"User created successfully\"}")
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.status(Response.Status.BAD_REQUEST)
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"message\": \"Error creating user\"}")
                     .build();
         }
     }
+
 
     // Validate User Login
     @POST

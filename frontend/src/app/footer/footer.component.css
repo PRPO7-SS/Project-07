@@ -1,0 +1,11 @@
+.footer-background {
+    color: #6c757d; /* Muted text color */
+    text-align: center;
+    border-top: none; /* Remove any border */
+    font-size: 0.9rem; /* Smaller font size for subtlety */
+    padding-top: 10px; /* Add a little padding */
+    padding-bottom: 20px; /* Ensure spacing between footer text and bottom */
+    margin-top: auto;
+}
+
+

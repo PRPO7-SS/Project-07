@@ -1,0 +1,47 @@
+.navbar-custom {
+   background: linear-gradient(to right, #28a745, #218838);
+  padding: 10px 10px;
+}
+.navbar-nav .nav-link {
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #a9dfbf;
+}
+.navbar-nav .nav-link.active {
+  color: white;
+}
+
+.navbar-nav .nav-link.active:hover {
+  color: #a9dfbf;
+}
+
+.app-name {
+  font-family: 'Raleway', sans-serif;
+  font-size: 4rem; /* Adjust font size */
+  text-align: center; /* Center-align the text */
+}
+
+.navbar-brand {
+  font-family: 'Raleway', sans-serif;
+  font-size: 1.5rem; /* Adjust font size for navbar */
+}
+
+/* Style for Nav Buttons on Smaller Screens */
+@media (max-width: 991.98px) {
+  .navbar-nav .btn {
+      display: block; /* Ensure buttons stack vertically */
+      width: 100%; /* Full-width buttons for better alignment */
+      margin-bottom: 10px; /* Add space between buttons */
+      text-align: center; /* Center text inside buttons */
+  }
+
+  .navbar-nav {
+      gap: 10px; /* Add spacing between list items */
+      display: flex; /* Use flexbox for better alignment */
+      flex-direction: column; /* Stack nav items vertically */
+      align-items: left; /* Center-align buttons */
+  }
+}

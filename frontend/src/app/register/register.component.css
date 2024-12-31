@@ -1,0 +1,157 @@
+/* Page Layout Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Top Section - App Name and Register Form */
+.top-section {
+    height: auto; /* Let content determine height */
+    display: flex;
+    align-items: center;
+    justify-content: space-around; /* Adjust spacing between sections */
+    flex-wrap: wrap; /* Ensure responsive wrapping */
+    background-color: #e9ecef; /* Light gray background */
+    padding: 2rem;
+}
+
+/* App Name Styles */
+.app-name-section {
+    flex: 1; /* Take equal space */
+    text-align: center; /* Center-align text */
+    padding: 2rem;
+    max-width: 600px; /* Optional: Limit the width for better alignment */
+}
+
+.app-name {
+    font-family: 'Raleway', sans-serif;
+    font-size: 3.5rem; /* Large font size */
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.highlight-green {
+    color: #28a745; /* Highlight the "Bro" in green */
+}
+
+.lead {
+    font-size: 1.2rem; /* Slightly smaller font size */
+    line-height: 1.6;
+    color: #6c757d; /* Subtle gray text */
+}
+
+/* Register Form Container */
+.register-container {
+    flex: 1; /* Take equal space */
+    max-width: 350px; /* Smaller form width */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1.5rem; /* Slightly smaller padding */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 2rem auto; /* Add margin at the top and bottom */
+}
+
+.register-container h2 {
+    text-align: center;
+    font-size: 1.8rem; /* Slightly smaller font size */
+    margin-bottom: 1.5rem;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Space between form fields */
+}
+
+form label {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+form input {
+    width: 100%;
+    padding: 0.65rem; /* Slightly smaller input height */
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Subtle green glow */
+    outline: none;
+}
+
+/* Button Styles */
+button {
+    padding: 0.65rem 1.2rem; /* Slightly smaller button size */
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Error Message */
+.alert {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 0.75rem;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .top-section {
+        flex-direction: column; /* Stack elements vertically on smaller screens */
+        height: auto; /* Let content determine height */
+        padding: 2rem 1rem;
+    }
+
+    .app-name-section {
+        margin-bottom: 2rem; /* Add spacing between sections */
+    }
+
+    .register-container {
+        width: 90%; /* Full width on smaller screens */
+        max-width: none;
+        margin: 1.5rem auto; /* Add margin for spacing */
+    }
+}
+
+@media (min-width: 992px) {
+    .top-section {
+        flex-direction: row; /* Place elements side by side */
+        padding: 0 2rem; /* Add horizontal padding */
+        justify-content: space-evenly; /* Balanced spacing between columns */
+    }
+
+    .app-name-section {
+        padding-right: 2rem; /* Space between sections */
+    }
+
+    .register-container {
+        margin-top: 2rem; /* Add margin at the top */
+        margin-bottom: 2rem; /* Add margin at the bottom */
+    }
+}

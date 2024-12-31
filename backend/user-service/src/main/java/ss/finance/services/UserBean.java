@@ -96,6 +96,13 @@ public class UserBean {
         return toUser(doc);
     }
 
+    public boolean existingUser(String email){
+        Document doc = collection.find(new Document("email", email)).first();
+        if(doc != null) return true;
+        else return false;
+
+    }
+
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         for (Document doc : collection.find()) {

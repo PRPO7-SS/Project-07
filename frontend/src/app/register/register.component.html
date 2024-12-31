@@ -1,0 +1,87 @@
+<app-navigation [showFullNav]="false"></app-navigation>
+<div class="top-section">
+  <!-- App Name Section -->
+  <div class="app-name-section">
+    <h1 class="app-name">
+      Finance<span class="highlight-green">Bro</span>
+    </h1>
+    <p class="lead">Welcome to the application. Please log in to continue.</p>
+  </div>
+
+  <!-- Register Form Section -->
+  <div class="register-container">
+    <h2>Register</h2>
+    <form (ngSubmit)="registerUser()" #registerForm="ngForm">
+      <div class="mb-3">
+        <label for="fullName">Full Name</label>
+        <input
+          type="text"
+          id="fullName"
+          name="fullName"
+          placeholder="Enter your full name"
+          [(ngModel)]="user.fullName"
+          required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          [(ngModel)]="user.email"
+          required>
+      </div>
+
+      <div class="mb-3">
+        <label for="dob">Date of Birth</label>
+        <input
+          type="date"
+          id="dob"
+          name="dob"
+          [(ngModel)]="user.dob"
+          required>
+      </div>
+
+      <div class="mb-3">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Enter a username"
+          [(ngModel)]="user.username"
+          required>
+      </div>
+
+      <div class="mb-3">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          [(ngModel)]="user.password"
+          required>
+      </div>
+
+      <div class="mb-3">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          placeholder="Confirm your password"
+          [(ngModel)]="user.confirmPassword"
+          required>
+      </div>
+
+      <div *ngIf="message" class="alert" role="alert">
+        {{ message }}
+      </div>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</div>

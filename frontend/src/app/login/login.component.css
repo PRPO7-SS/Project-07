@@ -1,14 +1,147 @@
+/* Page Layout Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* App Name Section */
+.app-name-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9ecef; /* Light gray background */
+    height: 82vh; /* Full viewport height */
+    padding: 7% 0; /* Add padding for spacing */
+}
+
+.app-name {
+    font-family: 'Raleway', sans-serif;
+    font-size: 4rem; /* Adjust font size */
+    text-align: center; /* Center-align the text */
+}
+
+.highlight-green {
+    color: #28a745; /* Green color */
+    font-weight: bold;
+}
+
+.lead {
+    font-size: 1.5rem;
+    line-height: 1.8;
+    color: #6c757d; /* Subtle text color */
+}
+
+/* Login Container */
 .login-container {
-  width: 300px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; /* Center-align in the container */
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .login-container h2 {
-  text-align: center;
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
 }
-.login-container .error {
-  color: red;
-  text-align: center;
+
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.login-container label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-container input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    outline: none;
+}
+
+/* Error and Message Styles */
+.alert {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 0.75rem 1.25rem;
+    border-radius: 5px;
+}
+
+.error {
+    color: #dc3545; /* Red color for errors */
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+.top-section {
+    height: 82vh; /* Full viewport height */
+    background-color: #e9ecef; /* Light gray background color */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 7%; /* Add padding to adjust vertical spacing */
+}
+
+/* Buttons */
+button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Responsive Styles */
+@media (max-width: 991.98px) {
+
+
+    .top-section {
+            height: 100vh; /* Expand top section to take full viewport height */
+        }
+    .app-name-section {
+        height: 100vh; /* Make the app name section full screen */
+    }
+
+    .login-container {
+        width: 90%;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+            padding-top: 30px; /* Add top padding for large screens */
+            padding-bottom: 30px; /* Add bottom padding */
+        }
+    .app-name-section {
+        padding-top: 10%;
+    }
+
+    .login-container {
+        margin-top: -2rem;
+    }
 }

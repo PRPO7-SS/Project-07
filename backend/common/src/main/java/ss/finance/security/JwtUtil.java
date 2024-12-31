@@ -13,7 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.annotation.PostConstruct;
 import io.jsonwebtoken.ExpiredJwtException;
 import ss.finance.environment.Config;
-
+import java.nio.charset.StandardCharsets;
 
 @ApplicationScoped
 public class JwtUtil {
@@ -37,16 +37,17 @@ public class JwtUtil {
 
     public String generateToken(ObjectId userId, String email) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId.toHexString());  // Store the userId as a string
+        claims.put("userId", userId.toHexString());
         claims.put("email", email);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
+
 
     public String generateRefreshToken(ObjectId userId, String email) {
         Map<String, Object> claims = new HashMap<>();
@@ -65,7 +66,7 @@ public class JwtUtil {
     public Claims extractClaims(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(secretKey.getBytes())
+                    .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8)) // Use StandardCharsets.UTF_8
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
@@ -76,6 +77,7 @@ public class JwtUtil {
             throw new RuntimeException("Error extracting claims", e);
         }
     }
+
 
 
 

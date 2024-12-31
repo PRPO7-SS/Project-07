@@ -1,0 +1,128 @@
+<app-navigation></app-navigation>
+<!-- Main content -->
+<div class="container" dir="ltr">
+  <div class="row">
+    <div class="col-12">
+      <div class="alert alert-dark p-2" hidden="!errorMessage">
+        <i class="fa-solid fa-triangle-exclamation pe-2"></i>{{ errorMessage }}
+      </div>
+    </div>
+    <!-- Navigation on the left only visible on md devices and larger -->
+    <div class="col-md-4 d-none d-md-block">
+      <div class="card">
+        <div class="card-body">
+          <nav class="nav flex-column nav-pills" aria-label="settingsType">
+            <a href="#account" data-bs-toggle="tab" class="nav-item nav-link nav-link-faded"
+               [class.active]="activeTab === 'account'"
+               (click)="setActiveTab('account')">
+              <i class="fa-solid fa-user"></i> Account
+            </a>
+            <a href="#password" data-bs-toggle="tab" class="nav-item nav-link nav-link-faded"
+               [class.active]="activeTab === 'password'"
+               (click)="setActiveTab('password')">
+              <i class="fa-solid fa-lock"></i> Password
+            </a>
+            <a class="nav-item nav-link nav-link-faded" style="cursor: pointer;"
+               (click)="logout()">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="col-md-8">
+      <div class="card">
+        <!-- Navigation only seen on smaller screens -->
+        <div class="card-header border-bottom mb-3 d-flex d-md-none">
+          <ul class="nav nav-tabs card-header-tabs mb-1" role="tablist">
+            <li class="nav-item">
+              <a href="#account" data-bs-toggle="tab" class="nav-link has-icon"
+                 [class.active]="activeTab === 'account'"
+                 (click)="setActiveTab('account')">
+                <i class="fa-solid fa-user"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#password" data-bs-toggle="tab" class="nav-link has-icon"
+                 [class.active]="activeTab === 'password'"
+                 (click)="setActiveTab('password')">
+                <i class="fa-solid fa-lock"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link has-icon" style="cursor: pointer;"
+                 (click)="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Different types of settings -->
+        <div class="card-body tab-content">
+          <div class="tab-pane" id="account" [class.active]="activeTab === 'account'">
+            <h6>Account Settings</h6>
+            <hr>
+            <form>
+              <div class="form-group mb-3">
+                <label for="fullName">Full Name</label>
+                <input type="text" class="form-control" name="fullName" id="fullName" [(ngModel)]="currentUser.fullName" placeholder="Enter your full name">
+              </div>
+              <div class="form-group mb-3">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="username" id="username" [(ngModel)]="currentUser.username" placeholder="Enter your username">
+              </div>
+              <div class="form-group mb-3">
+                <label for="email">Email</label>
+                <input type="text" class="form-control" name="email" id="email" [(ngModel)]="currentUser.email" placeholder="Enter your email">
+              </div>
+              <div class="form-group mb-3">
+                <label for="telephone">Telephone</label>
+                <input type="text" class="form-control" name="telephone" id="telephone" [(ngModel)]="currentUser.telephone" placeholder="Enter your phone number">
+              </div>
+              <button type="button" class="btn btn-primary customButton" (click)="updateAccount()">Update Profile</button>
+              <button type="button" class="btn btn-light" (click)="reset()">Reset Changes</button>
+            </form>
+          </div>
+
+          <div class="tab-pane" id="password" [class.active]="activeTab === 'password'">
+            <h6>Password Settings</h6>
+            <hr>
+            <form>
+              <div class="form-group mb-3">
+                <label>Change Password</label>
+                <input type="password" name="currentPassword" class="form-control mb-1" placeholder="Current Password" [(ngModel)]="passwordSettings.oldPassword">
+                <input type="password" name="newPassword" class="form-control mb-1" placeholder="New Password" [(ngModel)]="passwordSettings.newPassword">
+                <input type="password" name="confirmNewPassword" class="form-control mb-1" placeholder="Confirm Password" [(ngModel)]="passwordSettings.confirmNewPassword">
+              </div>
+              <button type="button" class="btn btn-primary customButton" (click)="changePassword()">Change Password</button>
+              <button type="reset" class="btn btn-light">Reset Changes</button>
+            </form>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success modal window -->
+<!-- Success Modal Window -->
+<ng-template #success>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      Success
+    </h4>
+    <button type="button" class="btn-close close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
+    <div id="successMark" class="mb-3">
+      <i class="fa-regular fa-circle-check"></i>
+    </div>
+    <p>{{ successMessage }}</p>
+  </div>
+</ng-template>
+
