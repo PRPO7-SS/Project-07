@@ -1,24 +1,25 @@
 package ss.finance.rest;
 
-import ss.finance.services.UserBean;
-import ss.finance.entities.User;
-import ss.finance.security.JwtUtil;
-import org.mindrot.jbcrypt.BCrypt;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
-import io.jsonwebtoken.Claims;
 import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+
 import org.bson.types.ObjectId;
-import java.util.UUID;
-import java.util.Map;
-import java.util.HashMap;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.time.ZoneId;
+import org.mindrot.jbcrypt.BCrypt;
+
+import io.jsonwebtoken.Claims;
+import ss.finance.entities.User;
+import ss.finance.security.JwtUtil;
+import ss.finance.services.UserBean;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
