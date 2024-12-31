@@ -1,0 +1,49 @@
+<nav class="navbar navbar-expand-lg navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand text-white" routerLink="/home">
+      Finance<span style="color: black; font-weight: 600;">Bro</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <!-- Introductory (always visible) -->
+        <li class="nav-item" *ngIf="showFullNav">
+          <a class="nav-link" routerLink="/introductory" routerLinkActive="active">
+            Introductory
+          </a>
+        </li>
+
+        <!-- Overview -->
+        <li class="nav-item" *ngIf="showFullNav">
+          <a class="nav-link active" routerLink="/finance" routerLinkActive="active">Overview</a>
+        </li>
+
+        <!-- Investments (no dropdown) -->
+        <li class="nav-item" *ngIf="showFullNav">
+          <a class="nav-link" routerLink="/investments" routerLinkActive="active">
+            Investments
+          </a>
+        </li>
+      </ul>
+
+      <!-- Right-aligned profile dropdown (conditionally displayed) -->
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item" *ngIf="showFullNav">
+          <a class="nav-link" routerLink="/settings">
+            Settings
+          </a>
+        </li>
+
+        <!-- Styled Buttons -->
+        <li class="nav-item" *ngIf="showLogin">
+          <a class="btn btn-outline-light me-2" routerLink="/login">Login</a>
+        </li>
+        <li class="nav-item" *ngIf="showLogin">
+          <a class="btn btn-light text-dark" routerLink="/register">Sign Up</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

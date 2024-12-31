@@ -5,11 +5,12 @@ import { User } from '../models/user';
 import { FormsModule } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
+import { NavigationComponent } from '../navigation/navigation.component';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavigationComponent],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
   providers: [BsModalService],

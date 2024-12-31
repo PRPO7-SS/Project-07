@@ -1,3 +1,4 @@
+<app-navigation></app-navigation>
 <!-- Main content -->
 <div class="container" dir="ltr">
   <div class="row">
@@ -107,3 +108,21 @@
     </div>
   </div>
 </div>
+
+<!-- Success modal window -->
+<!-- Success Modal Window -->
+<ng-template #success>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      Success
+    </h4>
+    <button type="button" class="btn-close close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
+    <div id="successMark" class="mb-3">
+      <i class="fa-regular fa-circle-check"></i>
+    </div>
+    <p>{{ successMessage }}</p>
+  </div>
+</ng-template>
+

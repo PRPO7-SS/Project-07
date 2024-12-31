@@ -1,0 +1,22 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main wrapper to take up remaining height of the page */
+.main-wrapper {
+    flex: 1; /* Allow the main content to expand and take up available space */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Footer styling */
+app-footer {
+    background-color: #f8f9fa; /* Light gray background */
+    border-top: 1px solid #ddd; /* Optional border for separation */
+    padding: 1rem 0;
+    text-align: center;
+    width: 100%;
+}

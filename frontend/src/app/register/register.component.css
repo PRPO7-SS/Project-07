@@ -7,10 +7,10 @@ body, html {
 
 /* Top Section - App Name and Register Form */
 .top-section {
-    height: 82vh; /* 82% viewport height */
+    height: auto; /* Let content determine height */
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around; /* Adjust spacing between sections */
     flex-wrap: wrap; /* Ensure responsive wrapping */
     background-color: #e9ecef; /* Light gray background */
     padding: 2rem;
@@ -21,6 +21,7 @@ body, html {
     flex: 1; /* Take equal space */
     text-align: center; /* Center-align text */
     padding: 2rem;
+    max-width: 600px; /* Optional: Limit the width for better alignment */
 }
 
 .app-name {
@@ -44,17 +45,18 @@ body, html {
 /* Register Form Container */
 .register-container {
     flex: 1; /* Take equal space */
-    max-width: 400px; /* Limit form width */
+    max-width: 350px; /* Smaller form width */
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding: 2rem;
+    padding: 1.5rem; /* Slightly smaller padding */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 2rem auto; /* Add margin at the top and bottom */
 }
 
 .register-container h2 {
     text-align: center;
-    font-size: 2rem;
+    font-size: 1.8rem; /* Slightly smaller font size */
     margin-bottom: 1.5rem;
 }
 
@@ -72,7 +74,7 @@ form label {
 
 form input {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.65rem; /* Slightly smaller input height */
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -87,7 +89,7 @@ form input:focus {
 
 /* Button Styles */
 button {
-    padding: 0.75rem 1.5rem;
+    padding: 0.65rem 1.2rem; /* Slightly smaller button size */
     font-size: 1rem;
     font-weight: bold;
     color: #fff;
@@ -122,7 +124,7 @@ button:hover {
 @media (max-width: 991.98px) {
     .top-section {
         flex-direction: column; /* Stack elements vertically on smaller screens */
-        height: 100vh; /* Full viewport height */
+        height: auto; /* Let content determine height */
         padding: 2rem 1rem;
     }
 
@@ -131,8 +133,9 @@ button:hover {
     }
 
     .register-container {
-        width: 100%; /* Full width on smaller screens */
+        width: 90%; /* Full width on smaller screens */
         max-width: none;
+        margin: 1.5rem auto; /* Add margin for spacing */
     }
 }
 
@@ -140,6 +143,7 @@ button:hover {
     .top-section {
         flex-direction: row; /* Place elements side by side */
         padding: 0 2rem; /* Add horizontal padding */
+        justify-content: space-evenly; /* Balanced spacing between columns */
     }
 
     .app-name-section {
@@ -147,6 +151,7 @@ button:hover {
     }
 
     .register-container {
-        margin-top: 0; /* No top margin on large screens */
+        margin-top: 2rem; /* Add margin at the top */
+        margin-bottom: 2rem; /* Add margin at the bottom */
     }
 }

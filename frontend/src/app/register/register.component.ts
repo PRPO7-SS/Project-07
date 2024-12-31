@@ -4,11 +4,12 @@ import { RouterModule, Router } from '@angular/router';
 import { RegisterRequest } from '../models/registerRequest';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NavigationComponent } from '../navigation/navigation.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ FormsModule, RouterModule, CommonModule ],
+  imports: [ FormsModule, RouterModule, CommonModule, NavigationComponent ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
