@@ -1,0 +1,8 @@
+ss\finance\services\InvestmentBean.class
+ss\finance\App.class
+ss\finance\Main.class
+ss\finance\RestApplication.class
+ss\finance\entities\Investment.class
+AccessControlResponseFilter.class
+ss\finance\rest\InvestmentApi.class
+ss\finance\services\InvestmentDTO.class

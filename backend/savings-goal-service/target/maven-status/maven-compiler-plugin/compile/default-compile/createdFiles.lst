@@ -1,0 +1,8 @@
+ss\finance\App.class
+ss\finance\rest\GoalApi.class
+ss\finance\Main.class
+ss\finance\RestApplication.class
+ss\finance\entities\SavingsGoal.class
+ss\finance\services\GoalBean.class
+ss\finance\services\GoalDTO.class
+AccessControlResponseFilter.class

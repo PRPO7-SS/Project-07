@@ -28,6 +28,32 @@ services:
     networks:
       - my_network  # Connects the microservice to the custom network
 
+  savings-goal-service:
+    build:
+      context: savings-goal-service  # Path to your microservice's Dockerfile
+    container_name: savings-goal
+    ports:
+      - "8084:8084"  # Maps your microservice port to the host
+    environment:
+      MONGO_URI: mongodb://mongodb:27017  # Use MongoDB container name as the host
+    depends_on:
+      - mongodb  # Ensures MongoDB starts before the microservice
+    networks:
+      - my_network  # Connects the microservice to the custom network
+
+  investment-service:
+    build:
+      context: investment-service
+    container_name: investment-service
+    ports:
+      - "8085:8085"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017
+    depends_on:
+      - mongodb
+    networks:
+      - my_network
+
 networks:
   my_network:
     driver: bridge
