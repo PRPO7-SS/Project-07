@@ -1,28 +1,255 @@
-.homepage-container {
-  text-align: center;
-  margin-top: 50px;
+body {
+  background-color: #e9ecef;
 }
 
-.homepage-container h1 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+.navbar-custom {
+  background-color: #28a745;
+  padding: 10px 10px;
 }
 
-.homepage-container p {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-.homepage-container button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  background-color: #007bff;
+.navbar-nav .nav-link {
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
-.homepage-container button:hover {
-  background-color: #0056b3;
+.navbar-nav .nav-link:hover {
+  color: #a9dfbf;
 }
+
+.navbar-nav .nav-link.active {
+  color: white;
+}
+
+.navbar-nav .nav-link.active:hover {
+  color: #a9dfbf;
+}
+
+#calendar {
+  width: 100%;
+}
+
+:host ::ng-deep .fc-daygrid-day-number {
+  color: black !important;
+  text-decoration: none !important;
+}
+
+:host ::ng-deep .fc-col-header-cell {
+  text-transform: uppercase;
+}
+
+:host ::ng-deep button.fc-prev-button,
+:host ::ng-deep button.fc-next-button,
+:host ::ng-deep button.fc-today-button {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+}
+
+:host ::ng-deep button.fc-prev-button:hover,
+:host ::ng-deep button.fc-next-button:hover,
+:host ::ng-deep button.fc-today-button:hover,
+:host ::ng-deep button.fc-prev-button:focus,
+:host ::ng-deep button.fc-next-button:focus,
+:host ::ng-deep button.fc-today-button:focus {
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
+}
+
+:host ::ng-deep .fc-button-group .fc-button {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+}
+
+:host ::ng-deep .fc-button-group .fc-button:hover,
+:host ::ng-deep .fc-button-group .fc-button:focus {
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
+}
+
+:host ::ng-deep .fc-col-header-cell a {
+  color: #1e7e34 !important;
+  text-decoration: none;
+}
+
+.blur-background {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
+
+.modal-body {
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+.list-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  transition: background-color 0.3s;
+}
+
+.list-group-item:hover {
+  background-color: #f1f1f1;
+}
+
+.list-group-item.income {
+  color: green;
+}
+
+.list-group-item.expense {
+  color: red;
+}
+
+.list-group-item .amount {
+  font-weight: bold;
+}
+
+.list-group-item small {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: bold;
+}
+
+.no-transactions {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.gradient-background {
+  background: linear-gradient(to bottom right, #e9ecef, #e9ecef);
+}
+
+.full-page-gradient {
+  background: linear-gradient(to bottom right, #e9ecef, #e9ecef);
+}
+
+.translucent-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+}
+
+.bg-white-opaque {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.bg-dark-opaque {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.border-bottom-white-20 {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.bottom-section {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.income span.badge {
+  background: #198754 !important;
+}
+
+.expense span.badge {
+  background: #dc3545 !important;
+}
+
+/* General RTL Direction */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl .translucent-card {
+  text-align: right;
+}
+
+.rtl .row {
+  flex-direction: row-reverse;
+}
+
+.rtl .list-group {
+  text-align: right;
+}
+
+.rtl .btn {
+  float: left; /* Reverse the button placement */
+}
+
+/* Optional: Badge alignment for RTL */
+.rtl .badge {
+  float: left;
+}
+
+.btn-primary {
+  background-color: #057c1b;
+}
+
+.btn{
+  margin-bottom: 5%;
+
+}
+.mt-5{
+  margin-bottom: 5%;
+}
+
+/* Container styling */
+.goal-item {
+  border-radius: 12px; /* Rounded corners */
+  padding: 16px; /* Inner spacing */
+  margin-bottom: 16px; /* Spacing between list items */
+}
+
+/* Underline */
+.goal-item::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin-top: 8px;
+}
+
+/* Text Styling */
+.goal-name {
+  font-size: 1.2em;
+  color: white; /* Black color for the name */
+}
+
+.goal-details {
+  font-size: 1em;
+  color: white /* Black color for target and current */
+}
+
+/* Buttons hover effect */
+button.action-btn {
+  background-color: #e2e8f0; /* Light grey background */
+  color: black; /* Black icon color */
+  border: none; /* No border */
+  border-radius: 6px; /* Rounded corners for buttons */
+  padding: 6px 10px; /* Button padding */
+}
+
+button.action-btn:hover {
+  background-color: #cbd5e1; /* Slightly darker on hover */
+  color: black;
+}
+
+
+.bg-success {
+  background-color: #28a745 !important; /* Green for completed */
+  color: #fff;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important; /* Red for not completed */
+  color: #fff;
+}
+
+
+

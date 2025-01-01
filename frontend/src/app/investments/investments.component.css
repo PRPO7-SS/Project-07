@@ -1,0 +1,223 @@
+/* Global Styling */
+body {
+    background-color: #f0f4f8;
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar-custom {
+    background-color: #28a745;
+}
+
+.navbar-custom .nav-link,
+.navbar-custom .navbar-brand {
+    color: white;
+    font-weight: bold;
+}
+
+.navbar-custom .nav-link:hover,
+.navbar-custom .navbar-brand:hover {
+    color: #d4d4d4;
+    text-decoration: underline;
+}
+
+/* Welcome Text Styling */
+.welcome-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #155724; /* Temno zelena */
+}
+
+/* Card Styling */
+.card-custom {
+    background-color: #e9f5ea; /* Svetlo zelena */
+    border: 1px solid #28a745;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-custom .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.card-custom .card-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #155724;
+    margin-top: 10px;
+}
+
+.capital-custom {
+    background-color: #ffffff; /* Bela barva ozadja */
+    border: 1px solid #d4d4d4; /* Svetlo siva obroba */
+    border-radius: 8px; /* Zaobljeni robovi */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Rahla senca */
+    padding: 20px; /* Notranji razmik */
+    margin-top: 20px; /* Razmik zgoraj */
+    font-family: 'Roboto', sans-serif; /* Enotna pisava */
+}
+
+.capital-custom .card-title {
+    font-size: 1.8rem; /* Velikost pisave za naslov */
+    color: #057c1b; /* Enaka barva kot na /finance */
+    font-weight: bold;
+    text-align: center; /* Poravnava na sredino */
+    margin-bottom: 15px; /* Razmik pod naslovom */
+}
+
+.capital-custom .card-text {
+    font-size: 1.2rem; /* Velikost pisave za vsebino */
+    color: #333; /* Nevtralna barva teksta */
+    font-weight: 600;
+    text-align: center; /* Poravnava na sredino */
+    margin-bottom: 10px; /* Razmik pod tekstom */
+}
+
+.capital-custom .form-control {
+    border-radius: 8px; /* Enaki robovi kot na /finance */
+    border: 1px solid #ced4da; /* Svetlo siva obroba */
+    padding: 10px; /* Več prostora znotraj polja */
+    font-size: 1rem; /* Standardna velikost pisave */
+}
+
+.capital-custom .btn-success {
+    background-color: #057c1b; /* Zelena barva za gumb */
+    color: white;
+    border-radius: 8px; /* Zaobljeni robovi gumba */
+    padding: 10px 20px; /* Dovolj prostora znotraj gumba */
+    font-weight: 600; /* Krepka pisava */
+}
+
+.capital-custom .btn-success:hover {
+    background-color: #046817; /* Temnejša zelena barva ob hoverju */
+    color: white;
+}
+
+/* Razdelitev kapitala seznam */
+.capital-custom ul {
+    list-style-type: none; /* Odstrani oznake alinej */
+    padding: 0; /* Odstrani notranje zamike */
+}
+
+.capital-custom ul li {
+    font-size: 1.2rem; /* Povečana velikost pisave za razdelitev kapitala */
+    color: #333; /* Nevtralna barva teksta */
+    font-weight: bold;
+    margin-top: 5px; /* Razmik med vrsticami */
+    text-align: center;
+}
+
+/* Table Styling */
+.table {
+    margin-top: 20px;
+}
+
+.table thead {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: #28a745;
+    color: white;
+    border-bottom: none;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+.modal-body .input-group {
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+form {
+    margin-top: 20px;
+}
+
+.form-control {
+    border-radius: 5px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.input-group-text {
+    background-color: #e9f5ea;
+    color: #155724;
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn.navbar-custom {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn.navbar-custom:hover {
+    background-color: #218838;
+    color: white;
+}
+
+.btn-outline-secondary {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Chart Placeholder */
+.chart-placeholder {
+    display: flex;
+    display: inline-block;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #d4d4d4;
+    border-radius: 10px;
+    color: #6c757d;
+    font-size: 1.2rem;
+    background-color: #ffffff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-custom .card-title {
+        font-size: 1rem;
+    }
+    .card-custom .card-text {
+        font-size: 1.2rem;
+    }
+}
+

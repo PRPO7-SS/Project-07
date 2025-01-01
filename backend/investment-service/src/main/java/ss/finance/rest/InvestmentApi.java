@@ -24,8 +24,14 @@ public class InvestmentApi {
     private JwtUtil jwtUtil;
 
     @GET
-    public Response getInvestments(@CookieParam("auth-token") String token) {
+    public Response getInvestments(@CookieParam("auth_token") String token) {
+        System.out.println("cookie: " + token);
         try {
+            if (token == null || token.isEmpty()) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"message\": \"Cookie is missing or invalid\"}")
+                        .build();
+            }
             ObjectId userId = jwtUtil.extractUserId(token);
             List<Investment> investments = investmentBean.getAllInvestments(userId);
             return Response.ok(investments).build();
@@ -34,8 +40,26 @@ public class InvestmentApi {
         }
     }
 
+    @GET
+    @Path("/{id}")
+    public Response getInvestmentById(@CookieParam("auth_token") String token, @PathParam("id") String id) {
+        try {
+            ObjectId userId = jwtUtil.extractUserId(token);
+            ObjectId investmentId = new ObjectId(id);
+            Investment investment = investmentBean.getInvestment(investmentId);
+
+            if (investment != null && investment.getUserId().equals(userId)) {
+                return Response.ok(investment).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", "Investment not found or access denied")).build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();
+        }
+    }
+
     @POST
-    public Response addInvestment(@CookieParam("auth-token") String token, Investment investment) {
+    public Response addInvestment(@CookieParam("auth_token") String token, Investment investment) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             investment.setUserId(userId);
@@ -48,7 +72,7 @@ public class InvestmentApi {
 
     @PUT
     @Path("/{id}")
-    public Response updateInvestment(@CookieParam("auth-token") String token, @PathParam("id") String id, Investment updatedInvestment) {
+    public Response updateInvestment(@CookieParam("auth_token") String token, @PathParam("id") String id, Investment updatedInvestment) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             updatedInvestment.setUserId(userId);
@@ -62,7 +86,7 @@ public class InvestmentApi {
 
     @DELETE
     @Path("/{id}")
-    public Response deleteInvestment(@CookieParam("auth-token") String token, @PathParam("id") String id) {
+    public Response deleteInvestment(@CookieParam("auth_token") String token, @PathParam("id") String id) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             ObjectId investmentId = new ObjectId(id);

@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 public class Investment {
+    private String _id;
     private ObjectId userId;
     private String type;
+    private String name;
     private Integer amount;
     private Integer quantity;
     private Date purchaseDate;
@@ -15,6 +17,14 @@ public class Investment {
     public Investment() {
 
     }
+    public String getId() {
+        return _id;
+    }
+
+    public void setId(String id) {
+        this._id = id;
+    }
+
 
     public ObjectId getUserId() {
         return userId;
@@ -30,6 +40,14 @@ public class Investment {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getAmount() {

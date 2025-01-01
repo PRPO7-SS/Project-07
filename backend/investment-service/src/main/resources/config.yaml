@@ -1,7 +1,7 @@
 kumuluzee:
   server:
     http:
-      port: 8080
+      port: 8085
     context-path: /
   logs:
     level: INFO
@@ -11,15 +11,7 @@ kumuluzee:
     mongodb:
       connectionString: "mongodb://mongodb:27017"
       database: "financeApp"
-  security:
-    providers:
-      jwt:
-        key: "aU0Gx6LJbYukM9DJmcFZjx0q3wx+TnpRkmRu2F7rx3Y="
-        algorithm: HS256
-        issuer: "user-service"
-        audience: "finance-frontend"
-        claims:
-          roles: "roles"
+
   cors:
     enabled: true
     allow-origins:

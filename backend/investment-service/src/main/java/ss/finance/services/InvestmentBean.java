@@ -92,6 +92,7 @@ public class InvestmentBean {
         return new Document()
                 .append("userId", investment.getUserId())
                 .append("type", investment.getType())
+                .append("name", investment.getName())
                 .append("amount", investment.getAmount())
                 .append("quantity", investment.getQuantity())
                 .append("purchaseDate", investment.getPurchaseDate())
@@ -101,8 +102,10 @@ public class InvestmentBean {
 
     private Investment toInvestment(Document doc) {
         Investment investment = new Investment();
+        investment.setId(doc.getObjectId("_id").toHexString());
         investment.setUserId(doc.getObjectId("userId"));
         investment.setType(doc.getString("type"));
+        investment.setName(doc.getString("name"));
         investment.setAmount(doc.getInteger("amount"));
         investment.setQuantity(doc.getInteger("quantity"));
         investment.setPurchaseDate(doc.getDate("purchaseDate"));

@@ -12,6 +12,8 @@ export class HttpService {
     userService: 'http://localhost:8080',
     transactionService: 'http://localhost:8082',
     investmentService: 'http://localhost:8083',
+    savingsGoalService: 'http://localhost:8084',
+    investmentSer: 'http://localhost:8085',
   };
 
   constructor(private readonly http: HttpClient) {}

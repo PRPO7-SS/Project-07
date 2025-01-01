@@ -7,8 +7,6 @@ WORKDIR /app
 # Copy the re-packaged JAR from the build output
 COPY target/investment-service-1.0-SNAPSHOT.jar app.jar
 
-
-
 # Expose the service port (adjust if needed)
 EXPOSE 8085
 
