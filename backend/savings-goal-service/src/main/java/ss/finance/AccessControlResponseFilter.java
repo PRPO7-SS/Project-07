@@ -16,7 +16,7 @@ public class AccessControlResponseFilter implements ContainerResponseFilter {
         final MultivaluedMap<String, Object> headers = responseContext.getHeaders();
 
         headers.add("Access-Control-Allow-Origin", "http://localhost:4200");
-        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         headers.add("Access-Control-Allow-Credentials", "true");
 
         String requestedHeaders = requestContext.getHeaderString("Access-Control-Request-Headers");

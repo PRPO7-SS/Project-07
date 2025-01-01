@@ -24,7 +24,7 @@ public class GoalApi {
     private JwtUtil jwtUtil;
 
     @GET
-    public Response getSavingsGoals(@CookieParam("auth-token") String token) {
+    public Response getSavingsGoals(@CookieParam("auth_token") String token) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             List<SavingsGoal> goals = goalBean.getAllSavingsGoals(userId);
@@ -35,7 +35,7 @@ public class GoalApi {
     }
 
     @POST
-    public Response addSavingsGoal(@CookieParam("auth-token") String token, SavingsGoal goal) {
+    public Response addSavingsGoal(@CookieParam("auth_token") String token, SavingsGoal goal) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             goal.setUserId(userId);
@@ -48,7 +48,7 @@ public class GoalApi {
 
     @PUT
     @Path("/{id}")
-    public Response updateSavingsGoal(@CookieParam("auth-token") String token, @PathParam("id") String id, SavingsGoal updatedGoal) {
+    public Response updateSavingsGoal(@CookieParam("auth_token") String token, @PathParam("id") String id, SavingsGoal updatedGoal) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             updatedGoal.setUserId(userId);
@@ -62,7 +62,7 @@ public class GoalApi {
 
     @DELETE
     @Path("/{id}")
-    public Response deleteSavingsGoal(@CookieParam("auth-token") String token, @PathParam("id") String id) {
+    public Response deleteSavingsGoal(@CookieParam("auth_token") String token, @PathParam("id") String id) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             ObjectId goalId = new ObjectId(id);

@@ -89,7 +89,7 @@ public class GoalBean {
 
     private Document toDocument(SavingsGoal goal) {
         return new Document()
-                .append("userId", goal.getUserId())
+                .append("userId", new ObjectId(goal.getUserId()))
                 .append("goalName", goal.getGoalName())
                 .append("targetAmount", goal.getTargetAmount())
                 .append("currentAmount", goal.getCurrentAmount())
@@ -100,6 +100,7 @@ public class GoalBean {
 
     private SavingsGoal toSavingsGoal(Document doc) {
         SavingsGoal goal = new SavingsGoal();
+        goal.setId(doc.getObjectId("_id").toHexString());
         goal.setUserId(doc.getObjectId("userId"));
         goal.setGoalName(doc.getString("goalName"));
         goal.setTargetAmount(doc.getInteger("targetAmount"));

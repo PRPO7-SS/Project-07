@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 public class SavingsGoal {
-    private ObjectId userId;
+    private String _id;
+    private String userId;
     private String goalName;
     private Integer targetAmount;
     private Integer currentAmount;
@@ -16,12 +17,16 @@ public class SavingsGoal {
 
     }
 
-    public ObjectId getUserId() {
+    public String getId(){ return _id; }
+
+    public void setId(String id){ this._id = id; }
+
+    public String getUserId() {
         return userId;
     }
 
     public void setUserId(ObjectId userId) {
-        this.userId = userId;
+        this.userId = userId.toHexString();
     }
 
     public String getGoalName() {
