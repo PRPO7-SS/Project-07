@@ -6,8 +6,8 @@ public class TransactionDTO {
     private String type;
     private double amount;
     private String category;
-    private Date date; // Include the date field
-
+    private Date date;
+    
     // Constructor with logging
     public TransactionDTO() {
         System.out.println("TransactionDTO initialized.");
@@ -58,10 +58,10 @@ public class TransactionDTO {
     @Override
     public String toString() {
         return "TransactionDTO{" +
-                "type='" + type + '\'' +
-                ", amount=" + amount +
-                ", category='" + category + '\'' +
-                ", date=" + date +
-                '}';
-    }
+               "type='" + type + '\'' +
+               ", amount=" + amount +
+               ", category='" + category + '\'' +
+               ", date=" + date +
+               '}';
+    }    
 }

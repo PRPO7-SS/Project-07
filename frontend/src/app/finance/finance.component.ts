@@ -46,6 +46,18 @@ export class FinanceComponent implements OnInit {
 
   selectedDay: { date: Date; transactions: any[] } | null = null;
 
+  tipOfTheDay: string = ''; // Tip of the day feature
+
+  tips: string[] = [
+    'Track your expenses daily to avoid overspending.',
+    'Set a monthly savings goal and stick to it.',
+    'Review your subscriptions to cut unnecessary costs.',
+    'Plan your meals to save on groceries.',
+    'Use public transport to save on transportation costs.',
+    'Set aside 20% of your income for future investments.',
+    'Create a budget and review it weekly.'
+  ];
+
   constructor(
     private readonly transactionService: TransactionService,
     private readonly router: Router
@@ -56,14 +68,35 @@ export class FinanceComponent implements OnInit {
   ngOnInit(): void {
     this.updateWeekRange();
     this.loadTransactions();
+    this.generateTipOfTheDay(); // Initialize Tip of the Day
+  }
+
+  generateTipOfTheDay(): void {
+    const randomIndex = Math.floor(Math.random() * this.tips.length);
+    this.tipOfTheDay = this.tips[randomIndex];
   }
 
   loadTransactions(): void {
     this.transactionService.getUserTransactions().subscribe({
       next: (data) => {
-        this.transactions = data.transactions || [];
+        console.log('Raw transactions data from backend:', data.transactions);
+
+        this.transactions = (data.transactions || []).map((transaction: any) => {
+          const parsedDate = transaction.date ? new Date(transaction.date) : null;
+          console.log('Parsed transaction date:', parsedDate);
+          return {
+            ...transaction,
+            date: parsedDate, // Ensure proper date format
+          };
+        });
+
+        console.log('Processed transactions:', this.transactions);
+
         this.groupedTransactions = this.groupTransactionsByDate(this.transactions);
+        console.log('Grouped transactions by date:', this.groupedTransactions);
+
         this.calculateWeeklySummary();
+        console.log('Weekly summary after calculation:', this.weeklySummary);
       },
       error: (err) => {
         console.error('Error fetching transactions:', err);
@@ -85,6 +118,7 @@ export class FinanceComponent implements OnInit {
     });
 
     this.transactions.forEach((transaction) => {
+      if (!transaction.date) return; // Skip transactions without a valid date
       const transactionDate = new Date(transaction.date);
       this.weeklySummary.forEach((day) => {
         if (this.isSameDay(day.date, transactionDate)) {
@@ -119,12 +153,20 @@ export class FinanceComponent implements OnInit {
   }
 
   submitTransaction(): void {
-    this.transactionService.addTransaction(this.newTransaction).subscribe({
+    const transactionPayload = {
+      ...this.newTransaction,
+      date: this.newTransaction.date
+        ? new Date(this.newTransaction.date).toISOString() // Ensure the date is in ISO format
+        : new Date().toISOString(), // Use the current date as a fallback
+    };
+  
+    this.transactionService.addTransaction(transactionPayload).subscribe({
       next: () => {
         this.successMessage = 'Transaction added successfully!';
         this.errorMessage = '';
+        this.addTransactionToWeeklySummary(transactionPayload);
+        this.addTransactionToGroupedTransactions(transactionPayload);
         this.resetForm();
-        this.loadTransactions();
         setTimeout(() => (this.successMessage = ''), 3000);
       },
       error: (err) => {
@@ -134,6 +176,32 @@ export class FinanceComponent implements OnInit {
         setTimeout(() => (this.errorMessage = ''), 3000);
       },
     });
+  }  
+
+  addTransactionToWeeklySummary(transaction: any): void {
+    const transactionDate = new Date(transaction.date);
+    this.weeklySummary.forEach((day) => {
+      if (this.isSameDay(day.date, transactionDate)) {
+        if (transaction.type.toLowerCase() === 'expense') {
+          day.spent += transaction.amount;
+        } else if (transaction.type.toLowerCase() === 'income') {
+          day.earned += transaction.amount;
+        }
+      }
+    });
+  }
+
+  addTransactionToGroupedTransactions(transaction: any): void {
+    const transactionDateStr = new Date(transaction.date).toDateString();
+    const existingGroup = this.groupedTransactions.find((group) => group.date === transactionDateStr);
+    if (existingGroup) {
+      existingGroup.transactions.push(transaction);
+    } else {
+      this.groupedTransactions.push({
+        date: transactionDateStr,
+        transactions: [transaction],
+      });
+    }
   }
 
   resetForm(): void {

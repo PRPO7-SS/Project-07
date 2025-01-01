@@ -7,25 +7,33 @@ import org.bson.types.ObjectId;
 public class Transaction {
     private ObjectId id;
     private ObjectId userId;
-    private String type; // "income" or "spending"
+    private String type;
     private double amount;
-    private String category; // e.g., "groceries", "salary"
-    private Date date; // Date of the transaction
-    private String currency; // e.g., "EUR"
+    private String category;
+    private Date date;
     private Date createdAt;
     private Date updatedAt;
 
-    public Transaction() {}
+    // Constructors
+    public Transaction() {
+        // Ensure the date field has a default value
+        this.date = new Date();
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
 
     public Transaction(ObjectId userId, String type, double amount, String category, Date date) {
         this.userId = userId;
         this.type = type;
         this.amount = amount;
         this.category = category;
-        this.date = date != null ? date : new Date(); // Ensure the date is set
+        this.date = date != null ? date : new Date(); // Default to current date if null
         this.createdAt = new Date();
         this.updatedAt = new Date();
-    }    
+
+        // Add logging
+        System.out.println("Transaction initialized: " + this);
+    }
 
     // Getters and Setters
     public ObjectId getId() {
@@ -74,14 +82,6 @@ public class Transaction {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     public Date getCreatedAt() {

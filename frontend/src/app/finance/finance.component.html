@@ -25,8 +25,8 @@
                 <!-- Left Column: Overview and Weekly Summary -->
                 <div class="col-12 col-lg-6 d-flex flex-column align-items-start justify-content-start">
                     <div class="p-4">
-                        <h1 class="app-name align-items-center">Finance Application</h1>
-                        <p class="lead mt-3">Manage your weekly finances effectively.</p>
+                        <h1 class="app-name align-items-center">Track Your Finances</h1>
+                        <p class="lead mt-3">Easily manage your income and spending in one place.</p>
 
                         <!-- Week Selector Section -->
                         <div class="week-selector d-flex justify-content-center align-items-center mb-4">
@@ -75,7 +75,7 @@
                                     'text-success': transaction.type === 'Income',
                                     'text-danger': transaction.type === 'Expense'
                                 }"
-                                >
+                            >
                                 <div>
                                     <strong>{{ transaction.amount | currency: 'EUR' }}</strong>
                                 </div>
@@ -85,10 +85,10 @@
                                 <!-- Delete Button with Trashcan Icon -->
                                 <div>
                                     <button 
-                                    class="btn btn-light btn-sm text-danger" 
-                                    (click)="deleteTransaction(transaction._id)"
+                                        class="btn btn-light btn-sm text-danger" 
+                                        (click)="deleteTransaction(transaction._id)"
                                     >
-                                    <i class="bi bi-trash"></i>
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                 </div>
 
                 <!-- Right Column: Finance Form and Tip of the Day -->
-                <div class="col-12 col-lg-6 d-flex flex-column align-items-start justify-content-start">
+                <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-start">
                     <div class="card p-4 mb-4" style="width: 100%; max-width: 500px;">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">Add Transaction</h3>
@@ -142,18 +142,18 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                      <label for="incomeCategory" class="form-label">Category</label>
-                                      <select
-                                          [(ngModel)]="newTransaction.category"
-                                          name="incomeCategory"
-                                          class="form-select"
-                                          required
-                                      >
-                                          <option *ngFor="let categoryKey of incomeCategories" [value]="categoryKey">
-                                              {{ categoryKey }}
-                                          </option>
-                                      </select>
-                                  </div>
+                                        <label for="incomeCategory" class="form-label">Category</label>
+                                        <select
+                                            [(ngModel)]="newTransaction.category"
+                                            name="incomeCategory"
+                                            class="form-select"
+                                            required
+                                        >
+                                            <option *ngFor="let categoryKey of incomeCategories" [value]="categoryKey">
+                                                {{ categoryKey }}
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <!-- Expense Section -->
@@ -174,18 +174,18 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                      <label for="expenseCategory" class="form-label">Category</label>
-                                      <select
-                                          [(ngModel)]="newTransaction.category"
-                                          name="expenseCategory"
-                                          class="form-select"
-                                          required
-                                      >
-                                          <option *ngFor="let categoryKey of expenseCategories" [value]="categoryKey">
-                                              {{ categoryKey }}
-                                          </option>
-                                      </select>
-                                  </div>
+                                        <label for="expenseCategory" class="form-label">Category</label>
+                                        <select
+                                            [(ngModel)]="newTransaction.category"
+                                            name="expenseCategory"
+                                            class="form-select"
+                                            required
+                                        >
+                                            <option *ngFor="let categoryKey of expenseCategories" [value]="categoryKey">
+                                                {{ categoryKey }}
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <!-- Date Input -->
@@ -205,11 +205,18 @@
                             </form>
                         </div>
                     </div>
+
+                    <!-- Tip of the Day -->
+                    <div class="card p-4" style="width: 100%; max-width: 500px;">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">Tip of the Day</h3>
+                            <p class="text-center">{{ tipOfTheDay }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- <app-footer [showFullFooter]="true"></app-footer> -->
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

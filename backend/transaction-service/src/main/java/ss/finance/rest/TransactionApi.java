@@ -36,18 +36,32 @@ public class TransactionApi {
     @POST
     public Response addTransaction(TransactionDTO transactionDTO, @CookieParam("auth_token") String token) {
         try {
-            logger.info("Received transactionDTO: " + transactionDTO);
+            // Log the input TransactionDTO object
+            logger.info("Received transactionDTO: " +
+                "type=" + transactionDTO.getType() +
+                ", amount=" + transactionDTO.getAmount() +
+                ", category=" + transactionDTO.getCategory() +
+                ", date=" + transactionDTO.getDate());
 
+            // Validate the date
+            if (transactionDTO.getDate() == null) {
+                logger.info("Date is missing. Setting current date.");
+                transactionDTO.setDate(new Date()); // Default to current date
+            } else {
+                logger.info("Using provided date: " + transactionDTO.getDate());
+            }
+    
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"message\": \"Token is missing or invalid\"}")
                         .build();
             }
-
+    
+            // Extract the user ID and log it
             ObjectId userId = jwtUtil.extractUserId(token);
             logger.info("Extracted userId: " + userId);
-
-            // Create and add transaction
+    
+            // Create and log the Transaction object
             Transaction transaction = new Transaction(
                     userId,
                     transactionDTO.getType(),
@@ -55,10 +69,18 @@ public class TransactionApi {
                     transactionDTO.getCategory(),
                     transactionDTO.getDate() // Pass the date field
             );
-
+            logger.info("Created Transaction object: " +
+                "userId=" + transaction.getUserId() +
+                ", type=" + transaction.getType() +
+                ", amount=" + transaction.getAmount() +
+                ", category=" + transaction.getCategory() +
+                ", date=" + transaction.getDate());
+    
+            // Save the transaction
+            logger.info("Transaction date before saving: " + transaction.getDate());
             transactionZrno.addTransaction(transaction);
             logger.info("Transaction added successfully: " + transaction);
-
+    
             return Response.status(Response.Status.CREATED)
                     .entity("{\"message\": \"Transaction created successfully\"}")
                     .build();
@@ -68,7 +90,7 @@ public class TransactionApi {
                     .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
-    }
+    }     
 
     @GET
     public Response getUserTransactions(@CookieParam("auth_token") String token) {

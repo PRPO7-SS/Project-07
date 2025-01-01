@@ -31,34 +31,59 @@ public class TransactionBean {
 
     public void addTransaction(Transaction transaction) {
         try {
-            logger.info("Adding transaction: " + transaction);
+            // Validate required fields
+            if (transaction.getType() == null || transaction.getType().isEmpty() ||
+                transaction.getCategory() == null || transaction.getCategory().isEmpty() ||
+                transaction.getAmount() <= 0) {
+                throw new IllegalArgumentException("Type, category, and amount are required fields.");
+            }
+    
+            // Ensure the date is set
+            if (transaction.getDate() == null) {
+                transaction.setDate(new Date());
+            }
+    
+            // Set creation and update timestamps
             transaction.setCreatedAt(new Date());
             transaction.setUpdatedAt(new Date());
-
+    
             Document transactionDoc = toDocument(transaction);
+            logger.info("Saving transaction to the database: " +
+                "userId=" + transaction.getUserId() +
+                ", type=" + transaction.getType() +
+                ", amount=" + transaction.getAmount() +
+                ", category=" + transaction.getCategory() +
+                ", date=" + transaction.getDate());
             collection.insertOne(transactionDoc);
-
-            logger.info("Transaction added successfully: " + transaction.getType());
+    
+            logger.info("Transaction added successfully: " + transaction);
+        } catch (IllegalArgumentException e) {
+            logger.warning("Validation error: " + e.getMessage());
+            throw new RuntimeException("Validation error: " + e.getMessage(), e);
         } catch (Exception e) {
             logger.severe("Error adding transaction: " + e.getMessage());
             throw new RuntimeException("Error adding transaction", e);
         }
-    }
+    }        
 
     public List<Transaction> getTransactionsByUserId(ObjectId userId) {
-        List<Transaction> transactions = new ArrayList<>();
-        try {
-            logger.info("Fetching transactions for userId: " + userId);
-            for (Document doc : collection.find(new Document("userId", userId))) {
-                transactions.add(toTransaction(doc));
-            }
-            logger.info("Fetched " + transactions.size() + " transactions for userId: " + userId);
-        } catch (Exception e) {
-            logger.severe("Error retrieving transactions: " + e.getMessage());
-            throw new RuntimeException("Error retrieving transactions", e);
+        logger.info("Querying database for transactions with userId: " + userId);
+    
+        List<Transaction> transactions = database.getCollection("transactions")
+                .find(eq("userId", userId))
+                .into(new ArrayList<>());
+    
+        for (Transaction transaction : transactions) {
+            logger.info("Transaction retrieved from database: " +
+                "userId=" + transaction.getUserId() +
+                ", type=" + transaction.getType() +
+                ", amount=" + transaction.getAmount() +
+                ", category=" + transaction.getCategory() +
+                ", date=" + transaction.getDate());
         }
+    
         return transactions;
-    }
+    }    
 
     public Transaction getTransactionById(ObjectId transactionId) {
         try {
@@ -117,17 +142,18 @@ public class TransactionBean {
 
     private Document toDocument(Transaction transaction) {
         logger.info("Converting Transaction to Document: " + transaction);
-        return new Document()
+        Document doc = new Document()
                 .append("userId", transaction.getUserId())
                 .append("type", transaction.getType())
                 .append("amount", transaction.getAmount())
                 .append("category", transaction.getCategory())
-                .append("date", transaction.getDate())
-                .append("currency", transaction.getCurrency())
+                .append("date", transaction.getDate()) // Log the date field
                 .append("createdAt", transaction.getCreatedAt())
                 .append("updatedAt", transaction.getUpdatedAt());
+        logger.info("Generated Document: " + doc);
+        return doc;
     }
-
+    
     private Transaction toTransaction(Document doc) {
         logger.info("Converting Document to Transaction: " + doc);
         Transaction transaction = new Transaction();
@@ -136,11 +162,10 @@ public class TransactionBean {
         transaction.setType(doc.getString("type"));
         transaction.setAmount(doc.getDouble("amount"));
         transaction.setCategory(doc.getString("category"));
-        transaction.setDate(doc.getDate("date")); // Ensure this line is present
-        transaction.setCurrency(doc.getString("currency"));
+        transaction.setDate(doc.getDate("date")); // Ensure this field is logged
         transaction.setCreatedAt(doc.getDate("createdAt"));
         transaction.setUpdatedAt(doc.getDate("updatedAt"));
         logger.info("Converted Transaction: " + transaction);
         return transaction;
-    }
+    }    
 }
