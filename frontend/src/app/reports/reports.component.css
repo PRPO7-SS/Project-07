@@ -1,0 +1,28 @@
+#spendingDateChart {
+  height: 100px;
+}
+
+.card {
+  margin-bottom: 1.5rem; /* Add space between cards */
+}
+
+.card-header {
+  background: linear-gradient(to right, #28a745, #22c548);
+  color: #fff;
+  padding: 10px 15px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card-header:hover {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Add a subtle glow */
+}
+
+.card-title {
+  margin: 0;
+}
+
+.h1 {
+  margin-bottom: 10px;
+}

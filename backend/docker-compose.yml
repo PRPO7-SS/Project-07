@@ -43,6 +43,21 @@ services:
     networks:
       - my_network
 
+  report-service:
+    build:
+      context: ./report-service
+    container_name: report-service
+    ports:
+      - "8087:8087"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017  # Use MongoDB container name as the host
+      JWT_SECRET: aU0Gx6LJbYukM9DJmcFZjx0q3wx+TnpRkmRu2F7rx3Y=
+      REFRESH_TOKEN_SECRET: g5gXa5lqbEVX2DVOGPJcOSbeBH9QD51istNulnB1tJZdIlP6ZWVS5YuJcua2Hg9dd7Dw35n7AV9dWOTXPGIb2g
+    depends_on:
+      - mongodb
+    networks:
+      - my_network
+
 networks:
   my_network:
     driver: bridge
