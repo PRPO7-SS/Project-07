@@ -1,0 +1,46 @@
+<div class="dropdown-container">
+  <div class="dropdown-item">
+    <label for="dataType">Data Type</label>
+    <select id="dataType" (change)="onDataTypeChange($event)">
+      <option value="crypto">Crypto</option>
+      <option value="stock">Stock</option>
+    </select>
+  </div>
+
+  <div class="dropdown-item">
+    <label for="item">Item</label>
+    <select id="item" (change)="onItemChange($event)" [(ngModel)]="selectedItem">
+      <option *ngFor="let item of itemList" [value]="item.id || item.symbol">
+        {{ item.name }}
+      </option>
+    </select>
+  </div>
+
+  <div class="dropdown-item">
+    <label for="currency">Currency</label>
+    <select id="currency" (change)="onCurrencyChange($event)" [(ngModel)]="selectedCurrency">
+      <option *ngFor="let currency of currencyList" [value]="currency">
+        {{ currency.toUpperCase() }}
+      </option>
+    </select>
+  </div>
+
+  <div class="dropdown-item">
+    <label for="timeframe-buttons" class="form-label">
+      Timeframe
+    </label>
+    <div id="timeframe-buttons" class="timeframe-buttons d-flex flex-wrap gap-2">
+      <button
+        *ngFor="let timeframe of timeframes"
+        [class.active]="selectedTimeframe === timeframe.value"
+        (click)="onTimeframeButtonClick(timeframe.value)"
+        class="timeframe-button"
+      >
+        {{ timeframe.label }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Ensure canvas is outside the dropdown container -->
+<canvas id="stockCryptoChart"></canvas>

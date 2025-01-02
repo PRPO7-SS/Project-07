@@ -1,0 +1,114 @@
+/* Container for all dropdowns */
+.dropdown-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap to the next line dynamically */
+    gap: 10px; /* Spacing between items */
+    align-items: center; /* Align labels and dropdowns vertically */
+    justify-content: flex-start; /* Align items to the left */
+  }
+  
+  /* Individual dropdown item (label + select) */
+  .dropdown-item {
+    display: flex;
+    flex-wrap: nowrap; /* Prevents label and dropdown from wrapping within this item */
+    align-items: center; /* Align label and dropdown vertically */
+    gap: 5px; /* Spacing between label and dropdown */
+    min-width: 150px; /* Ensures a consistent minimum width */
+  }
+  
+  /* Labels */
+  .dropdown-item label {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  /* Dropdowns */
+  .dropdown-item select {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    appearance: none; /* Removes default dropdown arrow for consistency */
+    background-color: #f9f9f9;
+    color: #333;
+    height: 30px; /* Keep dropdowns compact */
+  }
+  
+  /* Responsive adjustments */
+  @media screen and (max-width: 600px) {
+    .dropdown-container {
+      justify-content: center; /* Center-align items on smaller screens */
+    }
+  
+    .dropdown-item {
+      min-width: 100%; /* Make each dropdown take full width on small screens */
+    }
+  
+    .dropdown-item select {
+      width: 100%; /* Ensure dropdown fills the parent container */
+    }
+  }
+  
+  .timeframe-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Allows buttons to wrap onto new lines if needed */
+    gap: 5px; /* Space between buttons */
+  }
+  
+  .timeframe-button {
+    display: inline-block; /* Ensures the button width adjusts based on content */
+    white-space: nowrap; /* Prevent text wrapping */
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px; /* Consistent padding regardless of text length */
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .timeframe-button:hover {
+    background-color: #28a745;
+    color: #fff;
+  }
+  
+  .timeframe-button.active {
+    background-color: #28a745;
+    color: #fff;
+    border-color: #218838;
+  }
+  
+  .timeframe-button:focus {
+    outline: none;
+    box-shadow: 0 0 3px rgba(40, 167, 69, 0.5);
+  }
+  
+  
+  @media (max-width: 576px) { /* For extra-small screens */
+    .timeframe-buttons {
+      grid-template-columns: repeat(3, 1fr); /* 3 buttons per row */
+    }
+  }
+  
+  @media (max-width: 400px) { /* For very small screens */
+    .timeframe-buttons {
+      grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+    }
+  }
+
+  .rtl {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .rtl .dropdown-item {
+    text-align: right;
+  }
+  
+  .rtl .row {
+    flex-direction: row-reverse;
+  }
+  
+  .rtl .timeframe-button {
+    text-align: center;
+  }

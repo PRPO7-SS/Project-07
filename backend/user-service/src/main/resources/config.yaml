@@ -9,7 +9,7 @@ kumuluzee:
     scan-interval: 5
   datasource:
     mongodb:
-      connectionString: "mongodb://localhost:27017"
+      connectionString: "mongodb://mongodb:27017"
       database: "financeApp"
   security:
     providers:
@@ -32,4 +32,5 @@ kumuluzee:
     allow-headers:
       - Content-Type
       - Authorization
+      - Cookie
     allow-credentials: true

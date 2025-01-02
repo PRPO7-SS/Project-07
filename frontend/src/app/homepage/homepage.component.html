@@ -1,4 +1,222 @@
-<div class="homepage-container">
-  <h1>Welcome to Our Application!</h1>
-  <p>This is the homepage of your application.</p>
+<app-navigation></app-navigation>
+
+<div class="full-page-gradient d-flex flex-column min-vh-100">
+  <!-- Main content area -->
+  <div class="flex-grow-1 d-flex flex-column py-4">
+    <div class="container my-auto">
+      <!-- Calendar and Transactions Section -->
+      <div class="translucent-card p-4 mb-4">
+        <div class="row g-4">
+          <!-- Calendar Section -->
+          <div class="col-12 col-lg-8 d-flex flex-column align-items-center p-4 bg-white-opaque rounded">
+            <h2 class="fw-bold text-dark mb-4">Finance Calendar</h2>
+            <div id="calendar" class="w-100 bg-white rounded p-3 shadow-sm">
+              <full-calendar [options]="calendarOptions"></full-calendar>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#newGoalModal">
+                Create Goal
+              </button>
+            </div>
+          </div>
+
+          <!-- Transactions Side Panel -->
+          <div class="col-12 col-lg-4 d-flex flex-column bg-dark-opaque text-white p-3 rounded">
+            <h4 class="fw-bold mb-3">Transactions</h4>
+            <div class="flex-grow-1 overflow-auto">
+              <ul class="list-group list-unstyled" *ngIf="selectedTransactions?.length; else noTransactions">
+                <li *ngFor="let transaction of selectedTransactions"
+                    [ngClass]="{'income': transaction.type === 'Income', 'expense': transaction.type === 'Expense'}"
+                    class="row align-items-center py-2 border-bottom-white-20 gx-0">
+                  <!-- Amount -->
+                  <div class="col-3 fw-bold" style="font-size: 1.1em;">
+                    {{ transaction.amount.toFixed(2) }}€
+                  </div>
+                  <!-- Category -->
+                  <div class="col-6 small text-truncate">
+                    {{ transaction.category }}
+                  </div>
+                  <!-- Type -->
+                  <div class="col-3 text-end">
+                    <span class="badge"
+                          [class.bg-success]="transaction.type === 'Income'"
+                          [class.bg-danger]="transaction.type === 'Expense'">
+                      {{ transaction.type }}
+                    </span>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noTransactions>
+                <p class="text-center text-white-50 mt-4">No transactions available</p>
+              </ng-template>
+            </div>
+
+            <h4 class="fw-bold mb-3 mt-4">Savings Goals</h4>
+            <div class="flex-grow-1 overflow-auto">
+              <ul class="list-group list-unstyled" *ngIf="selectedGoals?.length; else noGoals">
+                <li
+                  *ngFor="let goal of selectedGoals"
+                  class="row align-items-center py-3 mb-3 rounded shadow-sm goal-item"
+                >
+                  <!-- Goal Name, Target, and Current -->
+                  <div class="col-md-6 col-sm-12">
+                    <div class="fw-bold goal-name">
+                      {{ goal.goalName }}
+                    </div>
+                    <div class="goal-details">
+                      <strong>Target:</strong> {{ goal.targetAmount }}€
+                    </div>
+                    <div class="goal-details">
+                      <strong>Current:</strong> {{ goal.currentAmount }}€
+                    </div>
+                  </div>
+
+                  <!-- Status, Edit Current, and Delete Buttons -->
+                  <div class="col-md-6 col-sm-12 d-flex justify-content-end align-items-center gap-3">
+                    <span
+                      class="badge px-3 py-2"
+                      [class.bg-success]="goal.targetAmount === goal.currentAmount"
+                      [class.bg-danger]="goal.targetAmount !== goal.currentAmount"
+                    >
+                      {{ goal.targetAmount === goal.currentAmount ? 'Completed' : 'Not completed' }}
+                    </span>
+
+                    <button
+                      class="btn btn-sm action-btn"
+                      data-bs-toggle="modal" data-bs-target="#editCurrentAmountModal"
+                      (click)="prepareEditCurrentAmount(goal)"
+                      title="Edit Current Amount"
+                    >
+                      <i class="bi bi-cash-coin"></i>
+                    </button>
+
+                    <button
+                      class="btn btn-sm action-btn"
+                      data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal"
+                      (click)="prepareDeleteGoal(goal.id)"
+                      title="Delete Goal"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noGoals>
+                <p class="text-center text-white-50 mt-4">No goals for the selected day</p>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crypto Chart Section -->
+      <div class="translucent-card p-4">
+        <h3 class="text-black fw-bold mb-4 text-center">Crypto Market</h3>
+        <div class="bg-white-opaque rounded p-3 shadow-sm">
+          <app-crypto-chart></app-crypto-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Goal Modal -->
+<div class="modal fade" id="newGoalModal" tabindex="-1" aria-labelledby="newGoalModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newGoalModalLabel">{{ isEditMode ? 'Update Goal' : 'Create Goal' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success" role="alert">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="submitGoal()">
+          <div class="mb-3">
+            <label for="goalName" class="form-label">Goal Name</label>
+            <input type="text" class="form-control" id="goalName" [(ngModel)]="newGoal.goalName" name="goalName" required />
+          </div>
+          <div class="mb-3">
+            <label for="targetAmount" class="form-label">Target Amount</label>
+            <input type="number" class="form-control" id="targetAmount" [(ngModel)]="newGoal.targetAmount" name="targetAmount" required />
+          </div>
+          <div class="mb-3">
+            <label for="currentAmount" class="form-label">Current Amount</label>
+            <input type="number" class="form-control" id="currentAmount" [(ngModel)]="newGoal.currentAmount" name="currentAmount" required />
+          </div>
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="startDate" [(ngModel)]="newGoal.startDate" name="startDate" required />
+          </div>
+          <div class="mb-3">
+            <label for="deadline" class="form-label">Deadline</label>
+            <input type="date" class="form-control" id="deadline" [(ngModel)]="newGoal.deadline" name="deadline" required />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Save Changes' : 'Create Goal' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Current Amount Modal -->
+<div class="modal fade" id="editCurrentAmountModal" tabindex="-1" aria-labelledby="editCurrentAmountModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCurrentAmountModalLabel">Update Current Amount</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success" role="alert">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="submitCurrentAmount()">
+          <div class="mb-3">
+            <label for="editCurrentAmount" class="form-label">Current Amount</label>
+            <input type="number" class="form-control" id="editCurrentAmount" [(ngModel)]="editGoal.currentAmount" name="editCurrentAmount" required />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success" role="alert">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this goal?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="deleteSavingsGoal(goalId)" data-bs-dismiss="modal">Delete</button>
+      </div>
+    </div>
+  </div>
 </div>

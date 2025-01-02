@@ -1,0 +1,278 @@
+<!-- src/app/components/investments/investments.component.html -->
+<!-- Navbar -->
+<app-navigation></app-navigation>
+
+<!-- Welcome Header -->
+<div class="container mt-5">
+  <h1 class="welcome-text">Tvoje investicije</h1>
+
+  <!-- Asset Summary Row -->
+  <div class="row mb-4">
+    <!-- Total Asset Value in EUR -->
+    <div class="col-md-4">
+      <div class="card card-custom mb-3">
+        <div class="card-body">
+          <h4 class="card-title">Skupna vrednost premoženja</h4>
+          <p class="card-text">€10,000</p> <!-- Hardcoded vrednost -->
+        </div>
+      </div>
+    </div>
+    <!-- Stock Asset Value and Percentage Change -->
+    <div class="col-md-4">
+      <div class="card card-custom mb-3">
+        <div class="card-body">
+          <h4 class="card-title">Vrednost delnic</h4>
+          <p class="card-text">€6,000 (+5%)</p> <!-- Hardcoded vrednost -->
+        </div>
+      </div>
+    </div>
+    <!-- Crypto Asset Value -->
+    <div class="col-md-4">
+      <div class="card card-custom mb-3">
+        <div class="card-body">
+          <h4 class="card-title">Vrednost crypta</h4>
+          <p class="card-text">€4,000</p> <!-- Hardcoded vrednost -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two-Column Layout: Portfolio Performance and Asset Allocation -->
+  <div class="row mb-4">
+    <!-- Portfolio Performance Over Time -->
+    <div class="col-md-6">
+      <h3>Price Performance</h3>
+      <div class="chart-placeholder" style=" background-color: #f0f0f0;">
+        <app-crypto-chart></app-crypto-chart>
+      </div>
+    </div>
+    <!-- Asset Allocation -->
+    <div class="col-md-6">
+      <div class="card capital-custom mb-3">
+        <div class="card-body">
+          <h4 class="card-title">Kapital na voljo</h4>
+          <p class="card-text">
+            Kapital za tekoči mesec: <strong>€{{ availableCapital }}</strong>
+          </p>
+          <hr />
+          <h5>Nastavi razdelitev kapitala (%)</h5>
+          <form (ngSubmit)="calculateAllocations()">
+            <div class="row">
+              <div class="col-md-4">
+                <label for="stocksPercentage" class="form-label">Delnice</label>
+                <input
+                  type="number"
+                  id="stocksPercentage"
+                  class="form-control"
+                  [(ngModel)]="allocation.stocks"
+                  name="stocksPercentage"
+                  min="0"
+                  max="100"
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="cryptoPercentage" class="form-label">Crypto</label>
+                <input
+                  type="number"
+                  id="cryptoPercentage"
+                  class="form-control"
+                  [(ngModel)]="allocation.crypto"
+                  name="cryptoPercentage"
+                  min="0"
+                  max="100"
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="savingsPercentage" class="form-label">Prihranki</label>
+                <input
+                  type="number"
+                  id="savingsPercentage"
+                  class="form-control"
+                  [(ngModel)]="allocation.savings"
+                  name="savingsPercentage"
+                  min="0"
+                  max="100"
+                />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Izračunaj</button>
+          </form>
+          <hr />
+          <h5>Razdelitev kapitala:</h5>
+          <ul>
+            <li>Delnice: €{{ calculatedAllocation.stocks }}</li>
+            <li>Crypto: €{{ calculatedAllocation.crypto }}</li>
+            <li>Prihranki: €{{ calculatedAllocation.savings }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Investment Table Section -->
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Sledenje investicij</h3>
+      <table class="table table-striped table-responsive">
+        <thead>
+        <tr>
+          <th>Tip</th>
+          <th>Sredstvo</th>
+          <th>Cena investicije</th>
+          <th>Trenutna cena</th>
+          <th>Količina</th>
+          <th>Datum nakupa</th>
+          <th>Fluktuacija</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let investment of investments">
+          <td>{{ investment.type }}</td>
+          <td>{{ investment.name }}</td>
+          <td>{{ investment.amount }}€</td>
+          <td>
+            {{ investment.currentValue ? ('€' + investment.currentValue) : 'N/A' }}
+          </td>
+          <td>{{ investment.quantity }}</td>
+          <td>{{ investment.purchaseDate | date: 'dd.MM.yyyy' }}</td>
+          <td>
+            {{ calculateFluctuation(investment) }}%
+          </td>
+          <td>
+            <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#editButton"   (click)="selectedInvestment = investment">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#deleteButton"   (click)="selectedInvestment = investment">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        <button type="button" class="btn navbar-custom" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+          Dodaj investicijo
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Modal for editing an investment-->
+  <div class="modal fade" id="editButton" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editButtonLabel">Uredi investicijo</h5>
+        </div>
+        <form (ngSubmit)="editInvestment(selectedInvestment)">
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupSelect01">Tip</label>
+              <select name="type"  [(ngModel)]="formData.type" class="form-select" id="inputGroupSelect01" required>
+                <option selected>Izberi...</option>
+                <option value="stocks">Delnica</option>
+                <option value="cryptocurrency">Kriptovaluta</option>
+                <option value="bonds">Obveznica</option>
+                <option value="real_estate">Nepremičnina</option>
+                <option value="mutual_funds">Vzajemni sklad</option>
+                <option value="other">Drugo</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Ime</span>
+              <input type="text" name="name" [(ngModel)]="formData.name" class="form-control" placeholder= "{{ selectedInvestment?.name }}" aria-label="InvestmentName" aria-describedby="basic-addon1" required>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon2">Vsota</span>
+              <input type="number" class="form-control" name="amount" [(ngModel)]="formData.amount" placeholder= "{{ selectedInvestment?.amount }}" aria-label="Text input with dropdown button" required>
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon3">Količina</span>
+              <input type="number" name="Quantity" [(ngModel)]="formData.quantity" class="form-control" placeholder= "{{ selectedInvestment?.quantity }}" aria-label="InvestmentQuantity" aria-describedby="basic-addon2" required>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon4">Datum nakupa</span>
+              <input type="date" name="purchaseDate" [(ngModel)]="formData.purchaseDate"class="form-control" aria-label="InvestmentDate" aria-describedby="basic-addon3" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Prekliči</button>
+            <button type="submit" class="btn navbar-custom" >Uredi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for deleting an investment-->
+  <div class="modal fade" id="deleteButton" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">   <h5 class="modal-title" id="deleteButtonLabel">Potrdite izbris</h5>
+        </div>
+        <div class="modal-body">
+          Ali ste prepričani, da želite izbrisati investicijo:
+          <strong>{{ selectedInvestment?.name }}</strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Prekliči</button>
+          <button type="button" class="btn navbar-custom" (click)="deleteInvestment(selectedInvestment)"  data-bs-dismiss="modal">Izbriši</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal for adding an investment-->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Dodaj investicijo</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="onAddInvestment($event)">
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupSelect01">Tip</label>
+              <select name="type"  [(ngModel)]="formData.type" class="form-select" id="inputGroupSelect01" required>
+                <option selected>Izberi...</option>
+                <option value="stocks">Delnica</option>
+                <option value="cryptocurrency">Kriptovaluta</option>
+                <option value="bonds">Obveznica</option>
+                <option value="real_estate">Nepremičnina</option>
+                <option value="mutual_funds">Vzajemni sklad</option>
+                <option value="other">Drugo</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Ime</span>
+              <input type="text" name="name" [(ngModel)]="formData.name" class="form-control" placeholder="NVDIA" aria-label="InvestmentName" aria-describedby="basic-addon1" required>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon2">Vsota</span>
+              <input type="number" class="form-control" name="amount" [(ngModel)]="formData.amount"placeholder="15.000" aria-label="Text input with dropdown button" required>
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon3">Količina</span>
+              <input type="number" name="Quantity" [(ngModel)]="formData.quantity" class="form-control" placeholder="NVDIA" aria-label="InvestmentQuantity" aria-describedby="basic-addon2" required>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon4">Datum nakupa</span>
+              <input type="date" name="purchaseDate" [(ngModel)]="formData.purchaseDate"class="form-control" aria-label="InvestmentDate" aria-describedby="basic-addon3" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Prekliči</button>
+            <button type="submit" class="btn navbar-custom">Dodaj</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
