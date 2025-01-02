@@ -4,13 +4,25 @@ kumuluzee:
       port: 8085
     context-path: /
   logs:
-    level: INFO
+    level: DEBUG
   dev:
     scan-interval: 5
   datasource:
     mongodb:
       connectionString: "mongodb://mongodb:27017"
       database: "financeApp"
+  openapi:
+    enabled: true
+    servers:
+      - url: http://localhost:8085
+    info:
+      title: "API Documentation"
+      version: "1.0.0"
+      description: "Opis API-ja za investicijsko mikrostoritev"
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui
+
 
   cors:
     enabled: true

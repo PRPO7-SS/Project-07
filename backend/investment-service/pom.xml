@@ -16,14 +16,17 @@
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-servlet-jetty</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-jax-rs-jersey</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-cdi-weld</artifactId>
@@ -32,6 +35,7 @@
             <groupId>com.kumuluz.ee.logs</groupId>
             <artifactId>kumuluzee-logs-log4j2</artifactId>
         </dependency>
+
         <dependency>
             <groupId>ss.finance</groupId>
             <artifactId>common</artifactId>
@@ -48,7 +52,7 @@
             <artifactId>mongodb-driver-sync</artifactId>
             <version>4.11.0</version>
         </dependency>
-        <!-- JSON Web Token (JWT) -->
+
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
@@ -70,10 +74,35 @@
             <artifactId>weld-servlet-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.kumuluz.ee.openapi</groupId>
+            <artifactId>kumuluzee-openapi-mp</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>com.kumuluz.ee.config</groupId>
+            <artifactId>kumuluzee-config-mp</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>com.kumuluz.ee.openapi</groupId>
+            <artifactId>kumuluzee-openapi-mp-ui</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>com.kumuluz.ee.swagger</groupId>
+            <artifactId>kumuluzee-swagger-ui</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.microprofile.openapi</groupId>
+            <artifactId>microprofile-openapi-api</artifactId>
+        </dependency>
 
     </dependencies>
 
@@ -106,6 +135,7 @@
                     <dockerHost>tcp://localhost:2375</dockerHost>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
