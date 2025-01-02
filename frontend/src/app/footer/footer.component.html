@@ -1,9 +1,64 @@
 <footer class="footer-background">
   <div class="container text-center py-4">
-    <p class="mb-0">© 2024 FinanceBro. All rights reserved.</p>
-    <small>
-      <a href="#" class="text-muted me-3">Privacy Policy</a>
-      <a href="#" class="text-muted">Terms of Service</a>
-    </small>
+      <!-- Buttons for specific pages -->
+      <div class="footer-buttons mb-3" *ngIf="showFullFooter">
+          <!-- View Summary button opens the modal -->
+          <button 
+            class="btn btn-outline-secondary me-2" 
+            data-bs-toggle="modal" 
+            data-bs-target="#summaryModal">
+            View Summary
+          </button>
+          <!-- Go to Dashboard button remains functional -->
+          <button class="btn btn-outline-secondary">
+            Go to Dashboard
+          </button>
+        </div>
+
+      <!-- Main footer text -->
+      <p class="mb-0">© 2024 FinanceBro. All rights reserved.</p>
+      <small>
+          <a href="#" class="text-muted me-3">Privacy Policy</a>
+          <a href="#" class="text-muted">Terms of Service</a>
+      </small>
   </div>
 </footer>
+
+<!-- Modal -->
+<div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="summaryModalLabel">Summary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Date Inputs -->
+        <form>
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" id="startDate" [(ngModel)]="startDate" name="startDate" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="date" id="endDate" [(ngModel)]="endDate" name="endDate" class="form-control" required />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-close-custom me-2" 
+            data-bs-dismiss="modal">
+            Close
+          </button>
+          <button 
+            type="button" 
+            class="btn-green-custom" 
+            (click)="goToReport()">
+            Generate Report
+          </button>
+      </div>
+    </div>
+  </div>
+</div>

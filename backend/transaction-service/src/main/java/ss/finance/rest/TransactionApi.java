@@ -111,9 +111,9 @@ public class TransactionApi {
 
     @DELETE
     @Path("/{transactionId}")
-    public Response deleteTransaction(@PathParam("transactionId") String transactionId) {
+    public Response deleteTransaction(@PathParam("transactionId") String transactionId, @CookieParam("auth_token") String token) {
         try {
-            // Validate the format of transactionId
+            // Validate the transactionId
             if (transactionId == null || transactionId.length() != 24 || !transactionId.matches("[a-fA-F0-9]{24}")) {
                 logger.severe("Invalid transaction ID format: " + transactionId);
                 return Response.status(Response.Status.BAD_REQUEST)
@@ -121,16 +121,36 @@ public class TransactionApi {
                         .build();
             }
     
-            logger.info("Received request to delete transaction with ID: " + transactionId);
+            // Validate the token
+            if (token == null || token.isEmpty()) {
+                logger.severe("Missing or invalid token.");
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"message\": \"Missing or invalid token\"}")
+                        .build();
+            }
     
-            ObjectId id = new ObjectId(transactionId); // Convert to ObjectId
-            if (transactionBean.deleteTransaction(id)) {
+            // Extract userId from token
+            ObjectId userId = jwtUtil.extractUserId(token);
+            logger.info("Extracted userId: " + userId);
+    
+            // Retrieve the transaction to ensure it belongs to the user
+            ObjectId transactionObjectId = new ObjectId(transactionId);
+            Transaction transaction = transactionBean.getTransactionById(transactionObjectId);
+            if (transaction == null || !transaction.getUserId().equals(userId)) {
+                logger.severe("Transaction not found or does not belong to user: " + userId);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"message\": \"Transaction not found or does not belong to the user\"}")
+                        .build();
+            }
+    
+            // Delete the transaction
+            if (transactionBean.deleteTransaction(transactionObjectId)) {
                 logger.info("Transaction deleted successfully: " + transactionId);
                 return Response.status(Response.Status.NO_CONTENT).build(); // 204 No Content
             } else {
-                logger.warning("Transaction not found for ID: " + transactionId);
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("{\"message\": \"Transaction not found\"}")
+                logger.severe("Failed to delete transaction: " + transactionId);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("{\"message\": \"Failed to delete transaction\"}")
                         .build();
             }
         } catch (IllegalArgumentException e) {
@@ -144,5 +164,5 @@ public class TransactionApi {
                     .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
-    }
+    }    
 }

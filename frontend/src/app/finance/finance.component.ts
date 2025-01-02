@@ -4,11 +4,12 @@ import { TransactionService } from '../services/transaction.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-finance',
   standalone: true,
-  imports: [NavigationComponent, CommonModule, FormsModule],
+  imports: [NavigationComponent, CommonModule, FormsModule, FooterComponent],
   templateUrl: './finance.component.html',
   styleUrls: ['./finance.component.css'],
 })
