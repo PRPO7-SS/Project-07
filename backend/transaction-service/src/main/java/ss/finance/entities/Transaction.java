@@ -5,9 +5,14 @@ import java.util.Date;
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import ss.finance.serializer.ObjectIdSerializer;
 
 public class Transaction {
+    @JsonSerialize(using=ObjectIdSerializer.class)
     private ObjectId id;
+    @JsonSerialize(using=ObjectIdSerializer.class)
     private ObjectId userId;
     private String type;
     private double amount;

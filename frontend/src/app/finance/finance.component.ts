@@ -177,6 +177,7 @@ export class FinanceComponent implements OnInit {
         this.addTransactionToWeeklySummary(this.newTransaction);
         this.addTransactionToGroupedTransactions(this.newTransaction);
         this.resetForm();
+        this.loadTransactions();
         setTimeout(() => (this.successMessage = ''), 3000);
       },
       error: (err) => {
@@ -300,7 +301,12 @@ export class FinanceComponent implements OnInit {
             console.log('Transaction deleted successfully:', transactionId);
             this.successMessage = 'Transaction deleted successfully!';
             setTimeout(() => (this.successMessage = ''), 3000);
-            this.loadTransactions(); // Refresh transactions after deletion
+            this.transactions = this.transactions.filter(transaction=>transaction.id!=transactionId);
+            if (this.selectedDay) {
+              this.selectedDay.transactions = this.selectedDay.transactions.filter(transaction=>
+              transaction.id!=transactionId)
+            }
+            this.loadTransactions();
         },
         error: (err) => {
             this.errorMessage = 'Error deleting transaction. Please try again.';
