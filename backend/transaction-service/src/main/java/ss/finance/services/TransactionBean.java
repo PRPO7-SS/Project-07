@@ -69,9 +69,9 @@ public class TransactionBean {
     public List<Transaction> getTransactionsByUserId(ObjectId userId) {
         logger.info("Querying database for transactions with userId: " + userId);
     
-        List<Transaction> transactions = database.getCollection("transactions")
-                .find(eq("userId", userId))
-                .into(new ArrayList<>());
+        List<Transaction> transactions = collection.find(new Document("userId", userId))
+                .into(new ArrayList<>())
+                .stream().map(doc->toTransaction(doc)).toList();
     
         for (Transaction transaction : transactions) {
             logger.info("Transaction retrieved from database: " +
@@ -160,7 +160,11 @@ public class TransactionBean {
         transaction.setId(doc.getObjectId("_id"));
         transaction.setUserId(doc.getObjectId("userId"));
         transaction.setType(doc.getString("type"));
-        transaction.setAmount(doc.getDouble("amount"));
+        try {
+            transaction.setAmount(doc.getDouble("amount"));
+        } catch (ClassCastException e) {
+            transaction.setAmount(doc.getInteger("amount"));
+        }
         transaction.setCategory(doc.getString("category"));
         transaction.setDate(doc.getDate("date")); // Ensure this field is logged
         transaction.setCreatedAt(doc.getDate("createdAt"));

@@ -1,19 +1,18 @@
 package ss.finance.security;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import io.github.cdimascio.dotenv.Dotenv;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+
 import org.bson.types.ObjectId;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.annotation.PostConstruct;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import ss.finance.environment.Config;
-import java.nio.charset.StandardCharsets;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @ApplicationScoped
 public class JwtUtil {

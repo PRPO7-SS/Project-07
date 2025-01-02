@@ -1,4 +1,4 @@
-package ss.finance.dtos;
+package ss.finance.services;
 
 import java.util.Date;
 

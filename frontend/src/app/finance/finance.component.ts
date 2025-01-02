@@ -62,35 +62,38 @@ export class FinanceComponent implements OnInit {
     private readonly transactionService: TransactionService,
     private readonly router: Router
   ) {
+    console.log('FinanceComponent initialized.');
     this.weekRange = this.getWeekRange(this.currentDate);
   }
 
   ngOnInit(): void {
+    console.log('Component initialized, calling updateWeekRange and loadTransactions.');
     this.updateWeekRange();
     this.loadTransactions();
     this.generateTipOfTheDay(); // Initialize Tip of the Day
   }
 
   generateTipOfTheDay(): void {
+    console.log('Generating tip of the day...');
     const randomIndex = Math.floor(Math.random() * this.tips.length);
     this.tipOfTheDay = this.tips[randomIndex];
+    console.log('Tip of the day:', this.tipOfTheDay);
   }
 
   loadTransactions(): void {
+    console.log('Attempting to load transactions...');
     this.transactionService.getUserTransactions().subscribe({
       next: (data) => {
-        console.log('Raw transactions data from backend:', data.transactions);
+        console.log('Raw transactions data from backend:', data);
 
-        this.transactions = (data.transactions || []).map((transaction: any) => {
-          const parsedDate = transaction.date ? new Date(transaction.date) : null;
-          console.log('Parsed transaction date:', parsedDate);
-          return {
-            ...transaction,
-            date: parsedDate, // Ensure proper date format
-          };
-        });
+        this.transactions = (data || []).map((transaction: any) => ({
+          ...transaction,
+          date: transaction.date ? new Date(transaction.date) : null, // Parse ISO date to Date object
+          createdAt: transaction.createdAt ? new Date(transaction.createdAt) : null,
+          updatedAt: transaction.updatedAt ? new Date(transaction.updatedAt) : null,
+        }));
 
-        console.log('Processed transactions:', this.transactions);
+        console.log('Parsed transactions:', this.transactions);
 
         this.groupedTransactions = this.groupTransactionsByDate(this.transactions);
         console.log('Grouped transactions by date:', this.groupedTransactions);
@@ -109,6 +112,7 @@ export class FinanceComponent implements OnInit {
   }
 
   calculateWeeklySummary(): void {
+    console.log('Calculating weekly summary...');
     const start = this.weekRange.start;
 
     this.weeklySummary = Array.from({ length: 7 }, (_, i) => {
@@ -116,6 +120,8 @@ export class FinanceComponent implements OnInit {
       date.setDate(start.getDate() + i);
       return { date, spent: 0, earned: 0 };
     });
+
+    console.log('Initial weekly summary structure:', this.weeklySummary);
 
     this.transactions.forEach((transaction) => {
       if (!transaction.date) return; // Skip transactions without a valid date
@@ -130,6 +136,8 @@ export class FinanceComponent implements OnInit {
         }
       });
     });
+
+    console.log('Weekly summary after processing transactions:', this.weeklySummary);
   }
 
   isSameDay(date1: Date, date2: Date): boolean {
@@ -141,44 +149,46 @@ export class FinanceComponent implements OnInit {
   }
 
   showDayTransactions(day: { date: Date; spent: number; earned: number }): void {
+    console.log('Showing transactions for day:', day);
     const transactionsForDay = this.transactions.filter((transaction) =>
       this.isSameDay(new Date(transaction.date), day.date)
     );
 
     this.selectedDay = { date: day.date, transactions: transactionsForDay };
+    console.log('Transactions for the selected day:', this.selectedDay);
   }
 
   showWeeklySummary(): void {
+    console.log('Switching back to weekly summary view.');
     this.selectedDay = null;
   }
 
   submitTransaction(): void {
-    const transactionPayload = {
+    console.log('Submitting transaction:', this.newTransaction);
+    this.transactionService.addTransaction({
       ...this.newTransaction,
-      date: this.newTransaction.date
-        ? new Date(this.newTransaction.date).toISOString() // Ensure the date is in ISO format
-        : new Date().toISOString(), // Use the current date as a fallback
-    };
-  
-    this.transactionService.addTransaction(transactionPayload).subscribe({
+      date: new Date(this.newTransaction.date).toISOString(), // Save date in ISO format
+    }).subscribe({
       next: () => {
+        console.log('Transaction added successfully.');
         this.successMessage = 'Transaction added successfully!';
         this.errorMessage = '';
-        this.addTransactionToWeeklySummary(transactionPayload);
-        this.addTransactionToGroupedTransactions(transactionPayload);
+        this.addTransactionToWeeklySummary(this.newTransaction);
+        this.addTransactionToGroupedTransactions(this.newTransaction);
         this.resetForm();
         setTimeout(() => (this.successMessage = ''), 3000);
       },
       error: (err) => {
+        console.error('Error adding transaction:', err);
         this.errorMessage = 'Error adding transaction. Please try again.';
         this.successMessage = '';
-        console.error('Error adding transaction:', err);
         setTimeout(() => (this.errorMessage = ''), 3000);
       },
     });
-  }  
+  }
 
   addTransactionToWeeklySummary(transaction: any): void {
+    console.log('Adding transaction to weekly summary:', transaction);
     const transactionDate = new Date(transaction.date);
     this.weeklySummary.forEach((day) => {
       if (this.isSameDay(day.date, transactionDate)) {
@@ -189,9 +199,11 @@ export class FinanceComponent implements OnInit {
         }
       }
     });
+    console.log('Weekly summary after adding transaction:', this.weeklySummary);
   }
 
   addTransactionToGroupedTransactions(transaction: any): void {
+    console.log('Adding transaction to grouped transactions:', transaction);
     const transactionDateStr = new Date(transaction.date).toDateString();
     const existingGroup = this.groupedTransactions.find((group) => group.date === transactionDateStr);
     if (existingGroup) {
@@ -202,9 +214,11 @@ export class FinanceComponent implements OnInit {
         transactions: [transaction],
       });
     }
+    console.log('Grouped transactions after addition:', this.groupedTransactions);
   }
 
   resetForm(): void {
+    console.log('Resetting form...');
     this.newTransaction = {
       type: '',
       amount: 0,
@@ -214,19 +228,23 @@ export class FinanceComponent implements OnInit {
   }
 
   prevWeek(): void {
+    console.log('Navigating to previous week...');
     this.currentDate.setDate(this.currentDate.getDate() - 7);
     this.updateWeekRange();
     this.loadTransactions();
   }
 
   nextWeek(): void {
+    console.log('Navigating to next week...');
     this.currentDate.setDate(this.currentDate.getDate() + 7);
     this.updateWeekRange();
     this.loadTransactions();
   }
 
   updateWeekRange(): void {
+    console.log('Updating week range...');
     this.weekRange = this.getWeekRange(this.currentDate);
+    console.log('Updated week range:', this.weekRange);
   }
 
   formatDate(date: Date): string {
@@ -249,6 +267,7 @@ export class FinanceComponent implements OnInit {
   }
 
   groupTransactionsByDate(transactions: any[]): { date: string; transactions: any[] }[] {
+    console.log('Grouping transactions by date...');
     const grouped = transactions.reduce((acc: any, transaction) => {
       const transactionDateStr = new Date(transaction.date).toDateString();
       if (!acc[transactionDateStr]) {
@@ -258,24 +277,35 @@ export class FinanceComponent implements OnInit {
       return acc;
     }, {});
 
-    return Object.keys(grouped).map((date) => ({
+    const result = Object.keys(grouped).map((date) => ({
       date,
       transactions: grouped[date],
     }));
+
+    console.log('Grouped transactions result:', result);
+    return result;
   }
 
   deleteTransaction(transactionId: string): void {
+    console.log('Attempting to delete transaction. Received ID:', transactionId);
+
+    if (!transactionId) {
+        console.error('Transaction ID is undefined or invalid');
+        return;
+    }
+
     this.transactionService.deleteTransaction(transactionId).subscribe({
-      next: () => {
-        this.loadTransactions();
-        this.successMessage = 'Transaction deleted successfully!';
-        setTimeout(() => (this.successMessage = ''), 3000);
-      },
-      error: (err) => {
-        this.errorMessage = 'Error deleting transaction. Please try again.';
-        console.error('Error deleting transaction:', err);
-        setTimeout(() => (this.errorMessage = ''), 3000);
-      },
+        next: () => {
+            console.log('Transaction deleted successfully:', transactionId);
+            this.successMessage = 'Transaction deleted successfully!';
+            setTimeout(() => (this.successMessage = ''), 3000);
+            this.loadTransactions(); // Refresh transactions after deletion
+        },
+        error: (err) => {
+            this.errorMessage = 'Error deleting transaction. Please try again.';
+            console.error('Error deleting transaction:', err);
+            setTimeout(() => (this.errorMessage = ''), 3000);
+        },
     });
   }
 }

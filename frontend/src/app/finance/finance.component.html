@@ -51,8 +51,8 @@
                                             {{ day.date | date: 'EEEE | d MMM yyyy' }}
                                         </h5>
                                         <p class="card-text">
-                                            <strong>Spent:</strong> €{{ day.spent }} |
-                                            <strong>Earned:</strong> €{{ day.earned }}
+                                            <strong>Spent:</strong> €{{ day.spent.toFixed(2) }} |
+                                            <strong>Earned:</strong> €{{ day.earned.toFixed(2) }}
                                         </p>
                                     </div>
                                 </div>
@@ -82,16 +82,15 @@
                                 <div>
                                     <span>{{ transaction.category }}</span>
                                 </div>
-                                <!-- Delete Button with Trashcan Icon -->
+                                <!-- Delete Button -->
                                 <div>
                                     <button 
                                         class="btn btn-light btn-sm text-danger" 
-                                        (click)="deleteTransaction(transaction._id)"
-                                    >
+                                        (click)="deleteTransaction(transaction.id.$oid || transaction.id.toHexString?.() || transaction.id)">
                                         <i class="bi bi-trash"></i>
-                                    </button>
+                                    </button>                                
                                 </div>
-                            </div>
+                            </div>                        
 
                             <div *ngIf="selectedDay.transactions.length === 0">
                                 <p class="text-center text-muted">No transactions for this day.</p>
