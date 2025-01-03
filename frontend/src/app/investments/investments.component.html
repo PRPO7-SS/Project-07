@@ -144,9 +144,6 @@
             {{ calculateFluctuation(investment) }}%
           </td>
           <td>
-            <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#editButton"   (click)="selectedInvestment = investment">
-              <i class="bi bi-pencil-square"></i>
-            </button>
             <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#deleteButton"   (click)="selectedInvestment = investment">
               <i class="bi bi-trash3"></i>
             </button>
@@ -164,55 +161,6 @@
     </div>
   </div>
 
-
-
-  <!-- Modal for editing an investment-->
-  <div class="modal fade" id="editButton" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editButtonLabel">Uredi investicijo</h5>
-        </div>
-        <form (ngSubmit)="editInvestment(selectedInvestment)">
-          <div class="modal-body">
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01">Tip</label>
-              <select name="type"    [(ngModel)]="formData.type" class="form-select" id="inputGroupSelect01" required>
-                <option selected>Izberi...</option>
-                <option value="stocks">Delnica</option>
-                <option value="cryptocurrency">Kriptovaluta</option>
-                <option value="bonds">Obveznica</option>
-                <option value="real_estate">Nepremičnina</option>
-                <option value="mutual_funds">Vzajemni sklad</option>
-                <option value="other">Drugo</option>
-              </select>
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Ime</span>
-              <input type="text" name="name" [(ngModel)]="formData.name" class="form-control" placeholder= "{{ selectedInvestment?.name }}" aria-label="InvestmentName" aria-describedby="basic-addon1" required>
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon2">Vsota</span>
-              <input type="number" class="form-control" name="amount" [(ngModel)]="formData.amount" placeholder= "{{ selectedInvestment?.amount }}" aria-label="Text input with dropdown button" required>
-              <span class="input-group-text" id="basic-addon2">€</span>
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon3">Količina</span>
-              <input type="number" name="Quantity" [(ngModel)]="formData.quantity" class="form-control" placeholder= "{{ selectedInvestment?.quantity }}" aria-label="InvestmentQuantity" aria-describedby="basic-addon2" required>
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon4">Datum nakupa</span>
-              <input type="date" name="purchaseDate" [(ngModel)]="formData.purchaseDate"class="form-control" aria-label="InvestmentDate" aria-describedby="basic-addon3" required>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Prekliči</button>
-            <button type="submit" class="btn navbar-custom" >Uredi</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
   <!-- Modal for deleting an investment-->
   <div class="modal fade" id="deleteButton" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -244,7 +192,7 @@
           <div class="modal-body">
             <div class="dropdown-item">
               <label for="dataType">Investment Type</label>
-              <select id="dataType" name="type" (change)="onDataTypeChange($event)"[(ngModel)]="formData.type">
+              <select id="dataType" name="type"  (change)="onDataTypeChange($event, false)"[(ngModel)]="formData.type">
                 <option value="crypto">Crypto</option>
                 <option value="stock">Stock</option>
               </select>

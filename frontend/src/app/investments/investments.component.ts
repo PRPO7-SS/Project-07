@@ -88,9 +88,12 @@ export class InvestmentsComponent implements OnInit {
     }
   }
 
-  onDataTypeChange(event: any): void {
+  onDataTypeChange(event: any, edit: boolean): void {
     this.dataType = event.target.value;
-    this.selectedItem = '';
+    if(!edit)
+      this.selectedItem = '';
+    else
+      this.selectedItem = this.selectedInvestment.name;
     this.loadItems();
   }
 
@@ -164,47 +167,6 @@ export class InvestmentsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error deleting investment:', error);
-      },
-    });
-  }
-
-  editInvestment(investment: any): void {
-    this.missingFields = {};
-
-    if (!this.formData.type.trim()) {
-      this.missingFields['type'] = true;
-    }
-    if (!this.formData.name.trim()) {
-      this.missingFields['name'] = true;
-    }
-    if (this.formData.amount <= 0) {
-      this.missingFields['amount'] = true;
-    }
-    if (this.formData.quantity <= 0) {
-      this.missingFields['quantity'] = true;
-    }
-    if (!this.formData.purchaseDate) {
-      this.missingFields['purchaseDate'] = true;
-    }
-
-    if (Object.keys(this.missingFields).length > 0) {
-      this.message = 'Please fill in all required fields.';
-      return;
-    }
-
-    this.closeModal();
-
-    this.loading = true;
-    this.investmentService.updateInvestment(investment._id, this.formData).subscribe({
-      next: (response: any) => {
-        console.log('Investment updated successfully:', response);
-        this.investments = this.investments.map((i) =>
-          i._id === investment._id ? { ...i, ...this.formData } : i
-        );
-      },
-      error: (error) => {
-        console.error('Error updating investment:', error);
-        alert('Error updating investment. Please try again.');
       },
     });
   }
