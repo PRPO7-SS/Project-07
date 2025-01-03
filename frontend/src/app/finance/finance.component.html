@@ -1,0 +1,224 @@
+<app-navigation></app-navigation>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance Page</title>
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    />
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+        rel="stylesheet"
+    />
+    <!-- Custom CSS File -->
+    <link rel="stylesheet" href="finance.component.css" />
+</head>
+<body>
+    <!-- Top Section -->
+    <div class="top-section">
+        <div class="container">
+            <div class="row">
+                <!-- Left Column: Overview and Weekly Summary -->
+                <div class="col-12 col-lg-6 d-flex flex-column align-items-start justify-content-start">
+                    <div class="p-4">
+                        <h1 class="app-name align-items-center">Track Your Finances</h1>
+                        <p class="lead mt-3">Easily manage your income and spending in one place.</p>
+
+                        <!-- Week Selector Section -->
+                        <div class="week-selector d-flex justify-content-center align-items-center mb-4">
+                            <button (click)="prevWeek()" class="btn btn-outline-secondary btn-sm me-3">&lt;</button>
+                            <div class="fw-bold">
+                                {{ formatDate(weekRange.start) }} - {{ formatDate(weekRange.end) }}
+                            </div>
+                            <button (click)="nextWeek()" class="btn btn-outline-secondary btn-sm ms-3">&gt;</button>
+                        </div>
+
+                        <!-- Weekly Calendar Section -->
+                        <div *ngIf="!selectedDay">
+                            <div class="weekly-calendar mt-4">
+                                <div
+                                    *ngFor="let day of weeklySummary"
+                                    class="day-summary card mb-3 p-2"
+                                    (click)="showDayTransactions(day)"
+                                    style="cursor: pointer;"
+                                >
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            {{ day.date | date: 'EEEE | d MMM yyyy' }}
+                                        </h5>
+                                        <p class="card-text">
+                                            <strong>Spent:</strong> €{{ day.spent.toFixed(2) }} |
+                                            <strong>Earned:</strong> €{{ day.earned.toFixed(2) }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selected Day Transactions Section -->
+                        <div *ngIf="selectedDay">
+                            <h3 class="text-center mb-3">
+                                Transactions for {{ selectedDay.date | date: 'EEEE, d MMM yyyy' }}
+                            </h3>
+                            <button class="btn btn-secondary mb-3" (click)="showWeeklySummary()">
+                                Back to Weekly Summary
+                            </button>
+
+                            <div
+                                *ngFor="let transaction of selectedDay.transactions"
+                                class="transaction-item d-flex justify-content-between align-items-center border rounded p-2 mb-1"
+                                [ngClass]="{
+                                    'text-success': transaction.type === 'Income',
+                                    'text-danger': transaction.type === 'Expense'
+                                }"
+                            >
+                                <div>
+                                    <strong>{{ transaction.amount | currency: 'EUR' }}</strong>
+                                </div>
+                                <div>
+                                    <span>{{ transaction.category }}</span>
+                                </div>
+                                <!-- Delete Button -->
+                                <div>
+                                    <button 
+                                        class="btn btn-light btn-sm text-danger" 
+                                        (click)="deleteTransaction(transaction.id.$oid || transaction.id.toHexString?.() || transaction.id)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>                                
+                                </div>
+                            </div>                        
+
+                            <div *ngIf="selectedDay.transactions.length === 0">
+                                <p class="text-center text-muted">No transactions for this day.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Finance Form and Tip of the Day -->
+                <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-start">
+                    <div class="card p-4 mb-4" style="width: 100%; max-width: 500px;">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">Add Transaction</h3>
+
+                            <!-- Success and Error Messages -->
+                            <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                                {{ successMessage }}
+                            </div>
+                            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                                {{ errorMessage }}
+                            </div>
+
+                            <form (ngSubmit)="submitTransaction()">
+                                <!-- Transaction Type -->
+                                <div class="mb-3">
+                                    <label for="transactionType" class="form-label">Transaction Type</label>
+                                    <select [(ngModel)]="newTransaction.type" name="transactionType" class="form-select" required>
+                                        <option value="Income">Income</option>
+                                        <option value="Expense">Expense</option>
+                                    </select>
+                                </div>
+
+                                <!-- Income Section -->
+                                <div *ngIf="newTransaction.type === 'Income'">
+                                    <div class="mb-3">
+                                        <label for="amount" class="form-label">Amount</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">€</span>
+                                            <input
+                                                [(ngModel)]="newTransaction.amount"
+                                                name="amount"
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                class="form-control"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="incomeCategory" class="form-label">Category</label>
+                                        <select
+                                            [(ngModel)]="newTransaction.category"
+                                            name="incomeCategory"
+                                            class="form-select"
+                                            required
+                                        >
+                                            <option *ngFor="let categoryKey of incomeCategories" [value]="categoryKey">
+                                                {{ categoryKey }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Expense Section -->
+                                <div *ngIf="newTransaction.type === 'Expense'">
+                                    <div class="mb-3">
+                                        <label for="amount" class="form-label">Amount</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">€</span>
+                                            <input
+                                                [(ngModel)]="newTransaction.amount"
+                                                name="amount"
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                class="form-control"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expenseCategory" class="form-label">Category</label>
+                                        <select
+                                            [(ngModel)]="newTransaction.category"
+                                            name="expenseCategory"
+                                            class="form-select"
+                                            required
+                                        >
+                                            <option *ngFor="let categoryKey of expenseCategories" [value]="categoryKey">
+                                                {{ categoryKey }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Date Input -->
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Date</label>
+                                    <input
+                                        [(ngModel)]="newTransaction.date"
+                                        name="date"
+                                        type="date"
+                                        class="form-control"
+                                        required
+                                    />
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-primary w-100">Add Transaction</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tip of the Day -->
+                    <div class="card p-4" style="width: 100%; max-width: 500px;">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">Tip of the Day</h3>
+                            <p class="text-center">{{ tipOfTheDay }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <app-footer [showFullFooter]="true"></app-footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

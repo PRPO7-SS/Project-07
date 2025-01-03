@@ -16,6 +16,7 @@
         <module>user-service</module>
         <module>savings-goal-service</module>
         <module>investment-service</module>
+        <module>report-service</module>
     </modules>
 
 
@@ -37,7 +38,7 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-core</artifactId>
-                <version>4.1.0</version>
+                <version>4.0.0</version>
             </dependency>
 
 
@@ -45,14 +46,14 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs-jersey</artifactId>
-                <version>4.1.0</version>
+                <version>4.0.0</version>
             </dependency>
 
             <!-- CDI (Context and Dependency Injection) -->
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-cdi-weld</artifactId>
-                <version>4.1.0</version>
+                <version>4.0.0</version>
             </dependency>
 
             <!-- Logging -->
@@ -66,7 +67,7 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-servlet-jetty</artifactId>
-                <version>4.1.0</version>
+                <version>4.0.0</version>
             </dependency>
 
             <!-- JUnit for Testing -->
@@ -165,7 +166,6 @@
             </dependency>
 
         </dependencies>
-
     </dependencyManagement>
 
     <repositories>

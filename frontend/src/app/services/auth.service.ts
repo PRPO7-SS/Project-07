@@ -3,15 +3,22 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/auth/login';
+  private apiUrl = 'http://localhost:8080/auth';
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
-    const body = { email, password };
-    return this.http.post(this.apiUrl, body, { withCredentials: true });
+    return this.http.post(`${this.apiUrl}/login`, { email, password });
+  }
+
+  saveToken(token: string): void {
+    localStorage.setItem('auth_token', token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('auth_token');
   }
 }

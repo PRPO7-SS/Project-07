@@ -1,0 +1,285 @@
+/* General Styles */
+body {
+    background-color: #e2e8f0; /* Light grey background for contrast */
+    font-family: 'Roboto', sans-serif;
+}
+
+html, body {
+    height: 100%; /* Ensures the page takes up full height */
+    margin: 0;
+}
+
+h1.app-name {
+    font-size: 3rem;
+}
+
+h3.text-center {
+    font-size: 1.25rem;
+}
+
+/* Top Section Styles */
+.top-section {
+    padding: 50px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Poravnaj na levo */
+}
+
+.app-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    text-align: left; /* Poravnava naslova na levo */
+    margin-left: 20px; /* Premik v levo */
+}
+
+.lead {
+    font-size: 1.2rem;
+    color: #555;
+    text-align: left; /* Poravnava podnaslova na levo */
+    margin-left: 20px; /* Premik v levo */
+}
+
+/* Navbar Customization */
+.navbar-custom {
+    background-color: #28a745; 
+    padding: 10px 10px; 
+}
+
+.navbar-nav .nav-link {
+    color: white; 
+    transition: color 0.13s ease; 
+}
+
+.navbar-nav .nav-link:hover {
+    color: #a9dfbf; 
+}
+
+.navbar-nav .nav-link.active {
+    color: white; 
+}
+
+.navbar-nav .nav-link.active:hover {
+    color: #a9dfbf; 
+}
+
+/* Weekly Calendar Styles */
+.weekly-calendar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Dva stolpca */
+    grid-auto-rows: auto; /* Prilagoditev višine vrstic */
+    gap: 16px; /* Razmik med karticami */
+}
+
+.weekly-calendar .day-summary {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    padding: 10px; /* Manjši padding */
+    font-size: 0.85rem; /* Zmanjšana velikost pisave */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Rahla senca za boljšo vidnost */
+    text-align: center; /* Poravnava vsebine na sredino */
+}
+
+.weekly-calendar .day-summary:nth-child(7) {
+    grid-column: span 2; /* Raztegne nedeljo čez oba stolpca */
+    justify-self: center; /* Poravna nedeljo na sredino */
+}
+
+.weekly-calendar .day-summary h5 {
+    margin: 0;
+    font-size: 1rem; /* Naslovi dnevov */
+}
+
+.weekly-calendar .day-summary p {
+    margin: 0;
+    font-size: 0.85rem; /* Velikost besedila za stroške in prihodke */
+}
+
+/* Week Selector */
+.week-selector {
+    font-size: 0.9rem; /* Smaller font size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.week-selector button {
+    padding: 4px 8px; /* Smaller buttons */
+    font-size: 0.85rem; /* Slightly smaller text */
+}
+
+/* Card Styling */
+.card {
+    border: none; /* Remove card border */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #fff;
+}
+
+/* Card Title Styling */
+.card-title {
+    font-size: 1.8rem;
+    color: #057c1b; /* Bootstrap primary color */
+}
+
+/* Form Field Styling */
+.form-control {
+    border-radius: 8px; /* Round input fields */
+    border: 1px solid #ced4da; /* Subtle border */
+}
+
+.form-select {
+    border-radius: 8px;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #057c1b; /* Bootstrap primary color */
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 10px 0;
+}
+
+.btn-primary:hover {
+    background-color: #046817; /* Darker on hover */
+}
+
+.btn-outline-secondary {
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa; /* Light background on hover */
+}
+
+/* Bottom Section Styles */
+.bottom-section {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+}
+
+/* Transaction Calendar */
+.transaction-calendar .day-summary button {
+    padding: 8px 12px; /* Smaller padding */
+    font-size: 1rem; /* Slightly smaller font size */
+    line-height: 1.2; /* Reduce line height for compact look */
+}
+
+.transaction-calendar .day-summary h5 {
+    font-size: 1.1rem; /* Reduce font size of day titles */
+    margin-bottom: 2px; /* Less space below the day title */
+}
+
+.transaction-calendar .day-summary p {
+    font-size: 0.9rem; /* Smaller font for the amounts */
+    margin-bottom: 0; /* No extra margin below the amount */
+}
+
+.day-summary {
+    margin-bottom: 10px; /* Less space between each day */
+}
+
+/* Modal Styling */
+.modal-body h6 {
+    font-size: 1rem; /* Slightly smaller headings in the modal */
+    margin-bottom: 10px; /* Less margin below modal headings */
+}
+
+.modal-body ul {
+    padding-left: 0;
+    font-size: 0.9rem; /* Smaller font size for transactions */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .top-section {
+        text-align: center;
+        align-items: center;
+    }
+
+    .app-name, .lead {
+        text-align: center;
+        margin-left: 0; 
+    }
+
+    .weekly-calendar {
+        display: block; /* Switch to block layout for stacking */
+    }
+
+    .weekly-calendar .day-summary {
+        margin-bottom: 16px; /* Add vertical spacing between items */
+        width: 100%; /* Ensure full width */
+    }
+
+    .card {
+        max-width: 100%; /* Ensure full width on mobile */
+    }
+}
+
+/* Style for the transaction-item */
+.transaction-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #f9f9f9; /* Light gray background */
+    cursor: pointer;
+  }
+  
+  /* Hover effect */
+  .transaction-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a soft shadow */
+    background-color: #ffffff; /* Subtle blue background on hover */
+  }
+  
+  /* Add padding around text for better spacing */
+  .transaction-item div {
+    padding: 0 10px;
+  }
+
+  /* Gray "Close" button */
+.btn-close-custom {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: #6c757d; /* Bootstrap gray */
+    color: #fff;
+    border: 1px solid #6c757d;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .btn-close-custom:hover {
+    background-color: #5c636a; /* Slightly darker gray */
+  }
+  
+  /* Green "Go to Report" button */
+  .btn-green-custom {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: #057c1b; /* Custom green */
+    color: #fff;
+    border: 1px solid #057c1b;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .btn-green-custom:hover {
+    background-color: #046817; /* Darker green on hover */
+  }

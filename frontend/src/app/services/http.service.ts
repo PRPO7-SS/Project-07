@@ -10,7 +10,7 @@ export class HttpService {
   // Define microservice base URLs
   private readonly microserviceUrls = {
     userService: 'http://localhost:8080',
-    transactionService: 'http://localhost:8082',
+    transactionService: 'http://localhost:8081',
     investmentService: 'http://localhost:8083',
     savingsGoalService: 'http://localhost:8084',
     investmentSer: 'http://localhost:8085',

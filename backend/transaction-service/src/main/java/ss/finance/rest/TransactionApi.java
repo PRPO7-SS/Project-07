@@ -1,20 +1,26 @@
 package ss.finance.rest;
 
-import ss.finance.TransactionZrno;
-import ss.finance.TransactionDTO;
-import ss.finance.Transaction;
-import ss.finance.security.JwtUtil;
+import java.util.Date;
+import java.util.logging.Logger;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.inject.Inject;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import java.util.List;
-import org.bson.types.ObjectId;
-import javax.ws.rs.core.Cookie;
 
+import org.bson.types.ObjectId;
+
+import ss.finance.entities.Transaction;
+import ss.finance.security.JwtUtil;
+import ss.finance.services.TransactionBean;
+import ss.finance.services.TransactionDTO;
 
 @Path("/transactions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,67 +28,141 @@ import javax.ws.rs.core.Cookie;
 public class TransactionApi {
 
     @Inject
-    private TransactionZrno transactionZrno;
+    private TransactionBean transactionBean;
 
     @Inject
     private JwtUtil jwtUtil;
 
+    private static final Logger logger = Logger.getLogger(TransactionApi.class.getName());
+
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addTransaction(TransactionDTO transactionDTO, @Context HttpHeaders headers) {
-        // Extract token from Authorization header
-        String token = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
-        if (token == null || !token.startsWith("Bearer ")) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"message\": \"Authorization header missing or invalid\"}")
+    public Response addTransaction(TransactionDTO transactionDTO, @CookieParam("auth_token") String token) {
+        try {
+            logger.info("Received transactionDTO: " +
+                "type=" + transactionDTO.getType() +
+                ", amount=" + transactionDTO.getAmount() +
+                ", category=" + transactionDTO.getCategory() +
+                ", date=" + transactionDTO.getDate());
+
+            if (transactionDTO.getDate() == null) {
+                logger.info("Date is missing. Setting current date.");
+                transactionDTO.setDate(new Date()); // Default to current date
+            }
+
+            if (token == null || token.isEmpty()) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"message\": \"Token is missing or invalid\"}")
+                        .build();
+            }
+
+            ObjectId userId = jwtUtil.extractUserId(token);
+            logger.info("Extracted userId: " + userId);
+
+            Transaction transaction = new Transaction(
+                    userId,
+                    transactionDTO.getType(),
+                    transactionDTO.getAmount(),
+                    transactionDTO.getCategory(),
+                    transactionDTO.getDate()
+            );
+
+            transactionBean.addTransaction(transaction);
+            logger.info("Transaction added successfully: " + transaction);
+
+            return Response.status(Response.Status.CREATED)
+                    .entity("{\"message\": \"Transaction created successfully\"}")
+                    .build();
+        } catch (Exception e) {
+            logger.severe("Error adding transaction: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
-        // Remove "Bearer " prefix from token
-        token = token.substring(7);
-
-        // Extract userId from the JWT token
-        ObjectId userId = jwtUtil.extractUserId(token); // Assuming your JwtUtil class works correctly
-
-        // Create the transaction object using the extracted userId and transaction details
-        Transaction transaction = new Transaction(
-                userId,
-                transactionDTO.getType(),
-                transactionDTO.getAmount(),
-                transactionDTO.getCategory()
-        );
-
-        // Add the transaction to the database or your data source
-        transactionZrno.addTransaction(transaction);
-
-        // Return success response
-        return Response.status(Response.Status.CREATED)
-                .entity("{\"message\": \"Transaction created successfully\"}")
-                .build();
     }
-
 
     @GET
-    public Response getUserTransactions(@Context HttpHeaders headers) {
-        //String token = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
-        Cookie authCookie = headers.getCookies().get("auth_token");
-        if (authCookie == null) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"message\": \"Auth cookie missing\"}")
+    public Response getUserTransactions(@CookieParam("auth_token") String token) {
+        try {
+            logger.info("Received token: " + token);
+
+            if (token == null || token.isEmpty()) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"message\": \"Token is missing or invalid\"}")
+                        .build();
+            }
+
+            ObjectId userId = jwtUtil.extractUserId(token);
+            logger.info("Extracted userId: " + userId);
+
+            var transactions = transactionBean.getTransactionsByUserId(userId);
+
+            if (transactions.isEmpty()) {
+                return Response.status(Response.Status.NO_CONTENT).build();
+            }
+
+            return Response.ok(transactions).build();
+        } catch (Exception e) {
+            logger.severe("Error retrieving transactions: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
-        String token = authCookie.getValue();
-        if (token == null || !token.startsWith("Bearer ")) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"message\": \"Authorization header missing or invalid\"}")
-                    .build();
-        }
-        // Remove "Bearer " prefix from token
-        token = token.substring(7);
-        ObjectId userId = jwtUtil.extractUserId(token);
-
-        List<TransactionDTO> transactions = transactionZrno.getAllTransactions(userId);
-
-        return Response.ok(transactions).build();
     }
+
+    @DELETE
+    @Path("/{transactionId}")
+    public Response deleteTransaction(@PathParam("transactionId") String transactionId, @CookieParam("auth_token") String token) {
+        try {
+            // Validate the transactionId
+            if (transactionId == null || transactionId.length() != 24 || !transactionId.matches("[a-fA-F0-9]{24}")) {
+                logger.severe("Invalid transaction ID format: " + transactionId);
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"message\": \"Invalid transaction ID format\"}")
+                        .build();
+            }
+    
+            // Validate the token
+            if (token == null || token.isEmpty()) {
+                logger.severe("Missing or invalid token.");
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"message\": \"Missing or invalid token\"}")
+                        .build();
+            }
+    
+            // Extract userId from token
+            ObjectId userId = jwtUtil.extractUserId(token);
+            logger.info("Extracted userId: " + userId);
+    
+            // Retrieve the transaction to ensure it belongs to the user
+            ObjectId transactionObjectId = new ObjectId(transactionId);
+            Transaction transaction = transactionBean.getTransactionById(transactionObjectId);
+            if (transaction == null || !transaction.getUserId().equals(userId)) {
+                logger.severe("Transaction not found or does not belong to user: " + userId);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"message\": \"Transaction not found or does not belong to the user\"}")
+                        .build();
+            }
+    
+            // Delete the transaction
+            if (transactionBean.deleteTransaction(transactionObjectId)) {
+                logger.info("Transaction deleted successfully: " + transactionId);
+                return Response.status(Response.Status.NO_CONTENT).build(); // 204 No Content
+            } else {
+                logger.severe("Failed to delete transaction: " + transactionId);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("{\"message\": \"Failed to delete transaction\"}")
+                        .build();
+            }
+        } catch (IllegalArgumentException e) {
+            logger.severe("Invalid transaction ID: " + transactionId);
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Invalid transaction ID\"}")
+                    .build();
+        } catch (Exception e) {
+            logger.severe("Error deleting transaction: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\": \"Server error occurred\"}")
+                    .build();
+        }
+    }    
 }

@@ -8,7 +8,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import ss.finance.entities.User;
 import ss.finance.utils.MongoDBConnection;
 import org.bson.types.ObjectId;
-import org.bson.Document;
 
 
 import javax.enterprise.context.ApplicationScoped;
