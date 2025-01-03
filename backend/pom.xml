@@ -14,9 +14,9 @@
         <module>common</module>
         <module>transaction-service</module>
         <module>user-service</module>
-        <module>report-service</module>
-        <module>investment-service</module>
         <module>savings-goal-service</module>
+        <module>investment-service</module>
+        <module>report-service</module>
     </modules>
 
 
@@ -129,9 +129,41 @@
                 <version>3.1.8.Final</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.kumuluz.ee.openapi</groupId>
+                <artifactId>kumuluzee-openapi-mp</artifactId>
+                <version>1.4.0</version>
+            </dependency>
 
+            <dependency>
+                <groupId>com.kumuluz.ee.config</groupId>
+                <artifactId>kumuluzee-config-mp</artifactId>
+                <version>2.0.0</version>
+            </dependency>
 
+            <dependency>
+                <groupId>org.eclipse.microprofile.config</groupId>
+                <artifactId>microprofile-config-api</artifactId>
+                <version>3.1</version>
+            </dependency>
 
+            <dependency>
+                <groupId>com.kumuluz.ee.openapi</groupId>
+                <artifactId>kumuluzee-openapi-mp-ui</artifactId>
+                <version>1.4.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.kumuluz.ee.swagger</groupId>
+                <artifactId>kumuluzee-swagger-ui</artifactId>
+                <version>1.2.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.microprofile.openapi</groupId>
+                <artifactId>microprofile-openapi-api</artifactId>
+                <version>4.0.2</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
