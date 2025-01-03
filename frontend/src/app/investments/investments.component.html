@@ -113,7 +113,11 @@
   <div class="row">
     <div class="col-md-12">
       <h3>Sledenje investicij</h3>
-      <table class="table table-striped table-responsive">
+      <div *ngIf="investments.length === 0" class="alert text-center mt-4 notification-box">
+        <div class="light-text">You currently have no investments entered.</div>
+        <div class="dark-text">Add your first investment by clicking the button below!</div>
+      </div>
+      <table *ngIf="investments.length > 0" class="table table-striped table-responsive">
         <thead>
         <tr>
           <th>Tip</th>
@@ -132,7 +136,7 @@
           <td>{{ investment.name }}</td>
           <td>{{ investment.amount }}€</td>
           <td>
-            {{ investment.currentValue ? ('€' + investment.currentValue) : 'N/A' }}
+            {{ investment.currentValue.toFixed(2) }}€
           </td>
           <td>{{ investment.quantity }}</td>
           <td>{{ investment.purchaseDate | date: 'dd.MM.yyyy' }}</td>
@@ -173,7 +177,7 @@
           <div class="modal-body">
             <div class="input-group mb-3">
               <label class="input-group-text" for="inputGroupSelect01">Tip</label>
-              <select name="type"  [(ngModel)]="formData.type" class="form-select" id="inputGroupSelect01" required>
+              <select name="type"    [(ngModel)]="formData.type" class="form-select" id="inputGroupSelect01" required>
                 <option selected>Izberi...</option>
                 <option value="stocks">Delnica</option>
                 <option value="cryptocurrency">Kriptovaluta</option>
@@ -238,21 +242,20 @@
         </div>
         <form (ngSubmit)="onAddInvestment($event)">
           <div class="modal-body">
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01">Tip</label>
-              <select name="type"  [(ngModel)]="formData.type" class="form-select" id="inputGroupSelect01" required>
-                <option selected>Izberi...</option>
-                <option value="stocks">Delnica</option>
-                <option value="cryptocurrency">Kriptovaluta</option>
-                <option value="bonds">Obveznica</option>
-                <option value="real_estate">Nepremičnina</option>
-                <option value="mutual_funds">Vzajemni sklad</option>
-                <option value="other">Drugo</option>
+            <div class="dropdown-item">
+              <label for="dataType">Investment Type</label>
+              <select id="dataType" name="type" (change)="onDataTypeChange($event)"[(ngModel)]="formData.type">
+                <option value="crypto">Crypto</option>
+                <option value="stock">Stock</option>
               </select>
             </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Ime</span>
-              <input type="text" name="name" [(ngModel)]="formData.name" class="form-control" placeholder="NVDIA" aria-label="InvestmentName" aria-describedby="basic-addon1" required>
+            <div class="dropdown-item">
+              <label for="item">Item</label>
+              <select id="item"  name="name" [(ngModel)]="formData.name">
+                <option *ngFor="let item of itemList" [value]="item.symbol">
+                  {{ item.name }}
+                </option>
+              </select>
             </div>
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon2">Vsota</span>

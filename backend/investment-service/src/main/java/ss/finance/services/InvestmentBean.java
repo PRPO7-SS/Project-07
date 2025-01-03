@@ -14,6 +14,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+import org.json.JSONObject;
+
 @ApplicationScoped
 public class InvestmentBean {
     private MongoCollection<Document> collection;
@@ -68,7 +73,12 @@ public class InvestmentBean {
         List<Investment> investments = new ArrayList<>();
         try {
             for (Document doc : collection.find(new Document("userId", userId))) {
-                investments.add(toInvestment(doc));
+                Investment investment = toInvestment(doc);
+                double price = calculateCurrentPrice(investment);
+                investment.setCurrentPrice(price);
+                double value = calculateCurrentValue(investment);
+                investment.setCurrentValue(value);
+                investments.add(investment);
             }
         } catch (Exception e) {
             logger.severe("Error retrieving all investments: " + e.getMessage());
@@ -88,6 +98,71 @@ public class InvestmentBean {
         }
     }
 
+    public Double calculateCurrentPrice(Investment i){
+        String baseUrl = System.getenv("API_URL");
+        String apiKey = System.getenv("API_KEY");
+        String type = i.getType();
+        String symbol = i.getName();
+        String url = "";
+
+        if(type.equals("stock")){
+            url = String.format("%s/price?symbol=%s,USD/EUR&apikey=%s", baseUrl, symbol, apiKey);
+        }else if(type.equals("crypto")){
+            url = String.format("%s/price?symbol=%s/EUR&apikey=%s", baseUrl, symbol, apiKey);
+        }else{
+            return (double)i.getAmount();
+        }
+
+        System.out.println("url: " + url);
+
+        try {
+            URL apiUrl = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) apiUrl.openConnection();
+            conn.setRequestMethod("GET");
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                throw new RuntimeException("Failed to fetch data: HTTP error code " + responseCode);
+            }
+
+            StringBuilder inline = new StringBuilder();
+            Scanner scanner = new Scanner(apiUrl.openStream());
+            while (scanner.hasNext()) {
+                inline.append(scanner.nextLine());
+            }
+            scanner.close();
+
+            JSONObject response = new JSONObject(inline.toString());
+
+            double priceInEur;
+            if (type.equals("stock")) {
+                double priceInUsd = response.getJSONObject(symbol).getDouble("price");
+                double usdToEur = response.getJSONObject("USD/EUR").getDouble("price");
+                priceInEur = priceInUsd * usdToEur;
+            } else {
+                priceInEur = response.getDouble("price");
+            }
+
+            System.out.println("price in eur: " + priceInEur);
+
+            return priceInEur;
+
+        } catch (Exception e) {
+            logger.severe("Error while calculating current value"+ e.getMessage());
+            return null;
+        }
+    }
+
+    public Double calculateCurrentValue(Investment i) {
+        if (i.getCurrentPrice() == null || i.getQuantity() == null) {
+            return 0.0;
+        }
+        return i.getCurrentPrice() * i.getQuantity();
+    }
+
+
+
     private Document toDocument(Investment investment) {
         return new Document()
                 .append("userId", investment.getUserId())
@@ -106,10 +181,29 @@ public class InvestmentBean {
         investment.setUserId(doc.getObjectId("userId"));
         investment.setType(doc.getString("type"));
         investment.setName(doc.getString("name"));
-        investment.setAmount(doc.getInteger("amount"));
-        investment.setQuantity(doc.getInteger("quantity"));
+
+        Object amount = doc.get("amount");
+        if (amount instanceof Integer) {
+            investment.setAmount(((Integer) amount).doubleValue());
+        } else if (amount instanceof Double) {
+            investment.setAmount((Double) amount);
+        }
+
+        Object quantity = doc.get("quantity");
+        if (quantity instanceof Integer) {
+            investment.setQuantity(((Integer) quantity).doubleValue());
+        } else if (quantity instanceof Double) {
+            investment.setQuantity((Double) quantity);
+        }
+
+        Object currentValue = doc.get("currentValue");
+        if (currentValue instanceof Integer) {
+            investment.setCurrentValue(((Integer) currentValue).doubleValue());
+        } else if (currentValue instanceof Double) {
+            investment.setCurrentValue((Double) currentValue);
+        }
+
         investment.setPurchaseDate(doc.getDate("purchaseDate"));
-        investment.setCurrentValue(doc.getInteger("currentValue"));
         return investment;
     }
 }

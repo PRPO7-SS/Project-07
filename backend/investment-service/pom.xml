@@ -104,6 +104,12 @@
             <artifactId>microprofile-openapi-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20241224</version>
+        </dependency>
+
     </dependencies>
 
     <build>

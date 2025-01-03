@@ -27,6 +27,17 @@ export class FinancialDataService {
     'Siemens',
   ];
 
+  private readonly allowedCryptos = [
+    'bitcoin',
+    'ethereum',
+    'xrp',
+    'solana',
+    'chainlink',
+    'bnb',
+    'tether',
+    'cardano',
+  ];
+
   constructor(private readonly http: HttpClient) {}
 
   /**
@@ -38,6 +49,32 @@ export class FinancialDataService {
     const url = `${this.baseUrl}/price?symbol=${symbol}&apikey=${this.apiKey}`;
     return this.http.get(url);
   }
+
+  getCryptoList(): Observable<any[]>{
+    return new Observable((observer) => {
+      // Mock data for stock list (Replace with API call if needed)
+      const cryptos = [
+        { symbol: 'BTC', name: 'bitcoin' },
+        { symbol: 'ETH', name: 'ethereum' },
+        { symbol: 'XRP', name: 'xrp' },
+        { symbol: 'SOL', name: 'solana' },
+        { symbol: 'LINK', name: 'chainlink' },
+        { symbol: 'BNB', name: 'bnb' },
+        { symbol: 'USDT', name: 'tether' },
+        { symbol: 'ADA', name: 'cardano' }
+      ]
+
+      // Filter stocks based on the allowed list
+      const filteredCrypto = cryptos.filter((crypto) =>
+        this.allowedCryptos.includes(crypto.name)
+      );
+
+      observer.next(filteredCrypto);
+      observer.complete();
+    });
+  }
+
+
 
   /**
    * Fetches historical prices for a stock or cryptocurrency.

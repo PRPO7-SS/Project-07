@@ -9,10 +9,11 @@ public class Investment {
     private ObjectId userId;
     private String type;
     private String name;
-    private Integer amount;
-    private Integer quantity;
+    private Double amount;
+    private Double quantity;
     private Date purchaseDate;
-    private Integer currentValue;
+    private Double currentPrice;
+    private Double currentValue;
 
     public Investment() {
 
@@ -50,19 +51,19 @@ public class Investment {
         this.name = name;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
@@ -74,11 +75,21 @@ public class Investment {
         this.purchaseDate = purchaseDate;
     }
 
-    public Integer getCurrentValue() {
+    public Double getCurrentValue() {
         return currentValue;
     }
 
-    public void setCurrentValue(Integer currentValue) {
-        this.currentValue = currentValue;
+    public void setCurrentValue(Double value) {
+        this.currentValue = value;
     }
+
+    public Double getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(Double value) {
+        this.currentPrice = value;
+    }
+
+
 }

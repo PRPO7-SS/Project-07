@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NavigationComponent } from '../navigation/navigation.component';
 import { InvestmentsService } from '../services/investment.service';
+import { FinancialDataService } from '../services/financial-data.service';
 import { InvestmentType } from '../models/investment';
 import { CryptoChartComponent } from '../homepage/crypto-chart/crypto-chart.component';
 // import { ModalModule } from 'ngx-bootstrap/modal';
@@ -23,7 +24,7 @@ export class InvestmentsComponent implements OnInit {
     type: '' as InvestmentType,
     name: '',
     amount: 0,
-    quantity: 0,
+    quantity: 0.0,
     purchaseDate: new Date(),
   };
 
@@ -33,6 +34,7 @@ export class InvestmentsComponent implements OnInit {
   selectedInvestment: any = null;
 
   investments: any[] = [];
+  itemList: any[] = [];
   allocation = {
     stocks: 0,
     crypto: 0,
@@ -44,15 +46,19 @@ export class InvestmentsComponent implements OnInit {
     savings: 0,
   };
   availableCapital: number = 0;
+  dataType: string = 'crypto';
+  selectedItem: string = 'bitcoin';
 
   constructor(
-    private readonly investmentService: InvestmentsService
+    private readonly investmentService: InvestmentsService,
+    private readonly finDataService: FinancialDataService,
   ) {}
 
   // protected modalRef?: BsModalRef;
 
   ngOnInit(): void {
     this.fetchInvestments();
+    this.loadItems();
   }
 
   fetchInvestments(): void {
@@ -62,12 +68,35 @@ export class InvestmentsComponent implements OnInit {
     });
   }
 
+  loadItems(): void {
+    if (this.dataType === 'stock') {
+      this.finDataService.getStockList().subscribe(
+        (data: any[]) => {
+          this.selectedItem = 'NVDA';
+          this.itemList = data; // Use the filtered stock list
+        },
+        (error) => console.error('Error loading stocks:', error)
+      );
+    } else if (this.dataType === 'crypto') {
+      this.finDataService.getCryptoList().subscribe(
+        (data: any[]) => {
+          this.selectedItem = 'BTC';
+          this.itemList = data; // Use the filtered stock list
+        },
+        (error) => console.error('Error loading stocks:', error)
+      );
+    }
+  }
+
+  onDataTypeChange(event: any): void {
+    this.dataType = event.target.value;
+    this.selectedItem = '';
+    this.loadItems();
+  }
+
   calculateFluctuation(investment: any): string {
-    if (investment.currentValue) {
       const percentageChange = ((investment.currentValue - investment.amount) / investment.amount) * 100;
       return percentageChange.toFixed(2);
-    }
-    return 'N/A';
   }
 
   calculateAllocations(): void {
