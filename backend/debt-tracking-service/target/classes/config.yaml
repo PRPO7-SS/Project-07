@@ -1,0 +1,13 @@
+kumuluzee:
+  server:
+    http:
+      port: 8086
+    context-path: /
+  logs:
+    level: INFO
+  dev:
+    scan-interval: 5
+  datasource:
+    mongodb:
+      connectionString: ${MONGO_URI}
+      database: "financeApp"

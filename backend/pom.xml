@@ -12,6 +12,7 @@
     <module>savings-goal-service</module>
     <module>investment-service</module>
     <module>budget-service</module>
+    <module>debt-tracking-service</module>
   </modules>
   <properties>
     <maven.compiler.source>17</maven.compiler.source>

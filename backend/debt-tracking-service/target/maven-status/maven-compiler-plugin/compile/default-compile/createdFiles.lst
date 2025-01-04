@@ -1,0 +1,9 @@
+ss/finance/core/RestApplication.class
+ss/finance/core/App.class
+ss/finance/entities/Debt.class
+ss/finance/repositories/DebtRepository.class
+ss/finance/rest/DebtApi.class
+ss/finance/services/DebtBean.class
+ss/finance/serializer/ObjectIdSerializer.class
+ss/finance/core/AccessControlResponseFilter.class
+ss/finance/core/Main.class

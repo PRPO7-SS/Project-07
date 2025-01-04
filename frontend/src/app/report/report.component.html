@@ -1,0 +1,68 @@
+<div class="container">
+    <h1 class="text-center" style="margin-bottom: 20px; margin-top: 10px;">
+      Generate Financial Report
+    </h1>
+  
+    <!-- Date Range Form -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Select Date Range</h5>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="generateReport()">
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input
+              type="date"
+              id="startDate"
+              [(ngModel)]="startDate"
+              name="startDate"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input
+              type="date"
+              id="endDate"
+              [(ngModel)]="endDate"
+              name="endDate"
+              class="form-control"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Generate Report</button>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Display Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Display Report -->
+    <div *ngIf="report" class="mt-4">
+      <h2>Report Summary</h2>
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Transaction Summary</h5>
+        </div>
+        <div class="card-body">
+          <p><strong>Total Income:</strong> ${{ report.totalIncome }}</p>
+          <p><strong>Total Expenses:</strong> ${{ report.totalExpenses }}</p>
+          <p><strong>Net Savings:</strong> ${{ report.netSavings }}</p>
+        </div>
+      </div>
+      <div class="card mt-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Investment Summary</h5>
+        </div>
+        <div class="card-body">
+          <p><strong>Total Investments:</strong> {{ report.totalInvestments }}</p>
+          <p><strong>Total Money Invested:</strong> ${{ report.totalInvested }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
