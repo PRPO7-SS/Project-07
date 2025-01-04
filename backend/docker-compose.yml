@@ -75,12 +75,12 @@ services:
     networks:
       - my_network
 
-  report-service:
+  budget-service:
     build:
-      context: ./report-service
-    container_name: report-service
+      context: budget-service
+    container_name: budget-service
     ports:
-      - "8087:8087"
+      - "8083:8083"
     environment:
       - MONGO_URI
       - JWT_SECRET

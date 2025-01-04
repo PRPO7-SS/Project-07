@@ -1,179 +1,143 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>ss.finance</groupId>
-    <artifactId>backend</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>backend</name>
-
-
-    <modules>
-        <module>common</module>
-        <module>transaction-service</module>
-        <module>user-service</module>
-        <module>savings-goal-service</module>
-        <module>investment-service</module>
-        <module>report-service</module>
-    </modules>
-
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-bom</artifactId>
-                <version>4.0.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- KumuluzEE Core -->
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-core</artifactId>
-                <version>4.0.0</version>
-            </dependency>
-
-
-            <!-- JAX-RS for REST API -->
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-jax-rs-jersey</artifactId>
-                <version>4.0.0</version>
-            </dependency>
-
-            <!-- CDI (Context and Dependency Injection) -->
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-cdi-weld</artifactId>
-                <version>4.0.0</version>
-            </dependency>
-
-            <!-- Logging -->
-            <dependency>
-                <groupId>com.kumuluz.ee.logs</groupId>
-                <artifactId>kumuluzee-logs-log4j2</artifactId>
-                <version>1.4.6</version>
-            </dependency>
-
-            <!-- Jetty Servlet for KumuluzEE -->
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-servlet-jetty</artifactId>
-                <version>4.0.0</version>
-            </dependency>
-
-            <!-- JUnit for Testing -->
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>5.8.1</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongodb-driver-sync</artifactId>
-                <version>4.11.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ss.finance</groupId>
-                <artifactId>transaction-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt</artifactId>
-                <version>0.9.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>4.10.0</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>io.rest-assured</groupId>
-                <artifactId>rest-assured</artifactId>
-                <version>4.4.0</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.cdimascio</groupId>
-                <artifactId>dotenv-java</artifactId>
-                <version>3.0.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>1.3.2</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.weld.servlet</groupId>
-                <artifactId>weld-servlet-core</artifactId>
-                <version>3.1.8.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.kumuluz.ee.openapi</groupId>
-                <artifactId>kumuluzee-openapi-mp</artifactId>
-                <version>1.4.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.kumuluz.ee.config</groupId>
-                <artifactId>kumuluzee-config-mp</artifactId>
-                <version>1.4.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.microprofile.config</groupId>
-                <artifactId>microprofile-config-api</artifactId>
-                <version>1.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.kumuluz.ee.openapi</groupId>
-                <artifactId>kumuluzee-openapi-mp-ui</artifactId>
-                <version>1.4.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.kumuluz.ee.swagger</groupId>
-                <artifactId>kumuluzee-swagger-ui</artifactId>
-                <version>1.2.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.microprofile.openapi</groupId>
-                <artifactId>microprofile-openapi-api</artifactId>
-                <version>1.1.2</version>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
-
-    <repositories>
-        <!-- Maven Central Repository -->
-        <repository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-    </repositories>
-
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ss.finance</groupId>
+  <artifactId>backend</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>backend</name>
+  <modules>
+    <module>common</module>
+    <module>transaction-service</module>
+    <module>user-service</module>
+    <module>savings-goal-service</module>
+    <module>investment-service</module>
+    <module>budget-service</module>
+  </modules>
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.kumuluz.ee</groupId>
+        <artifactId>kumuluzee-bom</artifactId>
+        <version>4.0.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- KumuluzEE Core -->
+      <dependency>
+        <groupId>com.kumuluz.ee</groupId>
+        <artifactId>kumuluzee-core</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <!-- JAX-RS for REST API -->
+      <dependency>
+        <groupId>com.kumuluz.ee</groupId>
+        <artifactId>kumuluzee-jax-rs-jersey</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <!-- CDI (Context and Dependency Injection) -->
+      <dependency>
+        <groupId>com.kumuluz.ee</groupId>
+        <artifactId>kumuluzee-cdi-weld</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <!-- Logging -->
+      <dependency>
+        <groupId>com.kumuluz.ee.logs</groupId>
+        <artifactId>kumuluzee-logs-log4j2</artifactId>
+        <version>1.4.6</version>
+      </dependency>
+      <!-- Jetty Servlet for KumuluzEE -->
+      <dependency>
+        <groupId>com.kumuluz.ee</groupId>
+        <artifactId>kumuluzee-servlet-jetty</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <!-- JUnit for Testing -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.8.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongodb-driver-sync</artifactId>
+        <version>4.11.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>0.9.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>4.10.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <version>4.4.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.github.cdimascio</groupId>
+        <artifactId>dotenv-java</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>1.3.2</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.weld.servlet</groupId>
+        <artifactId>weld-servlet-core</artifactId>
+        <version>3.1.8.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>com.kumuluz.ee.openapi</groupId>
+        <artifactId>kumuluzee-openapi-mp</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.kumuluz.ee.config</groupId>
+        <artifactId>kumuluzee-config-mp</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-api</artifactId>
+        <version>1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>com.kumuluz.ee.openapi</groupId>
+        <artifactId>kumuluzee-openapi-mp-ui</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.kumuluz.ee.swagger</groupId>
+        <artifactId>kumuluzee-swagger-ui</artifactId>
+        <version>1.2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.openapi</groupId>
+        <artifactId>microprofile-openapi-api</artifactId>
+        <version>1.1.2</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <repositories>
+    <!-- Maven Central Repository -->
+    <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
 </project>
