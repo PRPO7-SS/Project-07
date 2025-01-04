@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the re-packaged JAR from the build output
-COPY target/transaction-service-1.0-SNAPSHOT.jar app.jar
+COPY target/report-service-1.0-SNAPSHOT.jar app.jar
 
 
 

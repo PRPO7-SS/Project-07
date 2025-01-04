@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { NavigationComponent } from '../navigation/navigation.component';
 import { InvestmentsService } from '../services/investment.service';
 import { FinancialDataService } from '../services/financial-data.service';
+import { TransactionService } from '../services/transaction.service';
 import { InvestmentType } from '../models/investment';
 import { CryptoChartComponent } from '../homepage/crypto-chart/crypto-chart.component';
 // import { ModalModule } from 'ngx-bootstrap/modal';
@@ -48,10 +49,17 @@ export class InvestmentsComponent implements OnInit {
   availableCapital: number = 0;
   dataType: string = 'crypto';
   selectedItem: string = 'bitcoin';
+  totalInvestments: number = 0;
+  totalStocks: number = 0;
+  totalCrypto: number = 0;
+  currentTotalInvestments: number = 0;
+  currentTotalStocks: number = 0;
+  currentTotalCrypto: number = 0;
 
   constructor(
     private readonly investmentService: InvestmentsService,
     private readonly finDataService: FinancialDataService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   // protected modalRef?: BsModalRef;
@@ -59,11 +67,16 @@ export class InvestmentsComponent implements OnInit {
   ngOnInit(): void {
     this.fetchInvestments();
     this.loadItems();
+    this.calculateAvailableCapital();
   }
 
   fetchInvestments(): void {
     this.investmentService.getInvestments().subscribe((data) => {
       this.investments = data;
+      this.calculateTotalInvestments();
+      this.calculateTotalStocks();
+      this.calculateTotalCrypto();
+      this.updateCurrentValues();
       console.log('Fetched investments:', this.investments);
     });
   }
@@ -88,14 +101,66 @@ export class InvestmentsComponent implements OnInit {
     }
   }
 
-  onDataTypeChange(event: any, edit: boolean): void {
+  onDataTypeChange(event: any): void {
     this.dataType = event.target.value;
-    if(!edit)
-      this.selectedItem = '';
-    else
-      this.selectedItem = this.selectedInvestment.name;
+    this.selectedItem = '';
     this.loadItems();
   }
+
+  calculateAvailableCapital(): void {
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    this.transactionService.getUserTransactions().subscribe({
+      next: (data: any) => {
+        const transactions = data;
+
+        const income = transactions
+          .filter((transaction: any) => {
+            const date = new Date(transaction.date);
+            return (
+              transaction.type === 'Income' &&
+              date.getMonth() === currentMonth &&
+              date.getFullYear() === currentYear
+            );
+          })
+          .reduce((sum: number, transaction: any) => sum + transaction.amount, 0);
+
+        const expenses = transactions
+          .filter((transaction: any) => {
+            const date = new Date(transaction.date);
+            return (
+              transaction.type === 'Expense' &&
+              date.getMonth() === currentMonth &&
+              date.getFullYear() === currentYear
+            );
+          })
+          .reduce((sum: number, transaction: any) => sum + transaction.amount, 0);
+
+        this.availableCapital = income - expenses;
+      },
+      error: (error) => {
+        console.error('Error fetching transactions:', error);
+      },
+    });
+  }
+
+  calculateTotalInvestments(): void {
+    this.totalInvestments = this.investments.reduce((sum, investment) => sum + investment.amount, 0);
+  }
+
+  calculateTotalStocks(): void {
+    this.totalStocks = this.investments
+      .filter((investment) => investment.type.toLowerCase() === 'stock')
+      .reduce((sum, stock) => sum + stock.amount, 0);
+  }
+
+  calculateTotalCrypto(): void {
+    this.totalCrypto = this.investments
+      .filter((investment) => investment.type.toLowerCase() === 'crypto')
+      .reduce((sum, crypto) => sum + crypto.amount, 0);
+  }
+
 
   calculateFluctuation(investment: any): string {
       const percentageChange = ((investment.currentValue - investment.amount) / investment.amount) * 100;
@@ -110,7 +175,7 @@ export class InvestmentsComponent implements OnInit {
       return;
     }
 
-    this.calculatedAllocation.stocks = (this.allocation.stocks / 100) * this.availableCapital;
+    this.calculatedAllocation.stocks = ((this.allocation.stocks / 100) * this.availableCapital);
     this.calculatedAllocation.crypto = (this.allocation.crypto / 100) * this.availableCapital;
     this.calculatedAllocation.savings = (this.allocation.savings / 100) * this.availableCapital;
 
@@ -169,6 +234,24 @@ export class InvestmentsComponent implements OnInit {
         console.error('Error deleting investment:', error);
       },
     });
+  }
+
+  updateCurrentValues(): void {
+        this.currentTotalInvestments = 0;
+        this.currentTotalStocks = 0;
+        this.currentTotalCrypto = 0;
+
+        this.investments.forEach((investment) => {
+
+          this.currentTotalInvestments += investment.currentValue;
+
+          // Dodamo v ustrezno kategorijo
+          if (investment.type.toLowerCase() === 'stock') {
+            this.currentTotalStocks += investment.currentValue;
+          } else if (investment.type.toLowerCase() === 'crypto') {
+            this.currentTotalCrypto += investment.currentValue;
+          }
+        });
   }
 
   protected closeModal() {

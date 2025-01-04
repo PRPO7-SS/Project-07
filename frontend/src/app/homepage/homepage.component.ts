@@ -6,7 +6,7 @@ import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { FullCalendarModule } from '@fullcalendar/angular';
-//import { TransactionService } from '../services/transaction.service';
+import { TransactionService } from '../services/transaction.service';
 import { SavingsGoalService } from '../services/savings-goal.service';
 import { Transaction } from '../models/transaction';
 import { SavingsGoal } from '../models/savingsGoal';
@@ -60,7 +60,8 @@ export class HomepageComponent implements OnInit {
   goalId = '';
 
   constructor(
-    private readonly savingsGoalService: SavingsGoalService
+    private readonly savingsGoalService: SavingsGoalService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   ngOnInit(): void {
@@ -69,39 +70,46 @@ export class HomepageComponent implements OnInit {
   }
 
   loadToCalendar(): void {
-    const transactionData = { transactions: [] }; // Placeholder for transactions as []
-    const aggregatedTransactions = this.aggregateTransactions(transactionData.transactions);
-    const transactionEvents = aggregatedTransactions.map((entry) => ({
-      title: `${entry.type}: ${entry.amount}€`,
-      start: entry.date,
-      backgroundColor: entry.type === 'Income' ? '#28a745' : '#dc3545',
-      borderColor: entry.type === 'Income' ? '#28a745' : '#dc3545',
-      textColor: '#fff',
-      allDay: true,
-    }));
-
-    this.savingsGoalService.getSavingsGoals().subscribe({
-      next: (savingsGoalData: any[]) => {
-        const savingsGoalEvents = savingsGoalData.map((goal) => ({
-          title: goal.goalName,
-          start: goal.deadline,
-          backgroundColor: '#fff',
-          borderColor: '#000',
-          textColor: '#000',
+    this.transactionService.getUserTransactions().subscribe({
+      next: (transactionData) => {
+        const aggregatedTransactions = this.aggregateTransactions(transactionData);
+        const transactionEvents = aggregatedTransactions.map((entry) => ({
+          title: `${entry.type === 'Income' ? 'Income' : 'Expense'}: ${entry.amount}€`,
+          start: entry.date,
+          backgroundColor: entry.type === 'Income' ? '#28a745' : '#dc3545',
+          borderColor: entry.type === 'Income' ? '#28a745' : '#dc3545',
+          textColor: '#fff',
           allDay: true,
         }));
-        const events = [...transactionEvents, ...savingsGoalEvents];
-        this.calendarOptions.events = events;
+
+        this.savingsGoalService.getSavingsGoals().subscribe({
+          next: (savingsGoalData: any[]) => {
+            const savingsGoalEvents = savingsGoalData.map((goal) => ({
+              title: goal.goalName,
+              start: goal.deadline,
+              backgroundColor: '#fff',
+              borderColor: '#000',
+              textColor: '#000',
+              allDay: true,
+            }));
+            const events = [...transactionEvents, ...savingsGoalEvents];
+            this.calendarOptions.events = events;
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              this.calendarOptions.events = transactionEvents;
+            } else {
+              console.error('Error loading savings goals:', err);
+            }
+          }
+        });
       },
       error: (err) => {
-        if (err.status === 404) {
-          this.calendarOptions.events = transactionEvents;
-        } else {
-          console.error('Error loading savings goals', err);
-        }
+        console.error('Error loading transactions:', err);
       }
     });
   }
+
 
   private aggregateTransactions(transactions: Transaction[]): { date: string; type: 'Income' | 'Expense'; amount: number }[] {
     const map = new Map<string, { date: string; type: 'Income' | 'Expense'; amount: number }>();
@@ -120,7 +128,21 @@ export class HomepageComponent implements OnInit {
   handleDateClick(info: any): void {
     const clickedDate = info.dateStr;
 
-    this.selectedTransactions = []; // Placeholder for empty transactions
+    this.transactionService.getUserTransactions().subscribe({
+      next: (data) => {
+        this.selectedTransactions = data.filter(
+          (transaction: Transaction) =>
+            new Date(transaction.date).toISOString().split('T')[0] === clickedDate
+        );
+      },
+      error: (err) => {
+        if (err.status === 404) {
+          this.selectedGoals = [];
+        } else {
+          console.error('Error loading savings goals for date', err);
+        }
+      }
+    });
 
     this.savingsGoalService.getSavingsGoals().subscribe({
       next: (data) => {

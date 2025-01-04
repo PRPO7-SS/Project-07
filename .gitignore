@@ -5,6 +5,7 @@ backend/common/target/
 backend/transaction-service/target/
 backend/investment-service/target/
 backend/savings-goal-service/target/
+backend/report-service/target/
 
 # Node.js modules
 frontend/node_modules/
