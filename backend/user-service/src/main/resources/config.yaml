@@ -11,6 +11,14 @@ kumuluzee:
     mongodb:
       connectionString:  ${MONGO_URI}
       database: "financeApp"
+  openapi:
+    enabled: true
+    servers:
+      - url: http://localhost:8080
+    info:
+      title: "API Documentation"
+      version: "1.0.0"
+      description: "Opis REST API endpointov za uporabniško mikrostoritev"
   security:
     providers:
       jwt:

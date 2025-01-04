@@ -16,22 +16,27 @@
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-servlet-jetty</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-jax-rs-jersey</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-cdi-weld</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.kumuluz.ee.logs</groupId>
             <artifactId>kumuluzee-logs-log4j2</artifactId>
         </dependency>
+
         <dependency>
             <groupId>ss.finance</groupId>
             <artifactId>common</artifactId>
@@ -52,7 +57,6 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
         </dependency>
 
         <dependency>
@@ -65,9 +69,30 @@
             <artifactId>rest-assured</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.kumuluz.ee.openapi</groupId>
+            <artifactId>kumuluzee-openapi-mp</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>com.kumuluz.ee.config</groupId>
+            <artifactId>kumuluzee-config-mp</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>com.kumuluz.ee.openapi</groupId>
+            <artifactId>kumuluzee-openapi-mp-ui</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kumuluz.ee.swagger</groupId>
+            <artifactId>kumuluzee-swagger-ui</artifactId>
+        </dependency>
 
     </dependencies>
 
