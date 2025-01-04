@@ -4,6 +4,9 @@ import org.bson.types.ObjectId;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 public class Investment {
     private String _id;
     private ObjectId userId;

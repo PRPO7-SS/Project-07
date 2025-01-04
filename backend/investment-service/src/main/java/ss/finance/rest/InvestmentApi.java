@@ -146,7 +146,16 @@ public class InvestmentApi {
             content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Internal server error. Please try again later.\"}"))
     )
     @POST
-    public Response addInvestment(@CookieParam("auth_token") String token, Investment investment) {
+    public Response addInvestment(@CookieParam("auth_token") String token, @RequestBody(
+            description = "Investment details including type, name, amount, quantity, and purchase date",
+            required = true,
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(
+                            example = "{ \"type\": \"stock\", \"name\": \"NVDA\", \"amount\": 1000.50, \"quantity\": 10, \"purchaseDate\": \"2025-01-01\" }"
+                    )
+            )
+    )Investment investment) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             investment.setUserId(userId);

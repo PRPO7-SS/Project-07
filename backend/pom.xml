@@ -159,6 +159,13 @@
                 <version>1.2.2</version>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/com.kumuluz.ee.swagger/kumuluzee-swagger -->
+            <dependency>
+                <groupId>com.kumuluz.ee.swagger</groupId>
+                <artifactId>kumuluzee-swagger</artifactId>
+                <version>1.2.2</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.eclipse.microprofile.openapi</groupId>
                 <artifactId>microprofile-openapi-api</artifactId>

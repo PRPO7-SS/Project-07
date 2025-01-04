@@ -4,7 +4,7 @@ kumuluzee:
       port: 8085
     context-path: /
   logs:
-    level: DEBUG
+    level: INFO
   dev:
     scan-interval: 5
   datasource:
