@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -132,7 +133,7 @@ public class AuthApi {
 
 
     @POST
-    @Path("/token/refresh")
+    @Path("/refresh")
     @Produces(MediaType.APPLICATION_JSON)
     public Response refreshToken(@CookieParam("refresh_token") String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
@@ -142,22 +143,18 @@ public class AuthApi {
         }
 
         try {
-            Claims claims = jwtUtil.extractClaims(refreshToken);
-            String userId = claims.get("userId", String.class);
+            ObjectId userId = jwtUtil.extractRefreshUserId(refreshToken);
 
-            // Optionally check if the user still exists
-            User user = userBean.getUserById(new ObjectId(userId));
+            User user = userBean.getUserById(userId);
             if (user == null) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"message\": \"User not found.\"}")
                         .build();
             }
 
-            // Generate a new access token
-            String newAccessToken = jwtUtil.generateToken(new ObjectId(userId), user.getEmail());
+            String newAccessToken = jwtUtil.generateToken(userId, user.getEmail());
 
-            // Create a cookie for the new access token
-            NewCookie accessTokenCookie = new NewCookie("auth_token", newAccessToken, "/", null, "Access token", 3600, false);
+            NewCookie accessTokenCookie = new NewCookie("auth_token", newAccessToken, "/", null, "Access token", 3600000, false);
 
             return Response.ok("{\"message\": \"Token refreshed successfully\"}")
                     .cookie(accessTokenCookie)
@@ -167,6 +164,34 @@ public class AuthApi {
                     .entity("{\"message\": \"Invalid refresh token.\"}")
                     .build();
         }
+    }
+
+    @GET
+    @Path("/check-refresh")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkRefreshToken(@CookieParam("refresh_token") String refreshToken) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"valid\": false}")
+                    .build();
+        }
+
+        try {
+            ObjectId userId = jwtUtil.extractRefreshUserId(refreshToken);
+
+            User user = userBean.getUserById(userId);
+            if (user == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"valid\": false}")
+                        .build();
+            }
+            return  Response.ok("{\"valid\": true}").build();
+        }catch (Exception e) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"message\": \"Refresh token expired\"}")
+                    .build();
+        }
+
     }
 
 

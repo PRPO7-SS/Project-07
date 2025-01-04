@@ -120,7 +120,7 @@ export class SettingsComponent implements OnInit {
 
         setTimeout(() => {
           this.closeModal();
-          this.router.navigate(['/introductory']);
+          this.router.navigate(['/']);
         }, 3000);
       },
       error: () => {

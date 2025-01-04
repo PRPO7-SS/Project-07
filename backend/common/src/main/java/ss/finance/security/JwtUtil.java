@@ -87,5 +87,28 @@ public class JwtUtil {
         // Convert the String userId to an ObjectId
         return new ObjectId(userIdString);  // Assuming userIdString is a valid ObjectId string
     }
+
+
+    public Claims extractRefreshClaims(String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(refreshSecretKey.getBytes(StandardCharsets.UTF_8)) // Use StandardCharsets.UTF_8
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("Refresh token has expired", e);
+        } catch (io.jsonwebtoken.SignatureException e) {
+            throw new RuntimeException("Invalid refresh token signature", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error extracting claims", e);
+        }
+    }
+
+    public ObjectId extractRefreshUserId(String token) {
+        Claims claims = extractRefreshClaims(token);
+        String userIdString = claims.get("userId", String.class);
+
+        return new ObjectId(userIdString);
+    }
 }
 
