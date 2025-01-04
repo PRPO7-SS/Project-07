@@ -9,5 +9,5 @@ kumuluzee:
     scan-interval: 5
   datasource:
     mongodb:
-      connectionString: "mongodb://localhost:27017"
+      connectionString: ${MONGO_URI}
       database: "financeApp"
