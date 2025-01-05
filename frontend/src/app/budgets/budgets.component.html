@@ -27,14 +27,16 @@
           <tr *ngFor="let budget of budgets">
             <td>{{ budget.category }}</td>
             <td>{{ budget.monthlyLimit | number: '1.2-2' }}</td>
-            <td>{{ budget.remainingBudget | number: '1.2-2' }}</td>
-            <td>
-              <button class="btn btn-warning btn-sm me-2" (click)="editBudget(budget)">
-                Edit
-              </button>
-              <button class="btn btn-danger btn-sm" (click)="deleteBudget(budget.category)">
-                Delete
-              </button>
+            <td [ngClass]="{ 'text-danger': budget.remainingBudget < 0, 'text-success': budget.remainingBudget >= 0 }">
+              {{ budget.remainingBudget | number: '1.2-2' }}
+            </td>
+            <td class="action-buttons d-flex justify-content-around">
+                <button class="btn btn-warning btn-sm" (click)="editBudget(budget)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" (click)="deleteBudget(budget.category)">
+                  <i class="bi bi-trash"></i>
+                </button>
             </td>
           </tr>
           <tr *ngIf="budgets.length === 0">
@@ -52,51 +54,51 @@
         </h3>
 
         <form [formGroup]="budgetForm" (ngSubmit)="selectedBudget ? updateBudget() : submitBudget()">
-          <!-- Category Input -->
-          <div class="mb-3">
-            <label for="category" class="form-label">Category</label>
-            <input
-              id="category"
-              type="text"
-              class="form-control"
-              formControlName="category"
-              [readonly]="!!selectedBudget"
-              placeholder="Enter budget category"
-              required
-            />
-            <div *ngIf="budgetForm.get('category')?.invalid && budgetForm.get('category')?.touched" class="text-danger">
-              Category is required.
+            <!-- Category Input -->
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <select
+                id="category"
+                class="form-select"
+                formControlName="category"
+                [disabled]="!!selectedBudget"
+                required
+              >
+                <option *ngFor="let category of budgetCategories" [value]="category">{{ category }}</option>
+              </select>
+              <div *ngIf="budgetForm.get('category')?.invalid && budgetForm.get('category')?.touched" class="text-danger">
+                Category is required.
+              </div>
             </div>
-          </div>
-
-          <!-- Monthly Limit Input -->
-          <div class="mb-3">
-            <label for="monthlyLimit" class="form-label">Monthly Limit (€)</label>
-            <input
-              id="monthlyLimit"
-              type="number"
-              class="form-control"
-              formControlName="monthlyLimit"
-              placeholder="Enter monthly limit"
-              required
-            />
-            <div
-              *ngIf="budgetForm.get('monthlyLimit')?.invalid && budgetForm.get('monthlyLimit')?.touched"
-              class="text-danger"
-            >
-              Monthly limit must be greater than 0.
+          
+            <!-- Monthly Limit Input -->
+            <div class="mb-3">
+              <label for="monthlyLimit" class="form-label">Monthly Limit (€)</label>
+              <input
+                id="monthlyLimit"
+                type="number"
+                class="form-control"
+                formControlName="monthlyLimit"
+                placeholder="Enter monthly limit"
+                required
+              />
+              <div
+                *ngIf="budgetForm.get('monthlyLimit')?.invalid && budgetForm.get('monthlyLimit')?.touched"
+                class="text-danger"
+              >
+                Monthly limit must be greater than 0.
+              </div>
             </div>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="btn btn-primary w-100">
-            {{ selectedBudget ? 'Save Changes' : 'Add Budget' }}
-          </button>
-
-          <!-- Cancel Button -->
-          <button *ngIf="selectedBudget" type="button" class="btn btn-secondary w-100 mt-2" (click)="resetForm()">
-            Cancel
-          </button>
+          
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100">
+              {{ selectedBudget ? 'Save Changes' : 'Add Budget' }}
+            </button>
+          
+            <!-- Cancel Button -->
+            <button *ngIf="selectedBudget" type="button" class="btn btn-secondary w-100 mt-2" (click)="resetForm()">
+              Cancel
+            </button>
         </form>
       </div>
     </div>
