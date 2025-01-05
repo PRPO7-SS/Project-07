@@ -8,6 +8,7 @@ import { FinanceComponent } from './finance/finance.component';
 import { ReportsComponent } from './reports/reports.component';
 import { InvestmentsComponent  } from './investments/investments.component';
 import { authGuard } from './guards/auth.guard';
+import { BudgetsComponent } from './budgets/budgets.component';
 
 
 export const routes: Routes = [
@@ -18,6 +19,7 @@ export const routes: Routes = [
    { path: 'finance', component: FinanceComponent, canActivate: [authGuard] },
    { path: 'report', component: ReportsComponent },
    { path: 'investments', component: InvestmentsComponent, canActivate: [authGuard] },
+   { path: 'budgets', component: BudgetsComponent, canActivate: [authGuard] },
    { path: '', component: LandingPageComponent },
    { path: '**', redirectTo: 'home' },
 ];

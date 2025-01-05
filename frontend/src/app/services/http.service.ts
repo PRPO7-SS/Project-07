@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { BudgetService } from './budgets.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +12,10 @@ export class HttpService {
   private readonly microserviceUrls = {
     userService: 'http://localhost:8080',
     transactionService: 'http://localhost:8081',
-    investmentService: 'http://localhost:8083',
+    //investmentService: 'http://localhost:8083',
     savingsGoalService: 'http://localhost:8084',
     investmentSer: 'http://localhost:8085',
+    budgetService: 'http://localhost:8083',
   };
 
   constructor(private readonly http: HttpClient) {}

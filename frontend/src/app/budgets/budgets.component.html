@@ -1,0 +1,105 @@
+<app-navigation></app-navigation>
+<div class="container mt-4">
+  <div class="row">
+    <!-- Left Column: Budgets Overview -->
+    <div class="col-12 col-lg-6">
+      <h2 class="mb-4">Manage Your Budgets</h2>
+
+      <!-- Notifications -->
+      <div *ngIf="successMessage" class="alert alert-success" role="alert">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Budgets Table -->
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Monthly Limit (€)</th>
+            <th>Remaining (€)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let budget of budgets">
+            <td>{{ budget.category }}</td>
+            <td>{{ budget.monthlyLimit | number: '1.2-2' }}</td>
+            <td>{{ budget.remainingBudget | number: '1.2-2' }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm me-2" (click)="editBudget(budget)">
+                Edit
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="deleteBudget(budget.category)">
+                Delete
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="budgets.length === 0">
+            <td colspan="4" class="text-center">No budgets found. Add one below!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right Column: Budget Form -->
+    <div class="col-12 col-lg-6">
+      <div class="card p-4">
+        <h3 class="card-title text-center mb-4">
+          {{ selectedBudget ? 'Edit Budget' : 'Add Budget' }}
+        </h3>
+
+        <form [formGroup]="budgetForm" (ngSubmit)="selectedBudget ? updateBudget() : submitBudget()">
+          <!-- Category Input -->
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input
+              id="category"
+              type="text"
+              class="form-control"
+              formControlName="category"
+              [readonly]="!!selectedBudget"
+              placeholder="Enter budget category"
+              required
+            />
+            <div *ngIf="budgetForm.get('category')?.invalid && budgetForm.get('category')?.touched" class="text-danger">
+              Category is required.
+            </div>
+          </div>
+
+          <!-- Monthly Limit Input -->
+          <div class="mb-3">
+            <label for="monthlyLimit" class="form-label">Monthly Limit (€)</label>
+            <input
+              id="monthlyLimit"
+              type="number"
+              class="form-control"
+              formControlName="monthlyLimit"
+              placeholder="Enter monthly limit"
+              required
+            />
+            <div
+              *ngIf="budgetForm.get('monthlyLimit')?.invalid && budgetForm.get('monthlyLimit')?.touched"
+              class="text-danger"
+            >
+              Monthly limit must be greater than 0.
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary w-100">
+            {{ selectedBudget ? 'Save Changes' : 'Add Budget' }}
+          </button>
+
+          <!-- Cancel Button -->
+          <button *ngIf="selectedBudget" type="button" class="btn btn-secondary w-100 mt-2" (click)="resetForm()">
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer [showFullFooter]="true"></app-footer>

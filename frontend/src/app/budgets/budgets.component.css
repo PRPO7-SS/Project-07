@@ -1,0 +1,113 @@
+/* Global container styling */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styling for the form section */
+  form {
+    margin-bottom: 20px;
+  }
+  
+  form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  form input,
+  form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  form button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  form button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Styling for the table section */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  table th,
+  table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  table th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  table td:last-child {
+    text-align: center;
+  }
+  
+  /* Button styling inside the table */
+  .action-buttons button {
+    padding: 5px 10px;
+    font-size: 12px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .action-buttons .edit-btn {
+    background-color: #ffc107;
+  }
+  
+  .action-buttons .edit-btn:hover {
+    background-color: #e0a800;
+  }
+  
+  .action-buttons .delete-btn {
+    background-color: #dc3545;
+  }
+  
+  .action-buttons .delete-btn:hover {
+    background-color: #c82333;
+  }
+  
+  /* Responsive design for smaller screens */
+  @media (max-width: 768px) {
+    .container {
+      padding: 10px;
+    }
+  
+    table {
+      font-size: 14px;
+    }
+  
+    form input,
+    form select {
+      font-size: 12px;
+    }
+  }
