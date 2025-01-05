@@ -1,26 +1,19 @@
 <footer class="footer-background">
   <div class="container text-center py-4">
-      <!-- Buttons for specific pages -->
-      <div class="footer-buttons mb-3" *ngIf="showFullFooter">
-          <!-- View Summary button opens the modal -->
-          <button 
-            class="btn btn-outline-secondary me-2" 
-            data-bs-toggle="modal" 
-            data-bs-target="#summaryModal">
-            View Summary
-          </button>
-          <!-- Go to Dashboard button remains functional -->
-          <button class="btn btn-outline-secondary">
-            Go to Dashboard
-          </button>
-        </div>
+    <!-- Buttons for specific pages -->
+    <div class="footer-buttons mb-3" *ngIf="showFullFooter">
+      <!-- Go to Dashboard button -->
+      <button class="btn btn-outline-secondary" (click)="goToDashboard()">
+        Go to Dashboard
+      </button>
+    </div>
 
-      <!-- Main footer text -->
-      <p class="mb-0">© 2024 FinanceBro. All rights reserved.</p>
-      <small>
-          <a href="#" class="text-muted me-3">Privacy Policy</a>
-          <a href="#" class="text-muted">Terms of Service</a>
-      </small>
+    <!-- Main footer text -->
+    <p class="mb-0">© 2024 FinanceBro. All rights reserved.</p>
+    <small>
+      <a href="#" class="text-muted me-3">Privacy Policy</a>
+      <a href="#" class="text-muted">Terms of Service</a>
+    </small>
   </div>
 </footer>
 
@@ -46,18 +39,18 @@
         </form>
       </div>
       <div class="modal-footer">
-          <button 
-            type="button" 
-            class="btn-close-custom me-2" 
-            data-bs-dismiss="modal">
-            Close
-          </button>
-          <button 
-            type="button" 
-            class="btn-green-custom" 
-            (click)="goToReport()">
-            Generate Report
-          </button>
+        <button 
+          type="button" 
+          class="btn-close-custom me-2" 
+          data-bs-dismiss="modal">
+          Close
+        </button>
+        <button 
+          type="button" 
+          class="btn-green-custom" 
+          (click)="goToReport()">
+          Generate Report
+        </button>
       </div>
     </div>
   </div>
