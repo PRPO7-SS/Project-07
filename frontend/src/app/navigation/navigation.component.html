@@ -17,13 +17,22 @@
 
         <!-- Overview -->
         <li class="nav-item" *ngIf="showFullNav">
-          <a class="nav-link active" routerLink="/finance" routerLinkActive="active">Overview</a>
+          <a class="nav-link" routerLink="/finance" routerLinkActive="active">
+            Overview
+          </a>
         </li>
 
-        <!-- Investments (no dropdown) -->
+        <!-- Investments -->
         <li class="nav-item" *ngIf="showFullNav">
           <a class="nav-link" routerLink="/investments" routerLinkActive="active">
             Investments
+          </a>
+        </li>
+
+        <!-- Budgets -->
+        <li class="nav-item" *ngIf="showFullNav">
+          <a class="nav-link" routerLink="/budgets" routerLinkActive="active">
+            Budgets
           </a>
         </li>
       </ul>
