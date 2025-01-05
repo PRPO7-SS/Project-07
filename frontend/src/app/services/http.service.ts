@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { BudgetService } from './budgets.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +15,7 @@ export class HttpService {
     savingsGoalService: 'http://localhost:8084',
     investmentSer: 'http://localhost:8085',
     budgetService: 'http://localhost:8083',
+    debtService: 'http://localhost:8086',
   };
 
   constructor(private readonly http: HttpClient) {}
