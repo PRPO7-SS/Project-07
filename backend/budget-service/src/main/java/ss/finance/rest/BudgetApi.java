@@ -16,12 +16,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import ss.finance.entities.Budget;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.BudgetBean;
 import ss.finance.services.BudgetUpdateRequest;
 
+@Tag(name = "Budgets", description = "Endpoints for managing budgets")
 @Path("/budget")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -33,17 +40,31 @@ public class BudgetApi {
     @Inject
     private JwtUtil jwtUtil;
 
-    @Inject
-    private BudgetUpdateRequest request;
-
     private static final Logger logger = Logger.getLogger(BudgetApi.class.getName());
 
-
+    @Operation(summary = "Add a new budget",
+            description = "Creates a new budget for the authenticated user.")
+    @APIResponse(
+            responseCode = "201",
+            description = "Budget added successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Budget added successfully\"}"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Server error occurred",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @POST
-    public Response addBudget(Budget budget, @CookieParam("auth_token") String token) {
+    public Response addBudget(
+            @RequestBody(description = "Budget data to be created", required = true, content = @Content(schema = @Schema(implementation = Budget.class))) Budget budget,
+            @CookieParam("auth_token") String token) {
         try {
             logger.info("Received token: " + token);
-
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"message\": \"Token is missing or invalid\"}")
@@ -52,8 +73,6 @@ public class BudgetApi {
 
             ObjectId userId = jwtUtil.extractUserId(token);
             budget.setUserId(userId);
-
-            // Normalizacija kategorije
             budget.setCategory(
                 budget.getCategory().substring(0, 1).toUpperCase() + budget.getCategory().substring(1).toLowerCase()
             );
@@ -70,11 +89,30 @@ public class BudgetApi {
         }
     }
 
+    @Operation(summary = "Get all budgets",
+            description = "Retrieves all budgets for the authenticated user.")
+    @APIResponse(
+            responseCode = "200",
+            description = "List of budgets",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "[{\"category\": \"Groceries\", \"monthlyLimit\": 300, \"remainingBudget\": 150}]"))
+    )
+    @APIResponse(
+            responseCode = "204",
+            description = "No budgets found"
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Server error occurred",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @GET
     public Response getBudgets(@CookieParam("auth_token") String token) {
         try {
-            logger.info("Received token: " + token);
-
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"message\": \"Token is missing or invalid\"}")
@@ -82,8 +120,6 @@ public class BudgetApi {
             }
 
             ObjectId userId = jwtUtil.extractUserId(token);
-            logger.info("Extracted userId: " + userId);
-
             var budgets = budgetBean.getBudgetsByUserId(userId);
 
             if (budgets.isEmpty()) {
@@ -92,33 +128,46 @@ public class BudgetApi {
 
             return Response.ok(budgets).build();
         } catch (Exception e) {
-            logger.severe("Error retrieving transactions: " + e.getMessage());
+            logger.severe("Error retrieving budgets: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
     }
 
+    @Operation(summary = "Update a budget",
+            description = "Updates the monthly limit of a specific budget by category.")
+    @APIResponse(
+            responseCode = "200",
+            description = "Budget updated successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Budget updated successfully\"}"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Server error occurred",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @PUT
     @Path("/{categoryName}")
-    public Response updateBudget(@PathParam("categoryName") String categoryName, @CookieParam("auth_token") String token, BudgetUpdateRequest request) {
+    public Response updateBudget(
+            @PathParam("categoryName") String categoryName,
+            @CookieParam("auth_token") String token,
+            @RequestBody(description = "Request body containing the new monthly limit", required = true, content = @Content(schema = @Schema(implementation = BudgetUpdateRequest.class))) BudgetUpdateRequest request) {
         try {
-            logger.info("Received token: " + token);
-    
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"message\": \"Token is missing or invalid\"}")
                         .build();
             }
-    
+
             ObjectId userId = jwtUtil.extractUserId(token);
-            logger.info("Extracted userId: " + userId);
-    
             String normalizedCategoryName = categoryName.substring(0, 1).toUpperCase() + categoryName.substring(1).toLowerCase();
-            double newLimit = request.getNewLimit();
-            budgetBean.updateBudget(userId, normalizedCategoryName, newLimit);
-            logger.info("Budget updated successfully for category: " + normalizedCategoryName);
-    
+            budgetBean.updateBudget(userId, normalizedCategoryName, request.getNewLimit());
             return Response.ok("{\"message\": \"Budget updated successfully\"}").build();
         } catch (Exception e) {
             logger.severe("Error updating budget: " + e.getMessage());
@@ -128,26 +177,36 @@ public class BudgetApi {
         }
     }
 
+    @Operation(summary = "Delete a budget",
+            description = "Deletes a budget by category.")
+    @APIResponse(
+            responseCode = "200",
+            description = "Budget deleted successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Budget deleted successfully\"}"))
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Budget not found",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Budget not found for category: Groceries\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Server error occurred",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @DELETE
     @Path("/{categoryName}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteBudget(@PathParam("categoryName") String categoryName, @CookieParam("auth_token") String token) {
         try {
-            logger.info("Received request to delete budget for category: " + categoryName);
-    
-            // Validacija tokena
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"message\": \"Token is missing or invalid\"}")
                         .build();
             }
-    
-            // Ekstrakcija userId iz tokena
+
             ObjectId userId = jwtUtil.extractUserId(token);
-    
-            // Izbriši budget iz baze
             boolean deleted = budgetBean.deleteBudget(userId, categoryName);
-    
+
             if (deleted) {
                 return Response.ok("{\"message\": \"Budget deleted successfully\"}").build();
             } else {
