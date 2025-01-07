@@ -18,11 +18,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import ss.finance.entities.Debt;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.DebtBean;
 
+@Tag(name = "Debts", description = "Endpoints for managing debts")
 @Path("/debts")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,19 +43,42 @@ public class DebtApi {
 
     private static final Logger logger = Logger.getLogger(DebtApi.class.getName());
 
+    @Operation(summary = "Add a debt", description = "Creates a new debt for the authenticated user")
+    @APIResponse(
+            responseCode = "201",
+            description = "Debt created successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Debt added successfully\"}"))
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Invalid input",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Deadline cannot be in the past\"}"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @POST
-    public Response addDebt(Debt debt, @CookieParam("auth_token") String token) {
+    public Response addDebt(
+            @RequestBody(description = "Debt details", required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Debt.class))) 
+            Debt debt, 
+            @CookieParam("auth_token") String token) {
         try {
             ObjectId userId = jwtUtil.extractUserId(token);
             debt.setUserId(userId);
-    
-            // Preverjanje za deadline
+
             if (debt.getDeadline() != null && debt.getDeadline().before(new Date())) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"message\": \"Deadline cannot be in the past\"}")
                         .build();
             }
-    
+
             debtBean.addDebt(debt);
             return Response.status(Response.Status.CREATED)
                     .entity("{\"message\": \"Debt added successfully\"}")
@@ -60,81 +90,106 @@ public class DebtApi {
         }
     }
 
+    @Operation(summary = "Get all debts", description = "Retrieves all debts for the authenticated user")
+    @APIResponse(
+            responseCode = "200",
+            description = "List of debts",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "[{\"id\": \"<debt_id>\", \"creditor\": \"Bank A\", \"amount\": 2000, \"deadline\": \"2023-12-01\"}]"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
     @GET
     public Response getDebts(@CookieParam("auth_token") String token) {
-        ObjectId userId = jwtUtil.extractUserId(token);
-        List<Debt> debts = debtBean.getDebtsByUserId(userId);
-        if (debts.isEmpty()) {
-            return Response.status(Response.Status.NO_CONTENT).build();
-        }
-        return Response.ok(debts).build();
-    }
-
-    @GET
-    @Path("/{id}")
-    public Response getDebtById(@PathParam("id") String id, @CookieParam("auth_token") String token) {
         try {
-            // Check if the token is valid
-            logger.info("Received token: " + token);
-            if (token == null || token.isEmpty()) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"message\": \"Token is missing or invalid\"}")
-                        .build();
-            }
-
-            // Validate the provided ID
-            if (id == null || id.length() != 24 || !id.matches("[a-fA-F0-9]{24}")) {
-                logger.warning("Invalid debt ID format: " + id);
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"message\": \"Invalid debt ID format\"}")
-                        .build();
-            }
-
             ObjectId userId = jwtUtil.extractUserId(token);
-            logger.info("Extracted userId: " + userId);
+            List<Debt> debts = debtBean.getDebtsByUserId(userId);
 
-            ObjectId debtObjectId = new ObjectId(id);
-            Debt debt = debtBean.getDebtById(debtObjectId);
-
-            // Check if the debt exists and belongs to the user
-            if (debt == null || !debt.getUserId().equals(userId)) {
-                logger.warning("Debt not found or does not belong to the user: " + id);
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("{\"message\": \"Debt not found or does not belong to the user\"}")
-                        .build();
+            if (debts.isEmpty()) {
+                return Response.status(Response.Status.NO_CONTENT).build();
             }
 
-            logger.info("Fetched debt: " + debt);
-            return Response.ok(debt).build();
+            return Response.ok(debts).build();
         } catch (Exception e) {
-            logger.severe("Error retrieving debt: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
     }
 
+    @Operation(summary = "Get a debt by ID", description = "Retrieves a specific debt by its ID")
+    @APIResponse(
+            responseCode = "200",
+            description = "Debt details",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"id\": \"<debt_id>\", \"creditor\": \"Bank A\", \"amount\": 2000, \"deadline\": \"2023-12-01\"}"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Debt not found",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Debt not found or does not belong to the user\"}"))
+    )
+    @GET
+    @Path("/{id}")
+    public Response getDebtById(@PathParam("id") String id, @CookieParam("auth_token") String token) {
+        try {
+            if (id == null || id.length() != 24 || !id.matches("[a-fA-F0-9]{24}")) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"message\": \"Invalid debt ID format\"}")
+                        .build();
+            }
+
+            ObjectId userId = jwtUtil.extractUserId(token);
+            ObjectId debtObjectId = new ObjectId(id);
+            Debt debt = debtBean.getDebtById(debtObjectId);
+
+            if (debt == null || !debt.getUserId().equals(userId)) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"message\": \"Debt not found or does not belong to the user\"}")
+                        .build();
+            }
+
+            return Response.ok(debt).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\": \"Server error occurred\"}")
+                    .build();
+        }
+    }
+
+    @Operation(summary = "Update a debt", description = "Updates an existing debt by its ID")
+    @APIResponse(
+            responseCode = "200",
+            description = "Debt updated successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Debt updated successfully\"}"))
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Invalid debt ID",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Invalid debt ID\"}"))
+    )
     @PUT
     @Path("/{debtId}")
     public Response updateDebt(@PathParam("debtId") String debtId, Debt updatedDebt, @CookieParam("auth_token") String token) {
         try {
-            if (token == null || token.isEmpty()) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"message\": \"Token is missing or invalid\"}")
-                        .build();
-            }
-    
             ObjectId userId = jwtUtil.extractUserId(token);
             ObjectId debtObjectId = new ObjectId(debtId);
-    
             Debt existingDebt = debtBean.getDebtById(debtObjectId);
+
             if (existingDebt == null || !existingDebt.getUserId().equals(userId)) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"message\": \"Debt not found or does not belong to the user\"}")
                         .build();
             }
-    
+
             boolean updated = debtBean.updateDebt(debtObjectId, updatedDebt);
+
             if (updated) {
                 return Response.ok("{\"message\": \"Debt updated successfully\"}").build();
             } else {
@@ -143,13 +198,18 @@ public class DebtApi {
                         .build();
             }
         } catch (Exception e) {
-            logger.severe("Error updating debt: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
     }
 
+    @Operation(summary = "Delete a debt", description = "Deletes a specific debt by its ID")
+    @APIResponse(
+            responseCode = "200",
+            description = "Debt deleted successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Debt deleted successfully\"}"))
+    )
     @DELETE
     @Path("/{debtId}")
     public Response deleteDebt(@PathParam("debtId") String debtId) {
@@ -161,6 +221,12 @@ public class DebtApi {
         }
     }
 
+    @Operation(summary = "Mark a debt as paid", description = "Marks a specific debt as paid by its ID")
+    @APIResponse(
+            responseCode = "200",
+            description = "Debt marked as paid successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Debt marked as paid successfully\"}"))
+    )
     @PUT
     @Path("/{debtId}/markAsPaid")
     public Response markDebtAsPaid(@PathParam("debtId") String debtId) {
