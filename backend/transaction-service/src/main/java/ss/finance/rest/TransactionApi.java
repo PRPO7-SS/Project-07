@@ -16,12 +16,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import ss.finance.entities.Transaction;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.TransactionBean;
 import ss.finance.services.TransactionDTO;
 
+@Tag(name = "Transactions", description = "Endpoints for managing user transactions")
 @Path("/transactions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -35,18 +42,37 @@ public class TransactionApi {
 
     private static final Logger logger = Logger.getLogger(TransactionApi.class.getName());
 
+    @Operation(summary = "Add a transaction", description = "Creates a new transaction for the authenticated user")
+    @APIResponse(
+            responseCode = "201",
+            description = "Transaction created successfully",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Transaction created successfully\"}"))
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Invalid or missing body parameters",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Invalid request body\"}"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @POST
-    public Response addTransaction(TransactionDTO transactionDTO, @CookieParam("auth_token") String token) {
+    public Response addTransaction(
+            @RequestBody(description = "Transaction details", required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = TransactionDTO.class))) 
+            TransactionDTO transactionDTO, 
+            @CookieParam("auth_token") String token) {
         try {
-            logger.info("Received transactionDTO: " +
-                "type=" + transactionDTO.getType() +
-                ", amount=" + transactionDTO.getAmount() +
-                ", category=" + transactionDTO.getCategory() +
-                ", date=" + transactionDTO.getDate());
+            logger.info("Received transactionDTO: " + transactionDTO);
 
             if (transactionDTO.getDate() == null) {
-                logger.info("Date is missing. Setting current date.");
-                transactionDTO.setDate(new Date()); // Default to current date
+                transactionDTO.setDate(new Date());
             }
 
             if (token == null || token.isEmpty()) {
@@ -56,8 +82,6 @@ public class TransactionApi {
             }
 
             ObjectId userId = jwtUtil.extractUserId(token);
-            logger.info("Extracted userId: " + userId);
-
             Transaction transaction = new Transaction(
                     userId,
                     transactionDTO.getType(),
@@ -67,7 +91,6 @@ public class TransactionApi {
             );
 
             transactionBean.addTransaction(transaction);
-            logger.info("Transaction added successfully: " + transaction);
 
             return Response.status(Response.Status.CREATED)
                     .entity("{\"message\": \"Transaction created successfully\"}")
@@ -80,11 +103,25 @@ public class TransactionApi {
         }
     }
 
+    @Operation(summary = "Get user transactions", description = "Fetches all transactions for the authenticated user")
+    @APIResponse(
+            responseCode = "200",
+            description = "List of transactions",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "[{\"id\": \"<transaction_id>\", \"type\": \"expense\", \"amount\": 100.0, \"category\": \"Groceries\", \"date\": \"2023-12-01\"}]"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @GET
     public Response getUserTransactions(@CookieParam("auth_token") String token) {
         try {
-            logger.info("Received token: " + token);
-
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"message\": \"Token is missing or invalid\"}")
@@ -92,8 +129,6 @@ public class TransactionApi {
             }
 
             ObjectId userId = jwtUtil.extractUserId(token);
-            logger.info("Extracted userId: " + userId);
-
             var transactions = transactionBean.getTransactionsByUserId(userId);
 
             if (transactions.isEmpty()) {
@@ -109,60 +144,71 @@ public class TransactionApi {
         }
     }
 
+    @Operation(summary = "Delete a transaction", description = "Deletes a transaction by ID")
+    @APIResponse(
+            responseCode = "204",
+            description = "Transaction deleted successfully"
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Invalid transaction ID",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Invalid transaction ID format\"}"))
+    )
+    @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized access",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Token is missing or invalid\"}"))
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Transaction not found",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Transaction not found or does not belong to the user\"}"))
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"message\": \"Server error occurred\"}"))
+    )
     @DELETE
     @Path("/{transactionId}")
-    public Response deleteTransaction(@PathParam("transactionId") String transactionId, @CookieParam("auth_token") String token) {
+    public Response deleteTransaction(
+            @PathParam("transactionId") String transactionId, 
+            @CookieParam("auth_token") String token) {
         try {
-            // Validate the transactionId
             if (transactionId == null || transactionId.length() != 24 || !transactionId.matches("[a-fA-F0-9]{24}")) {
-                logger.severe("Invalid transaction ID format: " + transactionId);
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"message\": \"Invalid transaction ID format\"}")
                         .build();
             }
-    
-            // Validate the token
+
             if (token == null || token.isEmpty()) {
-                logger.severe("Missing or invalid token.");
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("{\"message\": \"Missing or invalid token\"}")
+                        .entity("{\"message\": \"Token is missing or invalid\"}")
                         .build();
             }
-    
-            // Extract userId from token
+
             ObjectId userId = jwtUtil.extractUserId(token);
-            logger.info("Extracted userId: " + userId);
-    
-            // Retrieve the transaction to ensure it belongs to the user
             ObjectId transactionObjectId = new ObjectId(transactionId);
             Transaction transaction = transactionBean.getTransactionById(transactionObjectId);
+
             if (transaction == null || !transaction.getUserId().equals(userId)) {
-                logger.severe("Transaction not found or does not belong to user: " + userId);
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"message\": \"Transaction not found or does not belong to the user\"}")
                         .build();
             }
-    
-            // Delete the transaction
+
             if (transactionBean.deleteTransaction(transactionObjectId)) {
-                logger.info("Transaction deleted successfully: " + transactionId);
-                return Response.status(Response.Status.NO_CONTENT).build(); // 204 No Content
+                return Response.status(Response.Status.NO_CONTENT).build();
             } else {
-                logger.severe("Failed to delete transaction: " + transactionId);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity("{\"message\": \"Failed to delete transaction\"}")
                         .build();
             }
-        } catch (IllegalArgumentException e) {
-            logger.severe("Invalid transaction ID: " + transactionId);
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"message\": \"Invalid transaction ID\"}")
-                    .build();
         } catch (Exception e) {
             logger.severe("Error deleting transaction: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"message\": \"Server error occurred\"}")
                     .build();
         }
-    }    
+    }
 }

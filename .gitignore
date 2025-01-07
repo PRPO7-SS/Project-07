@@ -6,6 +6,8 @@ backend/transaction-service/target/
 backend/investment-service/target/
 backend/savings-goal-service/target/
 backend/report-service/target/
+backend/budget-service/target/
+backend/debt-tracking-service/target/
 
 # Node.js modules
 frontend/node_modules/
