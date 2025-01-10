@@ -7,13 +7,12 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class TransactionService {
-  private readonly serviceName = 'transactionService'; // Specify the microservice name
 
   constructor(private readonly httpService: HttpService) {}
 
   // Fetch all user transactions
   getUserTransactions(): Observable<any> {
-    return this.httpService.get(this.serviceName, 'transactions', {
+    return this.httpService.get('transactions', {
       withCredentials: true, // Send authentication cookies
     });
   }
@@ -25,21 +24,21 @@ export class TransactionService {
     category: string;
     date: string;
   }): Observable<any> {
-    return this.httpService.post(this.serviceName, 'transactions', transactionData, {
+    return this.httpService.post('transactions', transactionData, {
       withCredentials: true, // Send authentication cookies
     });
   }
 
   // Update an existing transaction
   updateTransaction(transactionId: string, updateData: any): Observable<any> {
-    return this.httpService.put(this.serviceName, `transactions/${transactionId}`, updateData, {
+    return this.httpService.put(`transactions/${transactionId}`, updateData, {
       withCredentials: true,
     });
   }
 
   // Delete a transaction
   deleteTransaction(transactionId: string): Observable<any> {
-    return this.httpService.delete(this.serviceName, `transactions/${transactionId}`, {
+    return this.httpService.delete( `transactions/${transactionId}`, {
       withCredentials: true,
     });
   }
@@ -47,7 +46,7 @@ export class TransactionService {
   // Fetch transactions by category
   getTransactionsByCategory(category: string): Observable<any> {
     const params = new HttpParams().set('category', category); // Use HttpParams to set the query parameter
-    return this.httpService.get(this.serviceName, 'transactions/search', {
+    return this.httpService.get('transactions/search', {
       params,
       withCredentials: true,
     });

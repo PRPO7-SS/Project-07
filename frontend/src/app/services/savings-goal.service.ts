@@ -12,7 +12,7 @@ export class SavingsGoalService {
   constructor(private readonly httpService: HttpService) {}
 
   getSavingsGoals(): Observable<any> {
-    return this.httpService.get('savingsGoalService', this.endpoint, { withCredentials: true }).pipe(
+    return this.httpService.get( this.endpoint, { withCredentials: true }).pipe(
       catchError((error) => {
         return of([]); // Return an empty array on error
       })
@@ -26,19 +26,19 @@ export class SavingsGoalService {
     startDate: string;
     deadline: string;
   }): Observable<any> {
-    return this.httpService.post('savingsGoalService', this.endpoint, savingsGoalData, {
+    return this.httpService.post(this.endpoint, savingsGoalData, {
       withCredentials: true, // Send authentication cookies
     });
   }
 
   updateSavingsGoal(goalId: string, updateData: any): Observable<any> {
-    return this.httpService.put('savingsGoalService',`${this.endpoint}/${goalId}`, updateData, {
+    return this.httpService.put(`${this.endpoint}/${goalId}`, updateData, {
       withCredentials: true,
     });
   }
 
   deleteSavingsGoal( goalId: string): Observable<any> {
-    return this.httpService.delete('savingsGoalService', `${this.endpoint}/${goalId}`, {
+    return this.httpService.delete( `${this.endpoint}/${goalId}`, {
       withCredentials: true,
     });
   }

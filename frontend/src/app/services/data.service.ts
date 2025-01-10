@@ -14,42 +14,42 @@ export class DataService {
 
   // Login method
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.httpService.post<any>('userService', 'auth/login', credentials, { withCredentials: true });
+    return this.httpService.post<any>('auth/login', credentials, { withCredentials: true });
   }
 
   // Refactored method: Get registration data
   getRegisterData(): Observable<any> {
-    return this.httpService.get<any>('userService','register', { withCredentials: true });
+    return this.httpService.get<any>('register', { withCredentials: true });
   }
 
   // New method for registration
   register(payload: RegisterRequest): Observable<any> {
-    return this.httpService.post<any>('userService','auth/register', payload);
+    return this.httpService.post<any>('auth/register', payload);
   }
 
   // Refactored method: Get current user profile
   getCurrentUser(): Observable<User> {
-    return this.httpService.get<User>('userService','users/profile', { withCredentials: true });
+    return this.httpService.get<User>('users/profile', { withCredentials: true });
   }
 
   deleteCurrentUser(): Observable<any> {
-    return this.httpService.delete<User>('userService','users/profile', { withCredentials: true });
+    return this.httpService.delete<User>('users/profile', { withCredentials: true });
   }
 
   updateCurrentUser(payload: User): Observable<User> {
-    return this.httpService.put<User>('userService','users/profile', payload, { withCredentials: true });
+    return this.httpService.put<User>('users/profile', payload, { withCredentials: true });
   }
 
   getUserAge(): Observable<{ age: number }> {
-    return this.httpService.get<{ age: number }>('userService','users/age', { withCredentials: true });
+    return this.httpService.get<{ age: number }>('users/age', { withCredentials: true });
   }
 
   updatePassword(payload: Object): Observable<any> {
-    return this.httpService.put<User>('userService','users/change-password', payload, { withCredentials: true });
+    return this.httpService.put<User>('users/change-password', payload, { withCredentials: true });
   }
 
   logout(): Observable<any> {
-    return this.httpService.post<any>('userService','auth/logout', {}, { withCredentials: true });
+    return this.httpService.post<any>('auth/logout', {}, { withCredentials: true });
   }
 
 

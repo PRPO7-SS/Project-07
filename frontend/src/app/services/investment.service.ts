@@ -14,31 +14,14 @@ export class InvestmentsService {
 
   // Create a new investment
     createInvestment(payload: CreateInvestmentRequest): Observable<Investment> {
-        return this.httpService.post<Investment>('investmentSer', this.endpoint, payload, { withCredentials: true });
+        return this.httpService.post<Investment>(this.endpoint, payload, { withCredentials: true });
     }
 
     /**
    * Fetch all investments
    */
     getInvestments(): Observable<Investment[]> {
-        return this.httpService.get<Investment[]>('investmentSer', this.endpoint, { withCredentials: true });
-    }
-
-   /**
-   * Fetch a single investment by ID
-   * @param id - Investment ID
-   */
-    getInvestmentById(id: string): Observable<Investment> {
-        return this.httpService.get<Investment>('investmentSer', `investments/${id}`, { withCredentials: true });
-    }
-
- /**
-   * Update an existing investment
-   * @param id - Investment ID
-   * @param payload - Updated investment data
-   */
-    updateInvestment(id: string, payload: UpdateInvestmentRequest): Observable<Investment> {
-        return this.httpService.put<Investment>('investmentSer', `investments/${id}`, payload, { withCredentials: true });
+        return this.httpService.get<Investment[]>(this.endpoint, { withCredentials: true });
     }
 
 
@@ -47,7 +30,7 @@ export class InvestmentsService {
    * @param id - Investment ID
    */
   deleteInvestment(id: string): Observable<any> {
-    return this.httpService.delete<any>('investmentSer', `investments/${id}`, { withCredentials: true });
+    return this.httpService.delete<any>(`investments/${id}`, { withCredentials: true });
   }
 
 }

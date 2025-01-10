@@ -56,6 +56,7 @@ export class InvestmentsComponent implements OnInit {
   currentTotalStocks: number = 0;
   currentTotalCrypto: number = 0;
 
+
   constructor(
     private readonly investmentService: InvestmentsService,
     private readonly finDataService: FinancialDataService,
@@ -185,6 +186,7 @@ export class InvestmentsComponent implements OnInit {
   onAddInvestment(event: Event) {
     event.preventDefault();
     this.missingFields = {};
+    console.log('klicem');
 
     if (!this.formData.type.trim()) {
       this.missingFields['type'] = true;
@@ -203,6 +205,7 @@ export class InvestmentsComponent implements OnInit {
     }
 
     if (Object.keys(this.missingFields).length > 0) {
+      console.log('klicem2');
       this.message = 'Please fill in all required fields.';
       return;
     }
@@ -210,6 +213,7 @@ export class InvestmentsComponent implements OnInit {
     this.closeModal();
 
     this.loading = true;
+    console.log('klicem');
     this.investmentService.createInvestment(this.formData).subscribe({
       next: (response: any) => {
         this.loading = false;
