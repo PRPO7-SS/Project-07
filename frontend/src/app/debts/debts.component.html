@@ -1,0 +1,115 @@
+<app-navigation></app-navigation>
+<div class="container mt-5"> <!-- Dodan razmik od navigation bara -->
+  <h2 class="text-center mb-4 text-dark-green">Manage Your Debts</h2> <!-- Temno zelena barva in sredinska poravnava -->
+
+  <!-- Notifications -->
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <!-- Debts List -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th class="text-success">Creditor</th> <!-- Zelena barva -->
+        <th class="text-success">Description</th>
+        <th class="text-success">Amount (€)</th>
+        <th class="text-success">Deadline</th>
+        <th class="text-success">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let debt of debts">
+        <td>{{ debt.creditor }}</td>
+        <td>{{ debt.description }}</td>
+        <td>{{ debt.amount | number: '1.2-2' }}</td>
+        <td>{{ debt.deadline | date: 'mediumDate' }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm" (click)="editDebt(debt)">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button class="btn btn-success btn-sm" (click)="deleteDebt(debt.id)">
+            Mark as Paid
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Debt Form -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <h3 class="text-center mb-4">{{ selectedDebt ? 'Edit Debt' : 'Add Debt' }}</h3> <!-- Sredinska poravnava -->
+      <form [formGroup]="debtForm" (ngSubmit)="submitDebt()">
+        <!-- Creditor -->
+        <div class="mb-3">
+          <label for="creditor" class="form-label">Creditor</label>
+          <input
+            id="creditor"
+            type="text"
+            formControlName="creditor"
+            class="form-control"
+            placeholder="Enter creditor"
+            required
+          />
+          <div *ngIf="debtForm.get('creditor')?.invalid && debtForm.get('creditor')?.touched" class="text-danger">
+            Creditor is required.
+          </div>
+        </div>
+      
+        <!-- Description -->
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-control"
+            placeholder="Enter description"
+            rows="3"
+            required
+          ></textarea>
+          <div *ngIf="debtForm.get('description')?.invalid && debtForm.get('description')?.touched" class="text-danger">
+            Description is required.
+          </div>
+        </div>
+      
+        <!-- Amount -->
+        <div class="mb-3">
+          <label for="amount" class="form-label">Amount (€)</label>
+          <input
+            id="amount"
+            type="number"
+            formControlName="amount"
+            class="form-control"
+            placeholder="Enter amount"
+            min="1"
+            required
+          />
+          <div *ngIf="debtForm.get('amount')?.invalid && debtForm.get('amount')?.touched" class="text-danger">
+            Amount must be greater than 0.
+          </div>
+        </div>
+      
+        <!-- Deadline -->
+        <div class="mb-3">
+          <label for="deadline" class="form-label">Deadline</label>
+          <input
+            id="deadline"
+            type="date"
+            formControlName="deadline"
+            class="form-control"
+            required
+          />
+          <div *ngIf="debtForm.get('deadline')?.invalid && debtForm.get('deadline')?.touched" class="text-danger">
+            Deadline is required.
+          </div>
+        </div>
+      
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success w-100"> <!-- Zelena barva -->
+          {{ selectedDebt ? 'Save Changes' : 'Add Debt' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<app-footer [showFullFooter]="true"></app-footer>

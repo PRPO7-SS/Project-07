@@ -35,5 +35,9 @@ export class FooterComponent {
       alert('Please select both start and end dates.');
     }
   }
+
+  goToDashboard(): void {
+    this.router.navigate(['/home']);
+  }
   
 }

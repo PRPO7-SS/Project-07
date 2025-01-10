@@ -1,0 +1,31 @@
+.container {
+    margin-top: 30px; /* Odmik vsebine od navigation bara */
+  }
+  
+  .text-success {
+    color: #28a745; /* Svetlo zelena barva za besedilo */
+  }
+  
+  .text-dark-green {
+    color: #155724; /* Temno zelena barva za naslov */
+    font-weight: bold; /* Poudarjeno besedilo */
+  }
+  
+  .btn-success {
+    background-color: #28a745; /* Zelena barva za gumb */
+    border: none;
+    color: white; /* Bela pisava */
+    font-weight: bold;
+  }
+  
+  .btn-success:hover {
+    background-color: #218838; /* Temnejša zelena ob hoverju */
+  }
+  
+  .btn-warning {
+    color: white; /* Bela pisava za oranžen gumb */
+  }
+  
+  .btn-warning:hover {
+    background-color: #e0a800; /* Temnejša oranžna ob hoverju */
+  }

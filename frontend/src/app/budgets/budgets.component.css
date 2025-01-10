@@ -1,0 +1,162 @@
+/* Global container styling */
+.container {
+  max-width: 1200px; /* Povečana širina */
+  margin: 40px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for the form section */
+form {
+  margin-bottom: 20px;
+}
+
+form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px; /* Povečana pisava */
+}
+
+form button {
+  padding: 12px 20px;
+  font-size: 16px; /* Večji gumb */
+  border: none;
+  border-radius: 5px;
+  background-color: #28a745; /* Svetlo zelena */
+  color: white; /* Belo besedilo */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #218838; /* Temnejša zelena za hover učinek */
+}
+
+/* Styling for the table section */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th,
+table td {
+  padding: 12px; /* Povečan razmik */
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 16px; /* Povečana pisava */
+}
+
+table th {
+  background-color: #d4edda; /* Svetlo zelena barva */
+  color: #155724; /* Temno zelena za besedilo */
+  text-align: center;
+  border: 1px solid #c3e6cb; /* Rob z rahlo temnejšo zeleno */
+}
+
+table td:last-child {
+  text-align: center;
+}
+
+/* Button styling inside the table */
+.action-buttons {
+  display: flex;
+  gap: 8px; /* Večji razmik med gumbi */
+  justify-content: center; /* Poravnava na sredino */
+  align-items: center; /* Navpična poravnava */
+}
+
+.action-buttons button {
+  padding: 6px 10px; /* Večji gumbi */
+  font-size: 14px; /* Povečana pisava za gumb */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-buttons .edit-btn {
+  background-color: #ffc107; /* Rumena za urejanje */
+}
+
+.action-buttons .edit-btn:hover {
+  background-color: #e0a800;
+}
+
+.action-buttons .delete-btn {
+  background-color: #dc3545; /* Rdeča za brisanje */
+}
+
+.action-buttons .delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* Cards for budgets */
+.budget-card {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.budget-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Card styling */
+.card-title {
+  color: #155724; /* Temno zelena za naslov */
+  text-align: center;
+  font-weight: bold;
+}
+
+.card {
+  border: 1px solid #c3e6cb; /* Svetlo zelen rob */
+  border-radius: 8px; /* Zaobljeni robovi */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Rahla senca */
+  padding: 20px;
+  margin: 10px auto;
+}
+
+.card-body {
+  text-align: center;
+  background-color: #f8f9fa; /* Svetlo siva za ozadje */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  form input,
+  form select {
+    font-size: 14px;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap; /* Prelomi gumbe za manjše zaslone */
+    gap: 5px;
+  }
+}

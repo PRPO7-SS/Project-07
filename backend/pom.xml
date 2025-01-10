@@ -16,7 +16,8 @@
         <module>user-service</module>
         <module>savings-goal-service</module>
         <module>investment-service</module>
-        <module>report-service</module>
+        <module>budget-service</module>
+        <module>debt-tracking-service</module>
     </modules>
 
 
@@ -156,13 +157,6 @@
             <dependency>
                 <groupId>com.kumuluz.ee.swagger</groupId>
                 <artifactId>kumuluzee-swagger-ui</artifactId>
-                <version>1.2.2</version>
-            </dependency>
-
-            <!-- https://mvnrepository.com/artifact/com.kumuluz.ee.swagger/kumuluzee-swagger -->
-            <dependency>
-                <groupId>com.kumuluz.ee.swagger</groupId>
-                <artifactId>kumuluzee-swagger</artifactId>
                 <version>1.2.2</version>
             </dependency>
 

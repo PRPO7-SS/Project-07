@@ -19,18 +19,18 @@ export class FinanceComponent implements OnInit {
   groupedTransactions: { date: string; transactions: any[] }[] = [];
   weeklySummary: { date: Date; spent: number; earned: number }[] = [];
 
-  incomeCategories: string[] = ['salary', 'scholarship', 'gifts', 'other'];
+  incomeCategories: string[] = ['Salary', 'Scholarship', 'Gifts', 'Other'];
   expenseCategories: string[] = [
-    'groceries',
-    'clothes',
-    'school',
-    'transportation',
-    'gifts',
-    'subscription',
-    'eating',
-    'health',
-    'selfcare',
-    'other',
+    'Groceries',
+    'Clothes',
+    'School',
+    'Transportation',
+    'Gifts',
+    'Subscription',
+    'Eating',
+    'Health',
+    'Selfcare',
+    'Other',
   ];
   newTransaction = {
     type: '',

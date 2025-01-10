@@ -43,6 +43,12 @@
         </dependency>
 
         <dependency>
+            <groupId>ss.finance</groupId>
+            <artifactId>transaction-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
