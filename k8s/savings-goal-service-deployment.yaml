@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: savings-goal-service
+  labels:
+    app: savings-goal-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: savings-goal-service
+  template:
+    metadata:
+      labels:
+        app: savings-goal-service
+    spec:
+      containers:
+      - name: savings-goal-service
+        image: svitdocker123/backend-savings-goal-service:latest
+        envForm:
+        - secretRef:
+            name: backend-secrets
+        ports:
+        - containerPort: 8084
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"

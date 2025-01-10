@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debt-tracking-service
+  labels:
+    app: debt-tracking-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: debt-tracking-service
+  template:
+    metadata:
+      labels:
+        app: debt-tracking-service
+    spec:
+      containers:
+      - name: debt-tracking-service
+        image: svitdocker123/backend-debt-tracking-service:latest
+        envForm:
+        - secretRef:
+            name: backend-secrets
+        ports:
+        - containerPort: 8086
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
