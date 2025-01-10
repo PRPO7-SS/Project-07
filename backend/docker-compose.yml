@@ -13,6 +13,22 @@ services:
     networks:
       - my_network  # Connects MongoDB to the custom network
 
+  api-gateway:
+    image: nginx:latest
+    container_name: api-gateway
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Mount NGINX configuration
+    ports:
+      - "80:80"  # Expose port 80 for the gateway
+    depends_on:
+      - user-service
+      - savings-goal-service
+      - investment-service
+      - transaction-service
+      - report-service
+    networks:
+      - my_network
+
   user-service:
     build:
       context: user-service  # Path to your microservice's Dockerfile

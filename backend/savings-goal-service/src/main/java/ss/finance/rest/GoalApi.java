@@ -17,6 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 @Tag(name = "Savings Goals", description = "Endpoints related to managing savings goals")
 @Path("/savings-goals")
@@ -84,7 +85,16 @@ public class GoalApi {
             content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Server error\"}"))
     )
     @POST
-    public Response addSavingsGoal(@CookieParam("auth_token") String token, SavingsGoal goal) {
+    public Response addSavingsGoal(@CookieParam("auth_token") String token, @RequestBody(
+            description = "Savings goal details including goalName, targetAmount, currentAmount, startDate, and deadline",
+            required = true,
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(
+                            example = "{ \"goalName\": \"Vacation Fund\", \"targetAmount\": 5000.00, \"currentAmount\": 1000.00, \"startDate\": \"2025-01-01\", \"deadline\": \"2025-12-31\" }"
+                    )
+            )
+    ) SavingsGoal goal) {
         try {
             if (goal.getGoalName() == null || goal.getGoalName().isEmpty() ||
                     goal.getTargetAmount() == null || goal.getTargetAmount() <= 0 ||
@@ -123,7 +133,16 @@ public class GoalApi {
     )
     @PUT
     @Path("/{id}")
-    public Response updateSavingsGoal(@CookieParam("auth_token") String token, @PathParam("id") String id, SavingsGoal updatedGoal) {
+    public Response updateSavingsGoal(@CookieParam("auth_token") String token, @PathParam("id") String id, @RequestBody(
+            description = "Updated savings goal",
+            required = true,
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(
+                            example = "{  \"currentAmount\": 1500.00 \"}"
+                    )
+            )
+    )SavingsGoal updatedGoal) {
         try {
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)

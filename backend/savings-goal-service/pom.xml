@@ -89,10 +89,6 @@
             <artifactId>kumuluzee-openapi-mp-ui</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.kumuluz.ee.swagger</groupId>
-            <artifactId>kumuluzee-swagger-ui</artifactId>
-        </dependency>
 
     </dependencies>
 

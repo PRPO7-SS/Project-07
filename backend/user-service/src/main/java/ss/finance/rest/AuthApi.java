@@ -27,6 +27,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+
 
 @Tag(name = "Authentication", description = "Endpoints related to user authentication")
 @Path("/auth")
@@ -63,7 +65,16 @@ public class AuthApi {
     )
     @POST
     @Path("/register")
-    public Response addUser(User user) {
+    public Response addUser(@RequestBody(
+            description = "User details including fullName, email, username, password, and dateOfBirth",
+            required = true,
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(
+                            example = "{ \"fullName\": \"Samo Primer\", \"email\": \"samo.primer@example.com\", \"username\": \"samoprimer\", \"password\": \"securepassword123\", \"dateOfBirth\": \"1990-05-15\" }"
+                    )
+            )
+    )User user) {
         try {
             if (user.getUsername() == null || user.getUsername().isEmpty() ||
                     user.getFullName() == null || user.getFullName().isEmpty() ||

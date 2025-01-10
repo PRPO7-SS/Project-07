@@ -17,7 +17,7 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
     // Use the unified HttpService to call the backend refresh token endpoint
-    return this.httpService.get<any>('userService', 'auth/refresh', {
+    return this.httpService.get<any>( 'auth/refresh', {
       withCredentials: true, // Ensure cookies are sent
     });
   }
@@ -34,7 +34,7 @@ export class AuthService {
   hasRefreshToken(): Observable<boolean> {
     // Call the backend route to check for the refresh token's existence and validity
     return this.httpService
-      .get<{ valid: boolean }>('userService', 'auth/check-refresh', {
+      .get<{ valid: boolean }>('auth/check-refresh', {
         withCredentials: true, // Ensure cookies are sent
       })
       .pipe(

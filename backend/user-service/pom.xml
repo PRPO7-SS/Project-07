@@ -115,11 +115,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.kumuluz.ee.swagger</groupId>
-            <artifactId>kumuluzee-swagger-ui</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.eclipse.microprofile.openapi</groupId>
             <artifactId>microprofile-openapi-api</artifactId>
         </dependency>

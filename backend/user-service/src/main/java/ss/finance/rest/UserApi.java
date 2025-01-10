@@ -17,6 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 @Tag(name = "User", description = "Endpoints related to user management")
 @Path("/users")
@@ -62,7 +63,7 @@ public class UserApi {
     @APIResponse(
             responseCode = "400",
             description = "Invalid or missing fields",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Parameters 'oldPassword' and 'newPassword' are required\"}"))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Parameters 'oldPassword', 'newPassword' and 'confirmNewPassword' are required\"}"))
     )
     @APIResponse(
             responseCode = "401",
@@ -76,10 +77,20 @@ public class UserApi {
     )
     @PUT
     @Path("/change-password")
-    public Response changePassword(@CookieParam("auth_token") String token, Map<String, String> payload) {
+    public Response changePassword(@CookieParam("auth_token") String token,@RequestBody(
+            description = "Payload containing old password, new password, and confirm new password",
+            required = true,
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(
+                            example = "{ \"oldPassword\": \"current-password\", \"newPassword\": \"new-password\", \"confirmNewPassword\": \"new-password\" }"
+                    )
+            )
+    ) Map<String, String> payload) {
         try {
             String oldPassword = payload.get("oldPassword");
             String newPassword = payload.get("newPassword");
+            String confirmNewPassword = payload.get("confirmNewPassword");
 
             if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
@@ -87,9 +98,11 @@ public class UserApi {
                         .build();
             }
 
-            if (oldPassword == null || oldPassword.isEmpty() || newPassword == null || newPassword.isEmpty()) {
+            if (oldPassword == null || oldPassword.isEmpty() ||
+                    newPassword == null || newPassword.isEmpty() ||
+                    confirmNewPassword == null || confirmNewPassword.isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(Map.of("error", "Parameters 'oldPassword' and 'newPassword' are required"))
+                        .entity(Map.of("error", "Parameters 'oldPassword', 'newPassword' and 'confirmNewPaswword' are required"))
                         .build();
             }
 
@@ -103,7 +116,13 @@ public class UserApi {
 
             if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(Map.of("error", "Password does not match"))
+                        .entity(Map.of("error", "Wrong current password"))
+                        .build();
+            }
+
+            if(!newPassword.equals(confirmNewPassword)){
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(Map.of("error", "Passwords do not match"))
                         .build();
             }
 
@@ -127,7 +146,7 @@ public class UserApi {
     @APIResponse(
             responseCode = "401",
             description = "Unauthorized access",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Authorization header missing or invalid\"}"))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Cookie is missing or invalid\"}"))
     )
     @APIResponse(
             responseCode = "404",
@@ -141,15 +160,14 @@ public class UserApi {
     )
     @DELETE
     @Path("/profile")
-    public Response deleteUser(@HeaderParam("Authorization") String authHeader) {
+    public Response deleteUser(@CookieParam("auth_token") String token) {
         try {
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (token == null || token.isEmpty()) {
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(Map.of("error", "Authorization header missing or invalid"))
+                        .entity(Map.of("error", "Cookie is missing or invalid"))
                         .build();
             }
 
-            String token = authHeader.substring(7);
             ObjectId userId = jwtUtil.extractUserId(token);
 
             boolean isDeleted = userBean.deleteUser(userId);
