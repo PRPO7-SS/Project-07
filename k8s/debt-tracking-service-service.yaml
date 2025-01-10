@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: debt-tracking-service
+spec:
+  selector:
+    app: debt-tracking-service
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8086
+      nodePort: 30006

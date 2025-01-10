@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: savings-goal-service
+spec:
+  selector:
+    app: savings-goal-service
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8084
+      nodePort: 30004
