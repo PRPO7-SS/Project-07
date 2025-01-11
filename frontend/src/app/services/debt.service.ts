@@ -7,13 +7,12 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class DebtService {
-  private readonly serviceName = 'debtService'; // Specify the microservice name
 
   constructor(private readonly httpService: HttpService) {}
 
   // Fetch all debts for the authenticated user
   getDebts(): Observable<any> {
-    return this.httpService.get(this.serviceName, 'debts', {
+    return this.httpService.get('debts', {
       withCredentials: true, // Send authentication cookies
     });
   }
@@ -30,37 +29,37 @@ export class DebtService {
     if (!debtData.creditor) {
       throw new Error("Creditor is required.");
     }
-  
+
     if (!debtData.description) {
       throw new Error("Description is required.");
     }
-  
+
     if (!debtData.deadline) {
       throw new Error("Deadline is required.");
     }
-  
-    return this.httpService.post(this.serviceName, 'debts', debtData, {
+
+    return this.httpService.post('debts', debtData, {
       withCredentials: true, // Send authentication cookies
     });
   }
 
   // Update an existing debt
   updateDebt(debtId: string, updatedDebtData: any): Observable<any> {
-    return this.httpService.put(this.serviceName, `debts/${debtId}`, updatedDebtData, {
+    return this.httpService.put(`debts/${debtId}`, updatedDebtData, {
       withCredentials: true,
     });
   }
 
   // Delete a debt by its ID
   deleteDebt(debtId: string): Observable<any> {
-    return this.httpService.delete(this.serviceName, `debts/${debtId}`, {
+    return this.httpService.delete(`debts/${debtId}`, {
       withCredentials: true,
     });
   }
 
   // Mark a debt as paid
   markDebtAsPaid(debtId: string): Observable<any> {
-    return this.httpService.put(this.serviceName, `debts/${debtId}/markAsPaid`, {}, {
+    return this.httpService.put(`debts/${debtId}/markAsPaid`, {}, {
       withCredentials: true,
     });
   }

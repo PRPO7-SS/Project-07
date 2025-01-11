@@ -1,9 +1,0 @@
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/core/AccessControlResponseFilter.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/core/App.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/core/Main.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/core/RestApplication.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/entities/Debt.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/repositories/DebtRepository.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/rest/DebtApi.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/serializer/ObjectIdSerializer.java
-/Users/svitjesenk/Documents/Fakultet/3. letnik/1. semester/Postopki razvoja programske opreme/Projekt/Project-07/backend/debt-tracking-service/src/main/java/ss/finance/services/DebtBean.java

@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class HttpService {
-  private readonly apiGatewayUrl = 'http://localhost'; // Replace with your API Gateway URL if different
+  private readonly apiGatewayUrl = 'http://localhost:30000'; // Replace with your API Gateway URL if different
 
   constructor(private readonly http: HttpClient) {}
 

@@ -16,15 +16,14 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo:latest
+        image: spelakoracin/mongodb:latest
         ports:
         - containerPort: 27017
-        env:
-        - name: MONGO_URI
-          value: mongodb://mongodb:27017
+          name: mongo
         volumeMounts:
         - name: mongo-data
           mountPath: /data/db
       volumes:
       - name: mongo-data
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: mongo-pvc

@@ -25,7 +25,8 @@ services:
       - savings-goal-service
       - investment-service
       - transaction-service
-      - report-service
+      - budget-service
+      - debt-tracking-service
     networks:
       - my_network
 

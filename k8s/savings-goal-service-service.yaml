@@ -5,9 +5,8 @@ metadata:
 spec:
   selector:
     app: savings-goal-service
-  type: NodePort
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8084
-      nodePort: 30004

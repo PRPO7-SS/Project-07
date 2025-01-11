@@ -16,12 +16,12 @@ spec:
     spec:
       containers:
       - name: transaction-service
-        image: svitdocker123/backend-transaction-service:latest
-        envForm:
+        image: spelakoracin/backend-transaction-service:latest
+        envFrom:
         - secretRef:
             name: backend-secrets
         ports:
-        - containerPort: 8081
+        - containerPort: 80
         resources:
           limits:
             memory: "512Mi"

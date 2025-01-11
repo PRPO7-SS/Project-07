@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: debt-tracking-service
-        image: svitdocker123/backend-debt-tracking-service:latest
-        envForm:
+        image: spelakoracin/backend-debt-tracking-service:latest
+        envFrom:
         - secretRef:
             name: backend-secrets
         ports:

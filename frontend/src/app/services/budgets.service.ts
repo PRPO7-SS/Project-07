@@ -7,13 +7,12 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class BudgetService {
-  private readonly serviceName = 'budgetService'; // Specify the microservice name
 
   constructor(private readonly httpService: HttpService) {}
 
   // Fetch all budgets for the authenticated user
   getBudgets(): Observable<any> {
-    return this.httpService.get(this.serviceName, 'budget', {
+    return this.httpService.get( 'budget', {
       withCredentials: true, // Send authentication cookies
     });
   }
@@ -23,7 +22,7 @@ export class BudgetService {
     category: string;
     monthlyLimit: number;
   }): Observable<any> {
-    return this.httpService.post(this.serviceName, 'budget', budgetData, {
+    return this.httpService.post('budget', budgetData, {
       withCredentials: true, // Send authentication cookies
     });
   }
@@ -31,14 +30,14 @@ export class BudgetService {
   // Update an existing budget
   updateBudget(categoryName: string, newLimit: number): Observable<any> {
     const updatePayload = { newLimit }; // Payload for updating the budget
-    return this.httpService.put(this.serviceName, `budget/${categoryName}`, updatePayload, {
+    return this.httpService.put(`budget/${categoryName}`, updatePayload, {
       withCredentials: true,
     });
   }
 
   // Delete a budget by category name
   deleteBudget(categoryName: string): Observable<any> {
-    return this.httpService.delete(this.serviceName, `budget/${categoryName}`, {
+    return this.httpService.delete(`budget/${categoryName}`, {
       withCredentials: true,
     });
   }

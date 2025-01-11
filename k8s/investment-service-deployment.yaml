@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: investment-service
-        image: svitdocker123/backend-investment-service:latest
-        envForm:
+        image: spelakoracin/backend-investment-service:latest
+        envFrom:
         - secretRef:
             name: backend-secrets
         ports:

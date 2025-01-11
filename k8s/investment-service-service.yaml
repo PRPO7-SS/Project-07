@@ -5,10 +5,9 @@ metadata:
 spec:
   selector:
     app: investment-service
-  type: NodePort
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8085
-      nodePort: 30005
   

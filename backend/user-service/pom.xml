@@ -48,13 +48,6 @@
             <artifactId>mongodb-driver-sync</artifactId>
             <version>4.11.0</version>
         </dependency>
-        <!-- JSON Web Token (JWT) -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
-
         <!-- BCrypt for Password Hashing -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -135,20 +128,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.13</version>
-                <configuration>
-                    <repository>user-service</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-                    </buildArgs>
-                    <dockerHost>tcp://localhost:2375</dockerHost>
-                </configuration>
             </plugin>
         </plugins>
     </build>

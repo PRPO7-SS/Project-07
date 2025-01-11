@@ -5,9 +5,8 @@ metadata:
 spec:
   selector:
     app: budget-service
-  type: NodePort
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8083
-      nodePort: 30003

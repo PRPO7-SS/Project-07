@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: budget-service
-        image: svitdocker123/backend-budget-service:latest
-        envForm:
+        image: spelakoracin/backend-budget-service:latest
+        envFrom:
         - secretRef:
             name: backend-secrets
         ports:

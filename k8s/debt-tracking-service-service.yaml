@@ -5,9 +5,8 @@ metadata:
 spec:
   selector:
     app: debt-tracking-service
-  type: NodePort
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8086
-      nodePort: 30006

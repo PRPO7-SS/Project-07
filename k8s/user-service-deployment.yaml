@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: svitdocker123/backend-user-service:latest
-        envForm:
+        image: spelakoracin/backend-user-service:latest
+        envFrom:
         - secretRef:
             name: backend-secrets
         ports:
