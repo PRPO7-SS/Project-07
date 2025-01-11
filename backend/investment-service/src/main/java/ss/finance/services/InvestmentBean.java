@@ -23,8 +23,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.DeliverCallback;
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client.GetResponse;
 
 import ss.finance.entities.Investment;
 import ss.finance.rabbit.RabbitMQConfig;
@@ -49,7 +48,7 @@ public class InvestmentBean {
             logger.info("Delaying RabbitMQ listener initialization for 10 seconds...");
             Thread.sleep(10000); // Delay to ensure RabbitMQ is ready
             logger.info("Initializing RabbitMQ listener for InvestmentService...");
-            executor.submit(this::startRabbitMQConsumer);
+            startRabbitMQConsumer();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             logger.warning("Initialization delay was interrupted: " + e.getMessage());
@@ -58,30 +57,39 @@ public class InvestmentBean {
         }
     }
 
-    private void startRabbitMQConsumer() {
+    public void startRabbitMQConsumer() {
         try (Connection connection = RabbitMQConfig.createConnection();
-             Channel channel = connection.createChannel()) {
-    
+            Channel channel = connection.createChannel()) {
+
             String queueName = RabbitMQConfig.getQueueName();
             logger.info("Connecting to RabbitMQ queue: " + queueName);
-    
-            logger.info("Starting RabbitMQ consumer for queue: " + queueName);
-            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                String message = new String(delivery.getBody(), "UTF-8");
-                logger.info("Received message: " + message);
-                processMessage(message); // Obdelava prejetega sporočila
-            };
-    
-            // Branje sporočil iz vrste
-            String consumerTag = channel.basicConsume(queueName, true, deliverCallback, consumerTagCancelled -> {
-                logger.warning("Consumer cancelled: " + consumerTagCancelled);
-            });
-    
-            // Obvestilo po uspešni inicializaciji potrošnika
-            logger.info("RabbitMQ consumer started successfully. Consumer tag: " + consumerTag);
-    
-        } catch (IOException | ShutdownSignalException e) {
-            logger.severe("Error starting RabbitMQ consumer: " + e.getMessage());
+
+            while (true) {
+                try {
+                    // Pridobi naslednje sporočilo iz vrste, če obstaja
+                    GetResponse response = channel.basicGet(queueName, true); // true za avtomatsko potrjevanje
+
+                    if (response != null) {
+                        String message = new String(response.getBody(), "UTF-8");
+                        logger.info("Pulled message: " + message);
+                        processMessage(message); // Obdelava prejetega sporočila
+                    } else {
+                        logger.info("No messages in the queue.");
+                    }
+
+                    // Počakajte 5 sekund pred naslednjim preverjanjem
+                    int sleepTime = (response != null) ? 1000 : 5000;
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    logger.warning("Thread interrupted while sleeping: " + e.getMessage());
+                    Thread.currentThread().interrupt(); // Ponastavite zastavico prekinjenega niti
+                } catch (Exception e) {
+                    logger.severe("Error while processing messages: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            logger.severe("Error connecting to RabbitMQ: " + e.getMessage());
             e.printStackTrace();
         } catch (Exception e) {
             logger.severe("Unexpected error: " + e.getMessage());
@@ -90,9 +98,9 @@ public class InvestmentBean {
     }
 
     private void processMessage(String message) {
-        // Example: Log the received message
-        logger.info("Processing message: " + message);
-        // TODO: Implement logic to process the message, e.g., save or update investments
+        logger.info("Received a new transaction: " + message);
+        logger.info("RabbitMQ messages work! 😊");
+        logger.info("Thank you for using our service! 😊");
     }
 
     public void addInvestment(Investment investment) {
