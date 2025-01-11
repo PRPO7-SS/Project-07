@@ -1,33 +1,98 @@
 package ss.finance.services;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import ss.finance.entities.Investment;
-import ss.finance.utils.MongoDBConnection;
-
-import javax.enterprise.context.ApplicationScoped;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Scanner;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.json.JSONObject;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.ShutdownSignalException;
+
+import ss.finance.entities.Investment;
+import ss.finance.rabbit.RabbitMQConfig;
+import ss.finance.utils.MongoDBConnection;
 
 @ApplicationScoped
 public class InvestmentBean {
     private MongoCollection<Document> collection;
     private static final Logger logger = Logger.getLogger(InvestmentBean.class.getName());
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+
 
     public InvestmentBean() {
         MongoClient mongoClient = MongoDBConnection.getMongoClient();
         MongoDatabase database = mongoClient.getDatabase("financeApp");
         this.collection = database.getCollection("investments");
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            logger.info("Delaying RabbitMQ listener initialization for 10 seconds...");
+            Thread.sleep(10000); // Delay to ensure RabbitMQ is ready
+            logger.info("Initializing RabbitMQ listener for InvestmentService...");
+            executor.submit(this::startRabbitMQConsumer);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.warning("Initialization delay was interrupted: " + e.getMessage());
+        } catch (Exception e) {
+            logger.severe("Failed to initialize RabbitMQ listener: " + e.getMessage());
+        }
+    }
+
+    private void startRabbitMQConsumer() {
+        try (Connection connection = RabbitMQConfig.createConnection();
+             Channel channel = connection.createChannel()) {
+    
+            String queueName = RabbitMQConfig.getQueueName();
+            logger.info("Connecting to RabbitMQ queue: " + queueName);
+    
+            logger.info("Starting RabbitMQ consumer for queue: " + queueName);
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), "UTF-8");
+                logger.info("Received message: " + message);
+                processMessage(message); // Obdelava prejetega sporočila
+            };
+    
+            // Branje sporočil iz vrste
+            String consumerTag = channel.basicConsume(queueName, true, deliverCallback, consumerTagCancelled -> {
+                logger.warning("Consumer cancelled: " + consumerTagCancelled);
+            });
+    
+            // Obvestilo po uspešni inicializaciji potrošnika
+            logger.info("RabbitMQ consumer started successfully. Consumer tag: " + consumerTag);
+    
+        } catch (IOException | ShutdownSignalException e) {
+            logger.severe("Error starting RabbitMQ consumer: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            logger.severe("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void processMessage(String message) {
+        // Example: Log the received message
+        logger.info("Processing message: " + message);
+        // TODO: Implement logic to process the message, e.g., save or update investments
     }
 
     public void addInvestment(Investment investment) {

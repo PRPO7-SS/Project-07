@@ -1,13 +1,11 @@
 package ss.finance.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.bson.Document;
@@ -17,12 +15,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.DeliverCallback;
 
 import ss.finance.entities.User;
-import ss.finance.rabbit.RabbitMQConfig;
 import ss.finance.utils.MongoDBConnection;
 
 @ApplicationScoped
@@ -35,101 +29,6 @@ public class UserBean {
         MongoClient mongoClient = MongoDBConnection.getMongoClient();
         MongoDatabase database = mongoClient.getDatabase("financeApp");
         this.collection = database.getCollection("users");
-    }
-
-    @PostConstruct
-    public void init() {
-        try {
-            Thread.sleep(10000); // Zamika 10 sekund
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            logger.warning("Initialization was interrupted.");
-        }
-        executor.submit(this::startRabbitMQConsumer);
-    }
-
-    private boolean isRabbitMQReachable() {
-        try (Connection connection = RabbitMQConfig.createConnection()) {
-            logger.info("Successfully connected to RabbitMQ.");
-            return true;
-        } catch (Exception e) {
-            logger.warning("RabbitMQ is not reachable: " + e.getMessage());
-            e.printStackTrace(); // Izpišite celoten stack trace za dodatne informacije
-            return false;
-        }
-    }
-
-    private void startRabbitMQConsumer() {
-        if (!isRabbitMQReachable()) {
-            logger.severe("RabbitMQ is not reachable. Consumer will not start.");
-            return;
-        }
-
-        int retryCount = 0; // Število poskusov povezave
-        final int maxRetries = 5; // Največje število ponovitev
-        final int retryDelay = 5000; // Časovni zamik med ponovnimi poskusi v milisekundah
-    
-        while (retryCount < maxRetries) {
-            logger.info("Attempting to start RabbitMQ consumer (attempt " + (retryCount + 1) + "/" + maxRetries + ")...");
-    
-            try (Connection connection = RabbitMQConfig.createConnection();
-                 Channel channel = connection.createChannel()) {
-    
-                logger.info("Connected to RabbitMQ successfully.");
-                logger.info("Declaring queue: " + RabbitMQConfig.getQueueName());
-                channel.queueDeclare(RabbitMQConfig.getQueueName(), false, false, false, null);
-    
-                logger.info("Waiting for messages from RabbitMQ queue: " + RabbitMQConfig.getQueueName());
-    
-                DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                    String message = new String(delivery.getBody(), "UTF-8");
-                    logger.info("Received message from RabbitMQ: " + message);
-    
-                    // Obdelava prejete vsebine
-                    processReceivedMessage(message);
-                };
-    
-                logger.info("Starting consumer for queue: " + RabbitMQConfig.getQueueName());
-                channel.basicConsume(RabbitMQConfig.getQueueName(), true, deliverCallback, consumerTag -> {
-                    logger.warning("Consumer " + consumerTag + " cancelled.");
-                });
-    
-                // Uspešna inicializacija, prekinitev zanke
-                break;
-    
-            } catch (IOException e) {
-                logger.warning("IOException occurred while connecting to RabbitMQ: " + e.getMessage());
-                logger.warning("Retrying in " + retryDelay / 1000 + " seconds...");
-            } catch (Exception e) {
-                logger.severe("Unexpected error while starting RabbitMQ consumer: " + e.getMessage());
-                logger.severe("Retrying in " + retryDelay / 1000 + " seconds...");
-            }
-    
-            // Časovni zamik med ponovnimi poskusi
-            retryCount++;
-            try {
-                Thread.sleep(retryDelay);
-            } catch (InterruptedException interruptedException) {
-                logger.severe("Retry delay interrupted: " + interruptedException.getMessage());
-                Thread.currentThread().interrupt();
-                return;
-            }
-        }
-    
-        // Če povezava po največ poskusih ne uspe, logiraj napako
-        if (retryCount == maxRetries) {
-            logger.severe("Failed to start RabbitMQ consumer after " + maxRetries + " attempts. Consumer will not run.");
-        }
-    }
-
-    private void processReceivedMessage(String message) {
-        // TODO: Add custom logic to process the received message
-        logger.info("Processing message: " + message);
-
-        // Example: Log or save the message to MongoDB
-        Document logEntry = new Document("message", message)
-                .append("receivedAt", new java.util.Date());
-        collection.insertOne(logEntry);
     }
 
     public void addUser(User user) {

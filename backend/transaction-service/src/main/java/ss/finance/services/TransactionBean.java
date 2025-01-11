@@ -16,7 +16,6 @@ import com.mongodb.client.MongoDatabase;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
-import io.jsonwebtoken.io.IOException;
 import ss.finance.entities.Transaction;
 import ss.finance.rabbit.RabbitMQConfig;
 import ss.finance.utils.MongoDBConnection;
@@ -26,44 +25,79 @@ public class TransactionBean {
     private MongoCollection<Document> collection;
     private static final Logger logger = Logger.getLogger(TransactionBean.class.getName());
 
+    private Connection rabbitMQConnection;
+    private Channel rabbitMQChannel;
+    
     public TransactionBean() {
-        MongoClient mongoClient = MongoDBConnection.getMongoClient();
-        MongoDatabase database = mongoClient.getDatabase("financeApp");
-        this.collection = database.getCollection("transactions");
-        logger.info("Initialized TransactionBean with MongoDB collection 'transactions'");
+        logger.info("TransactionBean constructor invoked. Starting initialization...");
+    
+        // Inicializacija MongoDB
+        try {
+            MongoClient mongoClient = MongoDBConnection.getMongoClient();
+            MongoDatabase database = mongoClient.getDatabase("financeApp");
+            this.collection = database.getCollection("transactions");
+            logger.info("MongoDB connection established and collection 'transactions' initialized.");
+        } catch (Exception e) {
+            logger.severe("Failed to initialize MongoDB connection: " + e.getMessage());
+            throw new RuntimeException("Failed to initialize MongoDB", e);
+        }
+    
+        // Inicializacija RabbitMQ
+        try {
+            Thread.sleep(10000); // Zamika 10 sekund
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.warning("Initialization was interrupted.");
+        }
+        try {
+            logger.info("Initializing RabbitMQ connection...");
+            this.rabbitMQConnection = RabbitMQConfig.createConnection();
+            this.rabbitMQChannel = rabbitMQConnection.createChannel();
+    
+            String queueName = RabbitMQConfig.getQueueName();
+            logger.info("Declaring RabbitMQ queue: " + queueName);
+            rabbitMQChannel.queueDeclare(queueName, false, false, false, null);
+            logger.info("RabbitMQ queue '" + queueName + "' declared successfully.");
+        } catch (Exception e) {
+            logger.severe("Failed to initialize RabbitMQ connection or channel: " + e.getMessage());
+            throw new RuntimeException("Failed to initialize RabbitMQ", e);
+        }
+    
+        logger.info("TransactionBean initialized successfully.");
     }
-
+    
     public void addTransaction(Transaction transaction) {
+        logger.info("addTransaction method invoked.");
         try {
             // Validate required fields
+            logger.info("Validating transaction fields...");
             if (transaction.getType() == null || transaction.getType().isEmpty() ||
                 transaction.getCategory() == null || transaction.getCategory().isEmpty() ||
                 transaction.getAmount() <= 0) {
+                logger.warning("Validation failed: Type, category, and amount are required fields.");
                 throw new IllegalArgumentException("Type, category, and amount are required fields.");
             }
     
             // Ensure the date is set
             if (transaction.getDate() == null) {
                 transaction.setDate(new Date());
+                logger.info("Transaction date not provided. Setting current date.");
             }
     
             // Set creation and update timestamps
             transaction.setCreatedAt(new Date());
             transaction.setUpdatedAt(new Date());
+            logger.info("Transaction timestamps (createdAt, updatedAt) set.");
     
+            // Convert to MongoDB Document
             Document transactionDoc = toDocument(transaction);
-            logger.info("Saving transaction to the database: " +
-                "userId=" + transaction.getUserId() +
-                ", type=" + transaction.getType() +
-                ", amount=" + transaction.getAmount() +
-                ", category=" + transaction.getCategory() +
-                ", date=" + transaction.getDate());
+            logger.info("Saving transaction to MongoDB. Document: " + transactionDoc.toJson());
             collection.insertOne(transactionDoc);
+            logger.info("Transaction saved to MongoDB successfully.");
     
-            logger.info("Transaction added successfully: " + transaction);
-
             // Send the transaction to RabbitMQ
             sendTransactionToQueue(transaction);
+    
         } catch (IllegalArgumentException e) {
             logger.warning("Validation error: " + e.getMessage());
             throw new RuntimeException("Validation error: " + e.getMessage(), e);
@@ -74,49 +108,40 @@ public class TransactionBean {
     }
     
     public void sendTransactionToQueue(Transaction transaction) {
-        logger.info("Preparing to send transaction to RabbitMQ queue...");
+        logger.info("sendTransactionToQueue method invoked.");
     
-        // Debug transaction details
-        logger.info("Transaction details: userId=" + transaction.getUserId() +
-                    ", type=" + transaction.getType() +
-                    ", amount=" + transaction.getAmount() +
-                    ", category=" + transaction.getCategory() +
-                    ", date=" + transaction.getDate());
+        try {
+            // Debug transaction details
+            logger.info("Transaction details: " +
+                        "userId=" + transaction.getUserId() +
+                        ", type=" + transaction.getType() +
+                        ", amount=" + transaction.getAmount() +
+                        ", category=" + transaction.getCategory() +
+                        ", date=" + transaction.getDate());
     
-        try (Connection connection = RabbitMQConfig.createConnection();
-             Channel channel = connection.createChannel()) {
-    
-            logger.info("RabbitMQ connection established successfully.");
-    
-            // Declare the queue
-            String queueName = RabbitMQConfig.getQueueName();
-            logger.info("Declaring queue with name: " + queueName);
-            channel.queueDeclare(queueName, false, false, false, null);
-            logger.info("Queue declared successfully: " + queueName);
-    
-            // Retrieve queue details
-            logger.info("Fetching queue details for: " + queueName);
-            try {
-                channel.queueDeclarePassive(queueName);
-                logger.info("Queue '" + queueName + "' exists and is ready to receive messages.");
-            } catch (IOException e) {
-                logger.warning("Queue '" + queueName + "' does not exist or is not accessible: " + e.getMessage());
+            // Preveri, če je kanal aktiven
+            if (rabbitMQChannel == null || !rabbitMQChannel.isOpen()) {
+                logger.warning("RabbitMQ channel is not available. Attempting to reinitialize...");
+                this.rabbitMQChannel = rabbitMQConnection.createChannel();
+                logger.info("RabbitMQ channel reinitialized successfully.");
             }
     
-            // Convert transaction to JSON-like string
-            String message = String.format("{ \"userId\": \"%s\", \"type\": \"%s\", \"amount\": %.2f, \"category\": \"%s\", \"date\": \"%s\" }",
-                    transaction.getUserId(),
-                    transaction.getType(),
-                    transaction.getAmount(),
-                    transaction.getCategory(),
-                    transaction.getDate());
+            // Pretvori transakcijo v sporočilo JSON
+            String message = String.format(
+                "{ \"userId\": \"%s\", \"type\": \"%s\", \"amount\": %.2f, \"category\": \"%s\", \"date\": \"%s\" }",
+                transaction.getUserId(),
+                transaction.getType(),
+                transaction.getAmount(),
+                transaction.getCategory(),
+                transaction.getDate()
+            );
+            logger.info("Message to be sent to RabbitMQ: " + message);
     
-            logger.info("Message to be sent: " + message);
-    
-            // Publish the message
+            // Objavi sporočilo v RabbitMQ vrsto
+            String queueName = RabbitMQConfig.getQueueName();
             logger.info("Publishing message to queue: " + queueName);
-            channel.basicPublish("", queueName, null, message.getBytes());
-            logger.info("Message published to queue '" + queueName + "': " + message);
+            rabbitMQChannel.basicPublish("", queueName, null, message.getBytes());
+            logger.info("Message published successfully to queue '" + queueName + "'. Message content: " + message);
     
         } catch (Exception e) {
             logger.severe("Failed to send message to RabbitMQ: " + e.getMessage());
