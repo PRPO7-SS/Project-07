@@ -12,6 +12,18 @@ services:
       - mongo_data:/data/db
     networks:
       - my_network  # Connects MongoDB to the custom network
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ port za komunikacijo
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+    - my_network
 
   api-gateway:
     image: nginx:latest
@@ -42,6 +54,7 @@ services:
       - REFRESH_TOKEN_SECRET
     depends_on:
       - mongodb  # Ensures MongoDB starts before the microservice
+      - rabbitmq
     networks:
       - my_network  # Connects the microservice to the custom network
   
@@ -89,6 +102,7 @@ services:
       - REFRESH_TOKEN_SECRET
     depends_on:
       - mongodb
+      - rabbitmq
     networks:
       - my_network
 

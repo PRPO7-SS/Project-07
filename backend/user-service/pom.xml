@@ -112,6 +112,12 @@
             <artifactId>microprofile-openapi-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>5.17.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
