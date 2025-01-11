@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: savings-goal-service
-        image: spelakoracin/backend-savings-goal-service:latest
+        image: svitdocker123/backend-savings-goal-service:latest
         envFrom:
         - secretRef:
             name: backend-secrets

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: spelakoracin/nginx:latest
+        image: svitdocker123/api-gateway:latest
         volumeMounts:
         - name: nginx-config
           mountPath: /etc/nginx/nginx.conf

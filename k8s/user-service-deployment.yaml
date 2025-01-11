@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: spelakoracin/backend-user-service:latest
+        image: svitdocker123/backend-user-service:latest
         envFrom:
         - secretRef:
             name: backend-secrets
