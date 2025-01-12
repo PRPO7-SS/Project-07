@@ -4,11 +4,8 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class RabbitMQConfig {
+
     private static final String QUEUE_NAME = "transactionQueue";
-    private static final String HOST = "rabbitmq";
-    private static final int PORT = 5672;
-    private static final String USERNAME = "guest";
-    private static final String PASSWORD = "guest";
 
     /**
      * Ustvari povezavo z RabbitMQ strežnikom.
@@ -16,12 +13,24 @@ public class RabbitMQConfig {
      * @return Povezava z RabbitMQ.
      * @throws Exception Če pride do napake pri vzpostavitvi povezave.
      */
+
     public static Connection createConnection() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(HOST);
-        factory.setPort(PORT);
-        factory.setUsername(USERNAME);
-        factory.setPassword(PASSWORD);
+
+        // Branje konfiguracije iz okolja (če ni nastavljena, se uporabi privzeta vrednost)
+        String host = System.getenv("RABBITMQ_HOST");
+        String username = System.getenv("RABBITMQ_USER");
+        String password = System.getenv("RABBITMQ_PASS");
+        String portStr = System.getenv("RABBITMQ_PORT");
+
+        if (host == null || username == null || password == null || portStr == null) {
+            throw new IllegalArgumentException("Missing required RabbitMQ environment variables (RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS, RABBITMQ_PORT)");
+        }
+
+        factory.setHost(host);
+        factory.setUsername(username);
+        factory.setPassword(password);
+        factory.setPort(Integer.parseInt(portStr));
 
         // Debug: Izpis nastavitev povezave
         System.out.println("Connecting to RabbitMQ at " + factory.getHost() + ":" + factory.getPort());

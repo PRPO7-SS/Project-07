@@ -1,6 +1,5 @@
 package ss.finance.services;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,6 +17,8 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -31,7 +32,8 @@ import ss.finance.utils.MongoDBConnection;
 
 @ApplicationScoped
 public class InvestmentBean {
-    private MongoCollection<Document> collection;
+    private MongoCollection<Document> investmentCollection; // Zbirka za investicije
+    private MongoCollection<Document> transactionCollection; // Zbirka za transakcije
     private static final Logger logger = Logger.getLogger(InvestmentBean.class.getName());
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -39,7 +41,9 @@ public class InvestmentBean {
     public InvestmentBean() {
         MongoClient mongoClient = MongoDBConnection.getMongoClient();
         MongoDatabase database = mongoClient.getDatabase("financeApp");
-        this.collection = database.getCollection("investments");
+        // Inicializacija zbirk
+        this.investmentCollection = database.getCollection("investments"); // Zbirka za investicije
+        this.transactionCollection = database.getCollection("transXinvst"); // Zbirka za transakcije
     }
 
     @PostConstruct
@@ -47,66 +51,139 @@ public class InvestmentBean {
         try {
             logger.info("Delaying RabbitMQ listener initialization for 10 seconds...");
             Thread.sleep(10000); // Delay to ensure RabbitMQ is ready
+    
             logger.info("Initializing RabbitMQ listener for InvestmentService...");
-            startRabbitMQConsumer();
+            
+            // Zaženemo RabbitMQ consumer v ločeni niti
+            executor.submit(() -> {
+                try {
+                    startRabbitMQConsumer();
+                } catch (Exception e) {
+                    logger.severe("RabbitMQ consumer initialization failed: " + e.getMessage());
+                }
+            });
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             logger.warning("Initialization delay was interrupted: " + e.getMessage());
-        } catch (Exception e) {
-            logger.severe("Failed to initialize RabbitMQ listener: " + e.getMessage());
         }
     }
 
     public void startRabbitMQConsumer() {
-        try (Connection connection = RabbitMQConfig.createConnection();
-            Channel channel = connection.createChannel()) {
-
-            String queueName = RabbitMQConfig.getQueueName();
-            logger.info("Connecting to RabbitMQ queue: " + queueName);
-
-            while (true) {
-                try {
-                    // Pridobi naslednje sporočilo iz vrste, če obstaja
-                    GetResponse response = channel.basicGet(queueName, true); // true za avtomatsko potrjevanje
-
-                    if (response != null) {
-                        String message = new String(response.getBody(), "UTF-8");
-                        logger.info("Pulled message: " + message);
-                        processMessage(message); // Obdelava prejetega sporočila
-                    } else {
-                        logger.info("No messages in the queue.");
+        while (true) { // Zanko prestavimo sem, da lahko ob napaki znova vzpostavimo povezavo
+            try (Connection connection = RabbitMQConfig.createConnection();
+                 Channel channel = connection.createChannel()) {
+    
+                String queueName = RabbitMQConfig.getQueueName();
+                logger.info("Connecting to RabbitMQ queue: " + queueName);
+    
+                while (true) {
+                    try {
+                        // Pridobi naslednje sporočilo iz vrste, če obstaja
+                        GetResponse response = channel.basicGet(queueName, true); // true za avtomatsko potrjevanje
+    
+                        if (response != null) {
+                            String message = new String(response.getBody(), "UTF-8");
+                            logger.info("Pulled message: " + message);
+                            processMessage(message); // Obdelava prejetega sporočila
+                        } else {
+                            logger.info("No messages in the queue.");
+                        }
+    
+                        // Počakajte 5 sekund pred naslednjim preverjanjem
+                        int sleepTime = (response != null) ? 1000 : 5000;
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException e) {
+                        logger.warning("Thread interrupted while sleeping: " + e.getMessage());
+                        Thread.currentThread().interrupt(); // Ponastavite zastavico prekinjene niti
+                    } catch (Exception e) {
+                        logger.severe("Error while processing messages: " + e.getMessage());
                     }
-
-                    // Počakajte 5 sekund pred naslednjim preverjanjem
-                    int sleepTime = (response != null) ? 1000 : 5000;
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    logger.warning("Thread interrupted while sleeping: " + e.getMessage());
-                    Thread.currentThread().interrupt(); // Ponastavite zastavico prekinjenega niti
-                } catch (Exception e) {
-                    logger.severe("Error while processing messages: " + e.getMessage());
-                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                logger.severe("RabbitMQ connection failed, retrying in 10 seconds: " + e.getMessage());
+                try {
+                    Thread.sleep(10000); // Počakaj 10 sekund pred ponovnim poskusom
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    logger.warning("Retry delay interrupted: " + ie.getMessage());
                 }
             }
-        } catch (IOException e) {
-            logger.severe("Error connecting to RabbitMQ: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            logger.severe("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
+    /* 
     private void processMessage(String message) {
         logger.info("Received a new transaction: " + message);
         logger.info("RabbitMQ messages work! 😊");
         logger.info("Thank you for using our service! 😊");
     }
+    */
+
+    private void processMessage(String message) {
+        try {
+            // Parsiranje prejetega sporočila
+            ObjectMapper objectMapper = new ObjectMapper();
+            InvestmentMessage transaction = objectMapper.readValue(message, InvestmentMessage.class);
+    
+            // Nastavimo trenutni čas, če timestamp ni nastavljen
+            if (transaction.getTimestamp() == null) {
+                transaction.setTimestamp(new Date());
+            }
+    
+            logger.info("Processing transaction: Amount=" + transaction.getAmount() + 
+                        ", Type=" + transaction.getType() + 
+                        ", Timestamp=" + transaction.getTimestamp());
+    
+            // Shranimo transakcijo
+            saveTransaction(transaction);
+    
+        } catch (JsonProcessingException e) {
+            logger.severe("Failed to process message. Invalid JSON format: " + message);
+            logger.severe("Error details: " + e.getMessage());
+        } catch (Exception e) {
+            logger.severe("Unexpected error while processing message: " + e.getMessage());
+        }
+    }
+
+    private void saveTransaction(InvestmentMessage transaction) {
+        try {
+            Document document = new Document()
+                    .append("userId", transaction.getUserId()) // Uporabnik, ki je poslal transakcijo
+                    .append("lastTransactionAmount", transaction.getAmount()) // Znesek transakcije
+                    .append("lastTransactionType", transaction.getType()) // Tip transakcije (income/expense)
+                    .append("timestamp", transaction.getTimestamp()); // Čas transakcije
+            
+            logger.info("Attempting to save transaction: " + document.toJson());
+            transactionCollection.insertOne(document); // Shranimo v zbirko MongoDB
+    
+            logger.info("Transaction saved: UserId=" + transaction.getUserId() +
+                        ", Amount=" + transaction.getAmount() +
+                        ", Type=" + transaction.getType() +
+                        ", Timestamp=" + transaction.getTimestamp());
+        } catch (Exception e) {
+            logger.severe("Error saving transaction to database: " + e.getMessage());
+        }
+    }
+
+    public boolean deleteAllTransactions(String userId) {
+        try {
+            logger.info("Deleting all transactions for userId: " + userId);
+    
+            // Brisanje vseh transakcij za določen userId
+            transactionCollection.deleteMany(new Document("userId", userId));
+    
+            logger.info("All transactions deleted successfully for userId: " + userId);
+            return true;
+        } catch (Exception e) {
+            logger.severe("Error deleting transactions: " + e.getMessage());
+            return false;
+        }
+    }
 
     public void addInvestment(Investment investment) {
         try {
             Document investmentDoc = toDocument(investment);
-            collection.insertOne(investmentDoc);
+            investmentCollection.insertOne(investmentDoc);
             logger.info("Investment added successfully");
         } catch (Exception e) {
             logger.severe("Error adding investment: " + e.getMessage());
@@ -118,7 +195,7 @@ public class InvestmentBean {
         try {
             Document updateFields = toDocument(updatedInvestment);
             updateFields.append("updatedAt", new Date());
-            collection.updateOne(
+            investmentCollection.updateOne(
                     new Document("_id", investmentId),
                     new Document("$set", updateFields)
             );
@@ -131,7 +208,7 @@ public class InvestmentBean {
 
     public Investment getInvestment(ObjectId investmentId) {
         try {
-            Document doc = collection.find(new Document("_id", investmentId)).first();
+            Document doc = investmentCollection.find(new Document("_id", investmentId)).first();
             if (doc != null) {
                 return toInvestment(doc);
             }
@@ -145,7 +222,7 @@ public class InvestmentBean {
     public List<Investment> getAllInvestments(ObjectId userId) {
         List<Investment> investments = new ArrayList<>();
         try {
-            for (Document doc : collection.find(new Document("userId", userId))) {
+            for (Document doc : investmentCollection.find(new Document("userId", userId))) {
                 Investment investment = toInvestment(doc);
                 double price = calculateCurrentPrice(investment);
                 investment.setCurrentPrice(price);
@@ -162,7 +239,7 @@ public class InvestmentBean {
 
     public boolean deleteInvestment(ObjectId investmentId) {
         try {
-            collection.deleteOne(new Document("_id", investmentId));
+            investmentCollection.deleteOne(new Document("_id", investmentId));
             logger.info("Investment deleted successfully");
             return true;
         } catch (Exception e) {
@@ -234,6 +311,27 @@ public class InvestmentBean {
         return i.getCurrentPrice() * i.getQuantity();
     }
 
+    public Document getLastTransaction(String userId) {
+        try {
+            return transactionCollection.find(new Document("userId", userId))
+                    .sort(new Document("timestamp", -1)) // Razvrsti po datumu (najnovejša prva)
+                    .first(); // Vrne prvo najnovejšo transakcijo
+        } catch (Exception e) {
+            logger.severe("Error retrieving last transaction: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Document> getAllTransactions(String userId) {
+        logger.info("Querying database for transactions with userId: " + userId);
+    
+        List<Document> transactions = transactionCollection.find(new Document("userId", userId)) // userId kot String
+                .sort(new Document("timestamp", -1)) // Razvrstitev po datumu (najnovejša prva)
+                .into(new ArrayList<>());
+    
+        logger.info("Transactions found: " + transactions.size());
+        return transactions;
+    }
 
 
     private Document toDocument(Investment investment) {
