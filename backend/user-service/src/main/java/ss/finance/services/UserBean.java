@@ -1,24 +1,29 @@
 package ss.finance.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.mindrot.jbcrypt.BCrypt;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
-import org.mindrot.jbcrypt.BCrypt;
+
 import ss.finance.entities.User;
 import ss.finance.utils.MongoDBConnection;
-import org.bson.types.ObjectId;
-
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 @ApplicationScoped
 public class UserBean {
     private MongoCollection<Document> collection;
     private static final Logger logger = Logger.getLogger(UserBean.class.getName());
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public UserBean() {
         MongoClient mongoClient = MongoDBConnection.getMongoClient();

@@ -27,7 +27,7 @@ public class BudgetRepository {
         this.collection = database.getCollection("budgets");
         logger.info("Initialized BudgetRepository with MongoDB collection 'budgets'");
     }
-
+    
     public void addBudget(Budget budget) {
         // Normalizacija kategorije (prva črka velika, ostale male)
         budget.setCategory(

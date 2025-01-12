@@ -1,24 +1,33 @@
 package ss.finance.rest;
 
-import ss.finance.services.InvestmentBean;
-import ss.finance.entities.Investment;
-import ss.finance.security.JwtUtil;
-
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
-import org.bson.types.ObjectId;
+import java.util.logging.Logger;
 
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import java.util.logging.Logger;
+
+import ss.finance.entities.Investment;
+import ss.finance.security.JwtUtil;
+import ss.finance.services.InvestmentBean;
 
 
 @Tag(name = "Investments", description = "Endpoints for managing investments")
@@ -126,7 +135,6 @@ public class InvestmentApi {
                     .build();
         }
     }
-
 
     @Operation(summary = "Create a new investment",
             description = "Adds a new investment for the authenticated user")
@@ -243,5 +251,154 @@ public class InvestmentApi {
                     .build();
         }
     }
+
+        @Operation(summary = "Get last transaction",
+        description = "Fetches the last transaction for the authenticated user")
+        @APIResponse(
+                responseCode = "200",
+                description = "Last transaction details",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"userId\": \"<user_id>\", \"lastTransactionAmount\": 55.0, \"lastTransactionType\": \"income\", \"timestamp\": \"2025-01-11T12:00:00Z\"}"))
+        )
+        @APIResponse(
+                responseCode = "401",
+                description = "Unauthorized access",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Unauthorized access. Missing or invalid cookie.\"}"))
+        )
+        @APIResponse(
+                responseCode = "404",
+                description = "No transactions found",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"No transactions found for the user.\"}"))
+        )
+        @APIResponse(
+                responseCode = "500",
+                description = "Server error occurred",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Internal server error. Please try again later.\"}"))
+        )
+
+        @GET
+        @Path("/transactions/last")
+        public Response getLastTransaction(@CookieParam("auth_token") String token) {
+            try {
+                if (token == null || token.isEmpty()) {
+                    return Response.status(Response.Status.UNAUTHORIZED)
+                            .entity(Map.of("error", "Unauthorized access. Missing or invalid cookie."))
+                            .build();
+                }
+        
+                // Pridobitev userId kot String
+                String userId = jwtUtil.extractUserId(token).toHexString();
+        
+                // Pridobitev zadnje transakcije
+                Document lastTransaction = investmentBean.getLastTransaction(userId);
+        
+                if (lastTransaction != null) {
+                    return Response.ok(lastTransaction).build(); // Vrne zadnjo transakcijo
+                } else {
+                    return Response.status(Response.Status.NOT_FOUND)
+                            .entity(Map.of("error", "No transactions found for the user."))
+                            .build();
+                }
+            } catch (Exception e) {
+                logger.severe("Unexpected error occurred while fetching last transaction: " + e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(Map.of("error", "Internal server error. Please try again later."))
+                        .build();
+            }
+        }
+
+        @Operation(summary = "Get all transactions",
+        description = "Fetches all transactions for the authenticated user")
+        @APIResponse(
+                responseCode = "200",
+                description = "List of transactions",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "[{\"userId\": \"<user_id>\", \"lastTransactionAmount\": 55.0, \"lastTransactionType\": \"income\", \"timestamp\": \"2025-01-11T12:00:00Z\"}]"))
+        )
+        @APIResponse(
+                responseCode = "401",
+                description = "Unauthorized access",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Unauthorized access. Missing or invalid cookie.\"}"))
+        )
+        @APIResponse(
+                responseCode = "500",
+                description = "Server error occurred",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Internal server error. Please try again later.\"}"))
+        )
+        
+        @GET
+        @Path("/transactions")
+        public Response getAllTransactions(@CookieParam("auth_token") String token) {
+            try {
+                if (token == null || token.isEmpty()) {
+                        return Response.status(Response.Status.UNAUTHORIZED)
+                                .entity(Map.of("error", "Unauthorized access. Missing or invalid cookie."))
+                                .build();
+                }
+        
+                String userId = jwtUtil.extractUserId(token).toHexString(); // Pretvorite ObjectId v String
+                List<Document> transactions = investmentBean.getAllTransactions(userId); // Posredujte userId kot String
+        
+                if (transactions.isEmpty()) {
+                        return Response.status(Response.Status.NO_CONTENT).build(); // 204, če ni transakcij
+                }
+        
+                return Response.ok(transactions).build(); // Vrnemo seznam transakcij
+            } catch (IllegalArgumentException e) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(Map.of("error", "Invalid token."))
+                        .build();
+            } catch (Exception e) {
+                logger.severe("Unexpected error occurred: " + e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(Map.of("error", "Internal server error. Please try again later."))
+                        .build();
+            }
+        }
+
+        @Operation(summary = "Delete all transactions",
+        description = "Deletes all transactions for the authenticated user")
+        @APIResponse(
+                responseCode = "204",
+                description = "All transactions deleted successfully"
+        )
+        @APIResponse(
+                responseCode = "401",
+                description = "Unauthorized access",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Unauthorized access. Missing or invalid cookie.\"}"))
+        )
+        @APIResponse(
+                responseCode = "500",
+                description = "Server error occurred",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"error\": \"Internal server error. Please try again later.\"}"))
+        )
+        @DELETE
+        @Path("/transactions")
+        public Response deleteAllTransactions(@CookieParam("auth_token") String token) {
+        try {
+                if (token == null || token.isEmpty()) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(Map.of("error", "Unauthorized access. Missing or invalid cookie."))
+                        .build();
+                }
+
+                // Pridobitev userId iz tokena
+                String userId = jwtUtil.extractUserId(token).toHexString();
+
+                // Klic metode za brisanje vseh transakcij
+                boolean deleted = investmentBean.deleteAllTransactions(userId);
+
+                if (deleted) {
+                return Response.noContent().build(); // 204 No Content, če so transakcije uspešno izbrisane
+                } else {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(Map.of("error", "Failed to delete transactions."))
+                        .build();
+                }
+        } catch (Exception e) {
+                logger.severe("Unexpected error occurred while deleting transactions: " + e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(Map.of("error", "Internal server error. Please try again later."))
+                        .build();
+        }
+        }
 
 }

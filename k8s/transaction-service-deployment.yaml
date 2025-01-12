@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: transaction-service
-        image: spelakoracin/backend-transaction-service:latest
+        image: svitdocker123/backend-transaction-service:latest
         envFrom:
         - secretRef:
             name: backend-secrets

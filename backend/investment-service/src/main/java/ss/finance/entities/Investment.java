@@ -1,11 +1,10 @@
 package ss.finance.entities;
 
-import org.bson.types.ObjectId;
 import java.util.Date;
-import java.util.List;
 
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.bson.types.ObjectId;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Investment {
     private String _id;
@@ -17,10 +16,40 @@ public class Investment {
     private Date purchaseDate;
     private Double currentPrice;
     private Double currentValue;
+    private Double lastTransactionAmount;
+    private String lastTransactonType;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+    private Date timestamp; // Dodamo timestamp
+
 
     public Investment() {
 
     }
+
+    public Double getlastTransactionAmount() {
+        return lastTransactionAmount;
+    }
+
+    public void setlastTransactionAmount(Double lastTransactionAmount) {
+        this.lastTransactionAmount = lastTransactionAmount;
+    }
+
+    public String getlastTransactonType() {
+        return lastTransactonType;
+    }
+
+    public void setlastTransactonType(String lastTransactonType) {
+        this.lastTransactonType = lastTransactonType;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public String getId() {
         return _id;
     }

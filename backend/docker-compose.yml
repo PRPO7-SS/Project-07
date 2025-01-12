@@ -12,6 +12,20 @@ services:
       - mongo_data:/data/db
     networks:
       - my_network  # Connects MongoDB to the custom network
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ port za komunikacijo
+      - "15672:15672" # Management UI
+    environment:
+      - RABBITMQ_HOST
+      - RABBITMQ_PORT
+      - RABBITMQ_USER
+      - RABBITMQ_PASS
+    networks:
+    - my_network
 
   api-gateway:
     image: nginx:latest
@@ -72,8 +86,13 @@ services:
       - REFRESH_TOKEN_SECRET
       - API_KEY
       - API_URL
+      - RABBITMQ_HOST
+      - RABBITMQ_PORT
+      - RABBITMQ_USER
+      - RABBITMQ_PASS
     depends_on:
       - mongodb
+      - rabbitmq
     networks:
       - my_network
 
@@ -87,8 +106,13 @@ services:
       - MONGO_URI
       - JWT_SECRET
       - REFRESH_TOKEN_SECRET
+      - RABBITMQ_HOST
+      - RABBITMQ_PORT
+      - RABBITMQ_USER
+      - RABBITMQ_PASS
     depends_on:
       - mongodb
+      - rabbitmq
     networks:
       - my_network
 

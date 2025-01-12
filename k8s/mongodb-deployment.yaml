@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: spelakoracin/mongodb:latest
+        image: svitdocker123/mongodb_new:latest
         ports:
         - containerPort: 27017
           name: mongo
