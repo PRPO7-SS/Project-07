@@ -13,7 +13,7 @@ import { DebtsComponent } from './debts/debts.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-   { path: 'home', component: HomepageComponent, canActivate: [authGuard] },
+   { path: 'home', component: HomepageComponent },
    { path: 'register', component: RegisterComponent },
    { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
    { path: 'finance', component: FinanceComponent, canActivate: [authGuard] },

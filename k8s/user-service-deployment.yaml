@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: spelakoracin/backend-user-service:latest
+        image: spelakoracin/user-service-prod:latest
         envFrom:
         - secretRef:
             name: backend-secrets

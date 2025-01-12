@@ -143,8 +143,8 @@ public class AuthApi {
                 String accessToken = jwtUtil.generateToken(userId, validUser.getEmail());
                 String refreshToken = jwtUtil.generateRefreshToken(userId, validUser.getEmail());
 
-                NewCookie accessTokenCookie = new NewCookie("auth_token", accessToken, "/", "localhost", "Access token", 3600, false);
-                NewCookie refreshTokenCookie = new NewCookie("refresh_token", refreshToken, "/", "localhost", "Refresh token", 24 * 3600, true);
+                NewCookie accessTokenCookie = new NewCookie("auth_token", accessToken, "/", null, "Access token", 3600, false, true);
+                NewCookie refreshTokenCookie = new NewCookie("refresh_token", refreshToken, "/", null, "Refresh token", 24 * 3600, false, true);
 
                 return Response.ok(Map.of(
                                 "message", "Login successful",

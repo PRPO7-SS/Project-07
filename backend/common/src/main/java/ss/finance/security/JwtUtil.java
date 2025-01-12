@@ -17,8 +17,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @ApplicationScoped
 public class JwtUtil {
 
-    private String secretKey = System.getenv("JWT_SECRET");
-    private String refreshSecretKey = System.getenv("REFRESH_TOKEN_SECRET");
+    private final String secretKey = System.getenv("JWT_SECRET");
+    private final String refreshSecretKey = System.getenv("REFRESH_TOKEN_SECRET");
     private static final long EXPIRATION_TIME = 3600000; // Default to 1h
     private static final long REFRESH_EXPIRATION_TIME = 86400000; // Default to 1day
 
@@ -57,7 +57,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION_TIME)) // 1 day validity
-                .signWith(SignatureAlgorithm.HS256, refreshSecretKey) // Use a different secret key
+                .signWith(SignatureAlgorithm.HS256, refreshSecretKey.getBytes(StandardCharsets.UTF_8)) // Use a different secret key
                 .compact();
     }
 

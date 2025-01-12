@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HttpService {
-  private readonly apiGatewayUrl = 'http://localhost:30000'; // Replace with your API Gateway URL if different
+  private readonly apiGatewayUrl = environment.apiBaseUrl; // Replace with your API Gateway URL if different
 
   constructor(private readonly http: HttpClient) {}
 

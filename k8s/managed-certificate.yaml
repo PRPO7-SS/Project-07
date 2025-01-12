@@ -1,0 +1,9 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: financebro-cert
+  namespace: default
+spec:
+  domains:
+  - financebro.app
+  - www.financebro.app
