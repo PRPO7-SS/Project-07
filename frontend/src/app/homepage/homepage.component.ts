@@ -12,11 +12,12 @@ import { Transaction } from '../models/transaction';
 import { SavingsGoal } from '../models/savingsGoal';
 import { CryptoChartComponent } from './crypto-chart/crypto-chart.component';
 import { FormsModule } from '@angular/forms';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [NavigationComponent, CommonModule, RouterModule, FullCalendarModule, CryptoChartComponent, FormsModule],
+  imports: [NavigationComponent, CommonModule, RouterModule, FullCalendarModule, CryptoChartComponent, FormsModule, FooterComponent],
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.css'],
 })

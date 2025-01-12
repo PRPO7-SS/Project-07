@@ -11,11 +11,12 @@ import { InvestmentType } from '../models/investment';
 import { CryptoChartComponent } from '../homepage/crypto-chart/crypto-chart.component';
 // import { ModalModule } from 'ngx-bootstrap/modal';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-investments',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NavigationComponent, CryptoChartComponent,
+  imports: [CommonModule, FormsModule, RouterModule, NavigationComponent, CryptoChartComponent, FooterComponent
      ],
   templateUrl: './investments.component.html',
   styleUrls: ['./investments.component.css'],

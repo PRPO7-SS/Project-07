@@ -78,11 +78,22 @@ user-service na vratih 8080, investment-service na vratih 8085, transaction-serv
 savings-goal na vratih 8084, budget-service na vratih 8083 in debt-tracking-service na vratih 8086.
 
 3. Zagon uporabniškega vmesnika
-    
     Prestavite se v frontend direktorij in zaženite osprednji del aplikacije:
     ```bash
    cd frontend
    ng serve
+
+4. Lokalni dostop do MongoDB baze
+    Za lokalni dostop do MongoDB baze, uporabo baze financeApp in dostop do zbirk uporabimo spodnji ukaz.
+    ```bash
+    docker exec -it mongodb_new mongosh
+    use financeApp
+    show collections
+
+5. Dostop do RabbitMQ UI
+    Za dostop do RabbiMQ umesnika, v brskalniku vpišemo spodnji ukaz in se prijavimo z uporabniškim imenom in geslom.
+    ```bash
+    http://localhost:15672
    
 Frontend bo privzeto deloval na http://localhost:4200
 
