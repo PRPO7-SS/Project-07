@@ -36,8 +36,10 @@ Običajni uporabniki so osebe, stare 18 let ali več in so registrirane in prija
 ---
 ### Gostovanje aplikacije
 
+Aplikacija je naložena na kubernetes gručo in gostuje na naslovu: https://financebro.app
+
 ---
-### Lokalni zagon aplikacije
+### Lokalni zagon aplikacije - navodila za ostale razvijalce
 
 Aplikacijo je mogoče izvajati lokalno za namene razvoja ali testiranja. Spodaj so podrobnosti za namestitev in nastavitev.
 
@@ -99,6 +101,12 @@ V direktoriju backend ustvarite datoteko .env, innastavite naslednje okoljske sp
 **API_KEY**=fa70322f056548238c1dabc6a8eba98a
 
 **API_URL**=https://api.twelvedata.com
+
+**RABBITMQ_PORT**=5672
+
+**RABBITMQ_USER**=guest
+
+**RABBITMQ_PASS**=guest
     
 V datoteki frontend/src/environments/environments.ts nastavite spremeljivko
 twelveDataApiKey na vrednost fa70322f056548238c1dabc6a8eba98a.
