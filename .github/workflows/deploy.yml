@@ -50,10 +50,9 @@ jobs:
           cd backend/user-service && mvn clean package -DskipTests && cd ../..
           cd backend/investment-service && mvn clean package -DskipTests && cd ../..
 
-      # 7. Verify Docker Compose
+      # 7. Verify Docker Compose installation
       - name: Verify Docker Compose
-        run: |
-          docker compose version
+        run: docker compose version
 
       # 8. Build and Push Docker Images
       - name: Build and Push Docker Images
