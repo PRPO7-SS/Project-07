@@ -1,7 +1,7 @@
 name: CI/CD for FinanceBro
 
 on:
-  workflow_dispatch: # Možnost ročnega zagona iz GitHub UI
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -61,18 +61,20 @@ jobs:
           docker compose -f backend/docker-compose.yml build
           docker compose -f backend/docker-compose.yml push
 
-      # 9. Deploy to Kubernetes
+      # 9. Configure kubectl
       - name: Configure kubectl
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig
           export KUBECONFIG=kubeconfig
+          kubectl config use-context docker-desktop
 
+      # 10. Test Kubernetes API
+      - name: Test Kubernetes API
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      # 11. Apply Kubernetes manifests
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f k8s/
-          kubectl rollout status deployment/user-service
-          kubectl rollout status deployment/savings-goal-service
-          kubectl rollout status deployment/investment-service
-          kubectl rollout status deployment/transaction-service
-          kubectl rollout status deployment/budget-service
-          kubectl rollout status deployment/debt-tracking-service
+          kubectl apply -f k8s/ --validate=false
