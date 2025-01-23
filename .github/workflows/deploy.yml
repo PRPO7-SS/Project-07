@@ -1,0 +1,52 @@
+name: CI/CD for FinanceBro
+
+on:
+  workflow_dispatch: # Možnost ročnega zagona iz GitHub UI
+  push:
+    branches:
+      - main # Avtomatizacija za glavno vejo
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Set up Docker
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          docker --version
+
+      # 3. Log in to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 4. Build and Push Docker Images
+      - name: Build and Push Docker Images
+        run: |
+          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml push
+
+      # 5. Deploy to Kubernetes
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig
+          export KUBECONFIG=kubeconfig
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/
+          kubectl rollout status deployment/user-service
+          kubectl rollout status deployment/savings-goal-service
+          kubectl rollout status deployment/investment-service
+          kubectl rollout status deployment/transaction-service
+          kubectl rollout status deployment/budget-service
+          kubectl rollout status deployment/debt-tracking-service

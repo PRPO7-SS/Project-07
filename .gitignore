@@ -13,4 +13,4 @@ backend/debt-tracking-service/target/
 frontend/node_modules/
 
 # OS-specific files
-.DS_Store
+.DS_Storekubeconfig
