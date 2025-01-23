@@ -4,7 +4,7 @@ on:
   workflow_dispatch: # Možnost ročnega zagona iz GitHub UI
   push:
     branches:
-      - main # Avtomatizacija za glavno vejo
+      - main
 
 jobs:
   build_deploy:
@@ -17,10 +17,7 @@ jobs:
 
       # 2. Set up Docker
       - name: Set up Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          docker --version
+        uses: docker/setup-buildx-action@v2
 
       # 3. Log in to Docker Hub
       - name: Login to Docker Hub
