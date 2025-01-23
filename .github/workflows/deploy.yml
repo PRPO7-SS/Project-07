@@ -34,8 +34,8 @@ jobs:
       # 5. Build and Push Docker Images
       - name: Build and Push Docker Images
         run: |
-          docker compose -f docker-compose.yml build
-          docker compose -f docker-compose.yml push
+          docker compose -f backend/docker-compose.yml build
+          docker compose -f backend/docker-compose.yml push
 
       # 6. Deploy to Kubernetes
       - name: Configure kubectl
