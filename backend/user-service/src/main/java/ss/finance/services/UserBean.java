@@ -231,20 +231,23 @@ public class UserBean {
         user.setPassword(doc.getString("password"));
         user.setTelephone(doc.getString("telephone"));
         user.setLanguage(doc.getString("language"));
-        user.setNotifications(doc.getList("notifications", String.class) != null ? doc.getList("notifications", String.class) : new ArrayList<>());
+        user.setNotifications(doc.containsKey("notifications") ? doc.getList("notifications", String.class) : new ArrayList<>());
         user.setAvatar(doc.getString("avatar"));
         user.setDateOfBirth(doc.getDate("dateOfBirth"));
         user.setCurrency(doc.getString("currency"));
         user.setAccountStatus(doc.getString("accountStatus"));
-        user.setSavingsGoal(doc.getDouble("savingsGoal"));
-        user.setIncome(doc.getDouble("income"));
-        user.setRoles(doc.getList("roles", String.class));
+        
+        // Preverimo, ali polje obstaja, drugače nastavimo privzeto vrednost
+        user.setSavingsGoal(doc.containsKey("savingsGoal") ? doc.getDouble("savingsGoal") : 0.0);
+        user.setIncome(doc.containsKey("income") ? doc.getDouble("income") : 0.0);
+        
+        user.setRoles(doc.containsKey("roles") ? doc.getList("roles", String.class) : new ArrayList<>());
         user.setCreatedAt(doc.getDate("createdAt"));
         user.setUpdatedAt(doc.getDate("updatedAt"));
         user.setLastLogin(doc.getDate("lastLogin"));
         user.setResetToken(doc.getString("resetToken"));
         user.setResetTokenExpiry(doc.getDate("resetTokenExpiry"));
-
+    
         return user;
     }
 }

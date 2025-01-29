@@ -42,6 +42,14 @@
                 <version>4.0.0</version>
             </dependency>
 
+            <!-- JUnit 5 BOM (zaradi kompatibilnosti verzij) -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.9.2</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
 
             <!-- JAX-RS for REST API -->
             <dependency>
@@ -168,6 +176,22 @@
 
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <!-- Surefire za izvajanje testov -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M7</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <repositories>
         <!-- Maven Central Repository -->
