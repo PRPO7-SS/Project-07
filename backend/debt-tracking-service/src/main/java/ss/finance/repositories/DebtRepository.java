@@ -114,13 +114,17 @@ public class DebtRepository {
     }
 
     private Document toDocument(Debt debt) {
-        return new Document()
+        Document doc = new Document()
                 .append("userId", debt.getUserId())
                 .append("creditor", debt.getCreditor())
                 .append("description", debt.getDescription())
                 .append("amount", debt.getAmount())
                 .append("isPaid", debt.getIsPaid())
                 .append("deadline", debt.getDeadline());
+        if (debt.getId() != null) {
+            doc.append("_id", debt.getId());
+        }
+        return doc;
     }
 
     private Debt toDebt(Document doc) {

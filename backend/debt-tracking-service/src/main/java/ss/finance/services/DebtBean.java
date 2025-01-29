@@ -30,6 +30,10 @@ public class DebtBean {
     }
 
     public boolean updateDebt(ObjectId debtId, Debt updatedDebt) {
+        if (updatedDebt == null) {
+            logger.warning("Attempted to update debt with null object.");
+            return false;
+        }
         logger.info("Updating debt with ID: " + debtId);
         return debtRepository.updateDebt(debtId, updatedDebt);
     }
@@ -39,12 +43,22 @@ public class DebtBean {
         return debtRepository.deleteDebt(debtId);
     }
 
-    public void markAsPaid(ObjectId debtId) {
+    public boolean markAsPaid(ObjectId debtId) {
         logger.info("Marking debt with ID " + debtId + " as paid.");
+        List<Debt> debts = debtRepository.getDebtsByUserId(debtId);
+        if (debts.isEmpty()) {
+            logger.warning("Debt not found with ID: " + debtId);
+            return false;
+        }
         debtRepository.markAsPaid(debtId);
+        return true;
     }
 
     public Debt getDebtById(ObjectId debtObjectId) {
+        if (debtObjectId == null) {
+            logger.warning("Attempted to fetch debt with null ID.");
+            return null;
+        }
         logger.info("Fetching debt with ID: " + debtObjectId);
         return debtRepository.getDebtById(debtObjectId);
     }

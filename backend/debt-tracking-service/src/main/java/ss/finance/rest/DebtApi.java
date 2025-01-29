@@ -181,7 +181,6 @@ public class DebtApi {
             ObjectId userId = jwtUtil.extractUserId(token);
             ObjectId debtObjectId = new ObjectId(debtId);
             Debt existingDebt = debtBean.getDebtById(debtObjectId);
-
             if (existingDebt == null || !existingDebt.getUserId().equals(userId)) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"message\": \"Debt not found or does not belong to the user\"}")
@@ -231,7 +230,16 @@ public class DebtApi {
     @Path("/{debtId}/markAsPaid")
     public Response markDebtAsPaid(@PathParam("debtId") String debtId) {
         try {
-            debtBean.markAsPaid(new ObjectId(debtId));
+            ObjectId debtObjectId = new ObjectId(debtId);
+            Debt debt = debtBean.getDebtById(debtObjectId);
+        
+            if (debt == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"message\": \"Debt not found\"}")
+                        .build();
+            }
+        
+            debtBean.markAsPaid(debtObjectId);
             return Response.ok("{\"message\": \"Debt marked as paid successfully\"}").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
