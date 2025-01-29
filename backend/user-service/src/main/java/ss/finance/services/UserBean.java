@@ -35,28 +35,30 @@ public class UserBean {
         try {
             // Check if the user already exists by email
             Document existingUser = collection.find(new Document("email", user.getEmail())).first();
-
+    
             if (existingUser != null) {
-                // If the user exists, use their existing email as userId
+                // If the user exists, log and return
                 logger.info("User already exists with this email: " + user.getEmail());
             } else if (!isValidEmail(user.getEmail())) {
                 throw new IllegalArgumentException("Invalid email format.");
             } else {
                 user.setCreatedAt(new java.util.Date());
                 user.setUpdatedAt(new java.util.Date());
-
-
+    
                 Document userDoc = toDocument(user);
                 collection.insertOne(userDoc);
-
+    
                 // Log the successful user creation
                 logger.info("User added successfully");
             }
-
+    
             logger.info("User added successfully: " + user.getEmail());
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             logger.severe("Error adding user: " + e.getMessage());
-            throw new RuntimeException("Error adding user", e);
+            throw e; // Rethrow IllegalArgumentException directly
+        } catch (Exception e) {
+            logger.severe("Unexpected error adding user: " + e.getMessage());
+            throw new RuntimeException("Unexpected error adding user", e);
         }
     }
 
@@ -126,15 +128,21 @@ public class UserBean {
     }
 
     public void updateUser(ObjectId userId, User updatedUser) {
+        Document existingUser = collection.find(new Document("_id", userId)).first();
+        if (existingUser == null) {
+            logger.warning("User with ID " + userId + " not found, update skipped.");
+            return;
+        }
+    
         try {
             Document updateFields = toDocument(updatedUser);
-            updateFields.append("updatedAt", new java.util.Date()); // Set updated timestamp
-
+            updateFields.append("updatedAt", new java.util.Date());
+    
             collection.updateOne(
                     new Document("_id", userId),
                     new Document("$set", updateFields)
             );
-
+    
             logger.info("User updated successfully");
         } catch (Exception e) {
             logger.severe("Error updating user: " + e.getMessage());

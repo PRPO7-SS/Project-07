@@ -3,6 +3,7 @@ package ss.finance.repositories;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -40,9 +41,8 @@ public class BudgetRepository {
     }
 
     public List<Budget> getBudgetsByUserId(ObjectId userId) {
-        List<Budget> budgets = collection.find(new Document("userId", userId))
-                .into(new ArrayList<>())
-                .stream().map(this::toBudget).toList();
+        List<Document> documents = collection.find(new Document("userId", userId)).into(new ArrayList<>());
+        List<Budget> budgets = documents.stream().map(this::toBudget).collect(Collectors.toList());
         logger.info("Retrieved budgets for userId " + userId + ": " + budgets);
         return budgets;
     }

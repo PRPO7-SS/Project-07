@@ -1,11 +1,12 @@
 package ss.finance.entities;
 
-import org.bson.types.ObjectId;
-
 import java.util.Date;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 public class User {
+    private ObjectId id;
     private String username;
     private String fullName;
     private String email;
@@ -30,6 +31,14 @@ public class User {
 
     public User() {
 
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+    
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     // Getters and Setters for User fields

@@ -118,7 +118,7 @@
             <version>5.17.0</version>
         </dependency>
 
-                <!-- JUnit 5 BOM (Bill of Materials) -->
+        <!-- JUnit 5 BOM (Bill of Materials) -->
         <dependency>
             <groupId>org.junit</groupId>
             <artifactId>junit-bom</artifactId>

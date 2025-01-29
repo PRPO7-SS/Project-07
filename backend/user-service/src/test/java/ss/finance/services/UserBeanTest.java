@@ -4,8 +4,11 @@ import java.util.Date;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,12 +52,9 @@ public class UserBeanTest {
 
     @BeforeEach
     void setUp() {
-        // Simuliraj MongoDB povezavo samo, če je metoda uporabljena v testih
         lenient().when(mockMongoClient.getDatabase("financeApp")).thenReturn(mockDatabase);
         lenient().when(mockDatabase.getCollection("users")).thenReturn(mockCollection);
         lenient().when(mockCollection.find(any(Document.class))).thenReturn(mockFindIterable);
-
-        // Nastavi testni MongoDB klient v MongoDBConnection
         MongoDBConnection.setTestMongoClient(mockMongoClient);
     }
 
@@ -67,7 +67,7 @@ public class UserBeanTest {
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
 
-        when(mockFindIterable.first()).thenReturn(null); // User ne obstaja
+        when(mockFindIterable.first()).thenReturn(null);
 
         userBean.addUser(user);
 
@@ -92,7 +92,7 @@ public class UserBeanTest {
 
         boolean exists = userBean.existingUser("test@example.com");
 
-        assert exists;
+        assertEquals(true, exists);
     }
 
     @Test
@@ -101,39 +101,39 @@ public class UserBeanTest {
 
         boolean exists = userBean.existingUser("nonexistent@example.com");
 
-        assert !exists;
+        assertEquals(false, exists);
     }
 
     @Test
     void testValidateUser_CorrectPassword() {
         String plainPassword = "password";
         String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
-    
+
         Document userDoc = new Document("email", "test@example.com")
                                .append("password", hashedPassword)
-                               .append("balance", 100.0)  // Preveri, če toUser() pričakuje to polje
-                               .append("age", 25)         // Preveri, če obstajajo druga številska polja
-                               .append("someField", 10.5); // Dodaj manjkajoče vrednosti, ki jih uporablja toUser()
-    
+                               .append("balance", 100.0)
+                               .append("age", 25)
+                               .append("someField", 10.5);
+
         when(mockCollection.find(any(Document.class))).thenReturn(mockFindIterable);
         when(mockFindIterable.first()).thenReturn(userDoc);
-    
+
         User user = userBean.validateUser("test@example.com", plainPassword);
-    
-        assertNotNull(user, "User should not be null when correct password is provided.");
+
+        assertNotNull(user);
         assertEquals("test@example.com", user.getEmail());
     }
 
     @Test
     void testValidateUser_WrongPassword() {
-        String hashedPassword = "$2a$10$7QZzOeV6BQWuoY6pkAQu/O6I5gxzUqNe6NECcI9MfbfXzVbO4e52C"; // Hash za "password"
+        String hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt());
         Document userDoc = new Document("email", "test@example.com").append("password", hashedPassword);
 
         when(mockFindIterable.first()).thenReturn(userDoc);
 
         User user = userBean.validateUser("test@example.com", "wrongpassword");
 
-        assert user == null;
+        assertEquals(null, user);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class UserBeanTest {
 
         boolean deleted = userBean.deleteUser(userId);
 
-        assert deleted;
+        assertEquals(true, deleted);
         verify(mockCollection, times(1)).deleteOne(eq(new Document("_id", userId)));
     }
 
@@ -157,7 +157,90 @@ public class UserBeanTest {
 
         boolean deleted = userBean.deleteUser(userId);
 
-        assert !deleted;
+        assertEquals(false, deleted);
         verify(mockCollection, never()).deleteOne(any(Document.class));
+    }
+
+    @Test
+    void testUpdateUser_Success() {
+        ObjectId userId = new ObjectId();
+        Document existingUser = new Document("_id", userId)
+                .append("email", "old@example.com")
+                .append("password", "oldpassword");
+    
+        when(mockFindIterable.first()).thenReturn(existingUser); // Simulacija obstoječega uporabnika
+    
+        User updatedUser = new User();
+        updatedUser.setEmail("test@example.com");
+        updatedUser.setPassword("newpassword");
+    
+        userBean.updateUser(userId, updatedUser);
+    
+        verify(mockCollection, times(1)).updateOne(any(Document.class), any(Document.class));
+    }
+
+    @Test
+    void testUpdateUser_NotFound() {
+        ObjectId userId = new ObjectId();
+    
+        when(mockFindIterable.first()).thenReturn(null); // Simuliraj neobstoj uporabnika
+    
+        User updatedUser = new User();
+        updatedUser.setEmail("test@example.com");
+        updatedUser.setPassword("newpassword");
+    
+        userBean.updateUser(userId, updatedUser);
+    
+        verify(mockCollection, never()).updateOne(any(Document.class), any(Document.class));
+    }
+
+    @Test
+    void testGetUserByEmail_Success() {
+        Document userDoc = new Document("email", "test@example.com").append("password", "hashedpassword");
+        when(mockFindIterable.first()).thenReturn(userDoc);
+
+        User user = userBean.getUserByEmail("test@example.com");
+
+        assertNotNull(user);
+        assertEquals("test@example.com", user.getEmail());
+    }
+
+    @Test
+    void testGetUserByEmail_NotFound() {
+        when(mockFindIterable.first()).thenReturn(null);
+
+        User user = userBean.getUserByEmail("nonexistent@example.com");
+
+        assertNull(user);
+    }
+    
+    @Test
+    void testAddUser_InvalidEmail() {
+        User user = new User();
+        user.setEmail("invalid-email"); // Neveljaven email
+    
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userBean.addUser(user);
+        });
+    
+        assertTrue(exception.getMessage().contains("Invalid email format."));
+    }
+
+    @Test
+    void testValidateUser_NullEmail() {
+        User user = userBean.validateUser(null, "password");
+        assertNull(user);
+    }
+
+    @Test
+    void testValidateUser_NullPassword() {
+        User user = userBean.validateUser("test@example.com", null);
+        assertNull(user);
+    }
+
+    @Test
+    void testValidateUser_EmptyPassword() {
+        User user = userBean.validateUser("test@example.com", "");
+        assertNull(user);
     }
 }
