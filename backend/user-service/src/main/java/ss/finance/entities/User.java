@@ -37,8 +37,8 @@ public class User {
         return id;
     }
     
-    public void setId(ObjectId id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = new ObjectId(id);
     }
 
     // Getters and Setters for User fields
