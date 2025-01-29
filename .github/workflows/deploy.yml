@@ -59,21 +59,3 @@ jobs:
         run: |
           docker compose -f backend/docker-compose.yml build
           docker compose -f backend/docker-compose.yml push
-
-      # 9. Configure kubectl
-      - name: Configure kubectl
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig
-          export KUBECONFIG=kubeconfig
-          kubectl config use-context docker-desktop
-
-      # 10. Test Kubernetes API
-      - name: Test Kubernetes API
-        run: |
-          kubectl cluster-info
-          kubectl get nodes
-
-      # 11. Apply Kubernetes manifests
-      - name: Apply Kubernetes manifests
-        run: |
-          kubectl apply -f k8s/ --validate=false
