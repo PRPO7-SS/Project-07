@@ -1,8 +1,8 @@
 package ss.finance.entities;
 
-import org.bson.types.ObjectId;
 import java.util.Date;
-import java.util.List;
+
+import org.bson.types.ObjectId;
 
 public class SavingsGoal {
     private String _id;
@@ -15,6 +15,15 @@ public class SavingsGoal {
 
     public SavingsGoal() {
 
+    }
+
+    public SavingsGoal(ObjectId userId, String goalName, Integer targetAmount, Integer currentAmount, Date startDate, Date deadline) {
+        this.userId = userId.toHexString(); // Shrani userId kot String
+        this.goalName = goalName;
+        this.targetAmount = targetAmount;
+        this.currentAmount = currentAmount;
+        this.startDate = startDate;
+        this.deadline = deadline;
     }
 
     public String getId(){ return _id; }
