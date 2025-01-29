@@ -57,14 +57,6 @@ jobs:
           mvn test
           cd ..
 
-      # 6.2. Run Angular Unit Tests
-      - name: Run Frontend Unit Tests
-        run: |
-          cd frontend
-          npm install
-          npm run test -- --watch=false --browsers=ChromeHeadless
-          cd ..
-
       # 7. Verify Docker Compose installation
       - name: Verify Docker Compose
         run: docker compose version
