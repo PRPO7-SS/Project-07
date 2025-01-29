@@ -26,6 +26,15 @@ public class Investment {
 
     }
 
+    public Investment(ObjectId userId, String type, String name, Double amount, Double quantity, Date purchaseDate) {
+        this.userId = userId;
+        this.type = type;
+        this.name = name;
+        this.amount = amount;
+        this.quantity = quantity;
+        this.purchaseDate = purchaseDate;
+    }
+
     public Double getlastTransactionAmount() {
         return lastTransactionAmount;
     }
