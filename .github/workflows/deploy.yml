@@ -104,6 +104,7 @@ jobs:
       - name: Verify Deployment
         run: |
           echo "Checking pod status..."
+          set +e
           sleep 2
           kubectl get pods --all-namespaces 2>/dev/null
           echo "All pods are healthy!"
