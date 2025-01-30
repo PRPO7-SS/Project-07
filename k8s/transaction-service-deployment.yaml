@@ -14,6 +14,8 @@ spec:
       labels:
         app: transaction-service
     spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
       containers:
       - name: transaction-service
         image: svitdocker123/backend-transaction-service:latest
@@ -21,11 +23,23 @@ spec:
         - secretRef:
             name: backend-secrets
         ports:
-        - containerPort: 80
+        - containerPort: 8081
+        readinessProbe:
+          httpGet:
+            path: /transactions/health
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /transactions/health
+            port: 8081
+          initialDelaySeconds: 20
+          periodSeconds: 10
         resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
           requests:
             memory: "256Mi"
             cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

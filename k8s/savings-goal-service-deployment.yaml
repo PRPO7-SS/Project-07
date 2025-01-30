@@ -14,6 +14,8 @@ spec:
       labels:
         app: savings-goal-service
     spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
       containers:
       - name: savings-goal-service
         image: svitdocker123/backend-savings-goal-service:latest
@@ -22,10 +24,22 @@ spec:
             name: backend-secrets
         ports:
         - containerPort: 8084
+        readinessProbe:
+          httpGet:
+            path: /savings-goals/health
+            port: 8084
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /savings-goals/health
+            port: 8084
+          initialDelaySeconds: 20
+          periodSeconds: 10
         resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
           requests:
             memory: "256Mi"
             cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

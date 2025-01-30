@@ -32,18 +32,18 @@ data:
 
         server {
             listen 80;
-            server_name api.financebro.app;
+            server_name localhost;
 
 
           location /auth {
-              add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+              add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
               add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
               add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
               add_header Access-Control-Allow-Credentials 'true' always;
 
               # Handle preflight (OPTIONS) requests
               if ($request_method = OPTIONS) {
-                  add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                  add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                   add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                   add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                   add_header Access-Control-Allow-Credentials 'true' always;
@@ -59,14 +59,14 @@ data:
           }
 
             location /users {
-                add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                 add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                 add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                 add_header Access-Control-Allow-Credentials 'true' always;
 
                 # Handle preflight (OPTIONS) requests
                 if ($request_method = OPTIONS) {
-                    add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                    add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                     add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                     add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                     add_header Access-Control-Allow-Credentials 'true' always;
@@ -83,14 +83,14 @@ data:
             }
 
             location /savings-goals {
-              add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+              add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                   add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                   add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                   add_header Access-Control-Allow-Credentials 'true' always;
 
                   # Handle preflight (OPTIONS) requests
                   if ($request_method = OPTIONS) {
-                      add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                      add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                       add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                       add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                       add_header Access-Control-Allow-Credentials 'true' always;
@@ -106,14 +106,14 @@ data:
 
             }
             location /investments {
-              add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+              add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
               add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
               add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
               add_header Access-Control-Allow-Credentials 'true' always;
 
               # Handle preflight (OPTIONS) requests
               if ($request_method = OPTIONS) {
-                  add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                  add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                   add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                   add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                   add_header Access-Control-Allow-Credentials 'true' always;
@@ -127,14 +127,14 @@ data:
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             }
             location /transactions {
-              add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+              add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
               add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
               add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
               add_header Access-Control-Allow-Credentials 'true' always;
 
               # Handle preflight (OPTIONS) requests
               if ($request_method = OPTIONS) {
-                  add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                  add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                   add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                   add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                   add_header Access-Control-Allow-Credentials 'true' always;
@@ -151,14 +151,14 @@ data:
             }
 
             location /debts {
-              add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+              add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
               add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
               add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
               add_header Access-Control-Allow-Credentials 'true' always;
 
               # Handle preflight (OPTIONS) requests
               if ($request_method = OPTIONS) {
-                  add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                  add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                   add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                   add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                   add_header Access-Control-Allow-Credentials 'true' always;
@@ -174,14 +174,14 @@ data:
           }
 
           location /budget {
-              add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+              add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
               add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
               add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
               add_header Access-Control-Allow-Credentials 'true' always;
 
               # Handle preflight (OPTIONS) requests
               if ($request_method = OPTIONS) {
-                  add_header Access-Control-Allow-Origin 'https://financebro.app' always;
+                  add_header Access-Control-Allow-Origin 'http://localhost:4200' always;
                   add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
                   add_header Access-Control-Allow-Headers 'Authorization, Content-Type, X-Requested-With, Cookie' always;
                   add_header Access-Control-Allow-Credentials 'true' always;

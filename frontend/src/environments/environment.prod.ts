@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: "https://api.financebro.app",
+  apiBaseUrl: "https://localhost",
   twelveDataApiKey: '',
   twelveDataUrl: 'https://api.twelvedata.com'
 };

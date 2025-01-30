@@ -14,18 +14,32 @@ spec:
       labels:
         app: user-service
     spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
       containers:
       - name: user-service
-        image: spelakoracin/user-service-prod:latest
+        image: svitdocker123/user-service-prod:latest
         envFrom:
         - secretRef:
             name: backend-secrets
         ports:
         - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /auth/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /auth/health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
         resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
           requests:
             memory: "256Mi"
             cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

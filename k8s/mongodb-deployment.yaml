@@ -14,6 +14,8 @@ spec:
       labels:
         app: mongodb
     spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
       containers:
       - name: mongodb
         image: svitdocker123/mongodb_new:latest
@@ -23,6 +25,25 @@ spec:
         volumeMounts:
         - name: mongo-data
           mountPath: /data/db
+        envFrom:
+        - secretRef:
+            name: backend-secrets
+        readinessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - "db.runCommand({ ping: 1 })"
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - "db.runCommand({ ping: 1 })"
+          initialDelaySeconds: 20
+          periodSeconds: 10
       volumes:
       - name: mongo-data
         persistentVolumeClaim:

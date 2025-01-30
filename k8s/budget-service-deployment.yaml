@@ -29,3 +29,24 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /budget/health
+            port: 8083
+          initialDelaySeconds: 10  # Počaka 10s pred začetkom preverjanja
+          periodSeconds: 10  # Preverja vsakih 10s
+          failureThreshold: 3  # Po 3 neuspehih bo Kubernetes restartal pod
+        readinessProbe:
+          httpGet:
+            path: /budget/health
+            port: 8083
+          initialDelaySeconds: 5  # Hitrejše preverjanje pripravljenosti
+          periodSeconds: 5
+          failureThreshold: 2  # Po 2 neuspehih bo pod označen kot "not ready"
+        startupProbe:
+          httpGet:
+            path: /budget/health
+            port: 8083
+          initialDelaySeconds: 15  # Počaka več časa ob inicializaciji
+          periodSeconds: 10
+          failureThreshold: 5  # Če po 50s ni responsa, pod bo restartan

@@ -14,6 +14,8 @@ spec:
       labels:
         app: investment-service
     spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
       containers:
       - name: investment-service
         image: svitdocker123/backend-investment-service:latest
@@ -29,3 +31,15 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "250m"
+        readinessProbe:
+          httpGet:
+            path: "/investments/health"
+            port: 8085
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: "/investments/health"
+            port: 8085
+          initialDelaySeconds: 20
+          periodSeconds: 10

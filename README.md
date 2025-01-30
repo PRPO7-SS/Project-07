@@ -36,7 +36,7 @@ Običajni uporabniki so osebe, stare 18 let ali več in so registrirane in prija
 ---
 ### Gostovanje aplikacije
 
-Aplikacija je naložena na kubernetes gručo in gostuje na naslovu: https://financebro.app
+Aplikacija je naložena na kubernetes gručo in gostuje na naslovu: http://localhost:4200
 
 ---
 ### Lokalni zagon aplikacije - navodila za ostale razvijalce

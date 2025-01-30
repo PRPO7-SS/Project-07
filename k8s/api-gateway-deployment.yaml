@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: spelakoracin/backend-api
+        image: svitdocker123/backend-api
         volumeMounts:
         - name: nginx-config
           mountPath: /etc/nginx/nginx.conf
@@ -30,6 +30,22 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
       volumes:
       - name: nginx-config
         configMap:
