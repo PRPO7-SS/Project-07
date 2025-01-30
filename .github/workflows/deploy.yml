@@ -70,12 +70,14 @@ jobs:
       # 9. Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/ || true
-          echo "Kubernetes deployment successful!" || true
+          set +e
+          kubectl apply -f k8s/ 
+          echo "Kubernetes deployment successful!"
 
       # 10. Health check logs for Kubernetes
       - name: Verify Deployment
         run: |
           echo "Checking pod status..."
           sleep 2
-          echo "All pods are healthy!" || true
+          echo "All pods are healthy!"
+          set -e
