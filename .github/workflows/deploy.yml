@@ -67,20 +67,22 @@ jobs:
           docker compose -f backend/docker-compose.yml build
           docker compose -f backend/docker-compose.yml push
 
-      # 9. Deploy to Kubernetes (skrijemo napake in izklopimo validacijo)
-      - name: Deploy to Kubernetes
+      # 9. Start Docker Compose (v ozadju)
+      - name: Start Docker Compose
         run: |
-          set +e
-          kubectl apply -f k8s/ --validate=false 2>/dev/null
-          echo "Kubernetes deployment successful!"
-          set -e
+          docker compose -f backend/docker-compose.yml up -d
 
-      # 10. Health check logs for Kubernetes (vedno uspe)
-      - name: Verify Deployment
+      # 10. Preverjanje health checkov za Docker
+      - name: Verify Health Checks
         run: |
-          echo "Checking pod status..."
-          sleep 2
-          set +e
-          kubectl get pods --all-namespaces 2>/dev/null
-          echo "All pods are healthy!"
-          set -e
+          echo "Waiting for services to become healthy..."
+          sleep 10  # Počakamo, da se servisi inicializirajo
+
+          SERVICES=("user-service" "transaction-service" "savings-goal-service" "investment-service" "budget-service" "debt-tracking-service")
+
+          for service in "${SERVICES[@]}"; do
+            STATUS=$(docker inspect --format='{{json .State.Health.Status}}' $(docker ps --filter "name=$service" -q) 2>/dev/null)
+            echo "Service: $service - Health: $STATUS"
+          done
+
+          echo "Health check completed!"
