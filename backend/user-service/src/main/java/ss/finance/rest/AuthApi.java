@@ -1,6 +1,7 @@
 package ss.finance.rest;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -22,6 +23,13 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import ss.finance.entities.User;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.UserBean;
@@ -38,6 +46,44 @@ public class AuthApi {
 
     @Inject
     private JwtUtil jwtUtil;
+
+    private static final Logger logger = Logger.getLogger(AuthApi.class.getName());
+
+    private static final String MONGO_URI = System.getenv("MONGO_URL");
+    private static final String DATABASE_NAME = System.getenv("DATABASE_NAME");
+
+    @Operation(summary = "Health check", description = "Returns the health status of the User Service.")
+    @APIResponse(responseCode = "200", description = "Service is healthy")
+    @APIResponse(responseCode = "503", description = "Service is unhealthy")
+    @GET
+    @Path("/health")
+    public Response healthCheck() {
+        boolean isMongoUp = checkMongoDB();
+        boolean isServiceUp = true;  // Če endpoint deluje, pomeni da je User Service UP.
+
+        JsonObjectBuilder healthBuilder = Json.createObjectBuilder()
+                .add("status", isMongoUp ? "UP" : "DOWN");
+
+        JsonObjectBuilder detailsBuilder = Json.createObjectBuilder()
+                .add("MongoDB", isMongoUp ? "UP" : "DOWN")
+                .add("User Service", isServiceUp ? "UP" : "DOWN");
+
+        JsonObject healthJson = healthBuilder.add("details", detailsBuilder.build()).build();
+
+        int statusCode = isMongoUp ? Response.Status.OK.getStatusCode() : Response.Status.SERVICE_UNAVAILABLE.getStatusCode();
+        return Response.status(statusCode).entity(healthJson.toString()).build();
+    }
+
+    private boolean checkMongoDB() {
+        try (MongoClient mongoClient = MongoClients.create(MONGO_URI)) {
+            MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+            database.listCollectionNames().first(); // Če ne vrže izjeme, je MongoDB UP
+            return true;
+        } catch (Exception e) {
+            logger.severe("MongoDB connection check failed: " + e.getMessage());
+            return false;
+        }
+    }
 
     @Operation(summary = "Register a new user", description = "Creates a new user account.")
     @APIResponse(

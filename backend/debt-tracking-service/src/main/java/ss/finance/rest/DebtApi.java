@@ -25,6 +25,12 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import ss.finance.entities.Debt;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.DebtBean;
@@ -42,6 +48,42 @@ public class DebtApi {
     private JwtUtil jwtUtil;
 
     private static final Logger logger = Logger.getLogger(DebtApi.class.getName());
+
+
+    private static final String MONGO_URI = System.getenv("MONGO_URI"); // Prebere iz okolja
+    private static final String DATABASE_NAME = System.getenv("DATABASE_NAME"); // Prebere iz okolja
+
+    @Operation(summary = "Health check", description = "Returns the health status of the Debt microservice.")
+    @APIResponse(responseCode = "200", description = "Service is up and running")
+    @APIResponse(responseCode = "503", description = "Service is unavailable")
+    @GET
+    @Path("/health")
+    public Response healthCheck() {
+        boolean isMongoUp = checkMongoDB();
+        boolean isServiceUp = true; // Če lahko endpoint vrne odgovor, potem je servis UP.
+
+        JsonObject healthJson = Json.createObjectBuilder()
+                .add("status", isMongoUp ? "UP" : "DOWN")
+                .add("details", Json.createObjectBuilder()
+                        .add("MongoDB", isMongoUp ? "UP" : "DOWN")
+                        .add("Debt Service", isServiceUp ? "UP" : "DOWN")
+                        .build())
+                .build();
+
+        int statusCode = isMongoUp ? Response.Status.OK.getStatusCode() : Response.Status.SERVICE_UNAVAILABLE.getStatusCode();
+        return Response.status(statusCode).entity(healthJson.toString()).build();
+    }
+
+    private boolean checkMongoDB() {
+        try (MongoClient mongoClient = MongoClients.create(MONGO_URI)) {
+            MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+            database.listCollectionNames().first(); // Če lahko bere kolekcije, je MongoDB UP
+            return true;
+        } catch (Exception e) {
+            logger.severe("MongoDB health check failed: " + e.getMessage());
+            return false;
+        }
+    }
 
     @Operation(summary = "Add a debt", description = "Creates a new debt for the authenticated user")
     @APIResponse(

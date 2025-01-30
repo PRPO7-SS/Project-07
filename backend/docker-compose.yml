@@ -10,6 +10,11 @@ services:
       - MONGO_URI
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://localhost:27017 --quiet | grep 1 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - my_network  # Connects MongoDB to the custom network
   
@@ -24,8 +29,13 @@ services:
       - RABBITMQ_PORT
       - RABBITMQ_USER
       - RABBITMQ_PASS
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
-    - my_network
+      - my_network
 
   api-gateway:
     image: nginx:latest
@@ -46,33 +56,51 @@ services:
 
   user-service:
     build:
-      context: user-service  # Path to your microservice's Dockerfile
+      context: user-service
     container_name: user-service
     ports:
-      - "8080:8080"  # Maps your microservice port to the host
+      - "8080:8080"
     environment:
       - MONGO_URI
+      - MONGO_URL
+      - DATABASE_NAME
       - JWT_SECRET
       - REFRESH_TOKEN_SECRET
     depends_on:
-      - mongodb  # Ensures MongoDB starts before the microservice
+      mongodb:
+        condition: service_healthy  # Počakaj na MongoDB, da je zdrav
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:8080/users/health && curl -f http://localhost:8080/auth/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     networks:
-      - my_network  # Connects the microservice to the custom network
+      - my_network
   
   savings-goal-service:
     build:
-      context: savings-goal-service  # Path to your microservice's Dockerfile
+      context: savings-goal-service
     container_name: savings-goal
     ports:
-      - "8084:8084"  # Maps your microservice port to the host
+      - "8084:8084"
     environment:
       - MONGO_URI
+      - MONGO_URL
+      - DATABASE_NAME
       - JWT_SECRET
       - REFRESH_TOKEN_SECRET
     depends_on:
-      - mongodb  # Ensures MongoDB starts before the microservice
+      mongodb:
+        condition: service_healthy  # Pocakaj, da je MongoDB pripravljen
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/savings-goals/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s  # Pocakaj malo, preden začne health check
     networks:
-      - my_network  # Connects the microservice to the custom network
+      - my_network
   
   investment-service:
     build:
@@ -82,6 +110,8 @@ services:
       - "8085:8085"
     environment:
       - MONGO_URI
+      - MONGO_URL
+      - DATABASE_NAME
       - JWT_SECRET
       - REFRESH_TOKEN_SECRET
       - API_KEY
@@ -91,8 +121,15 @@ services:
       - RABBITMQ_USER
       - RABBITMQ_PASS
     depends_on:
-      - mongodb
-      - rabbitmq
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/investments/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - my_network
 
@@ -104,6 +141,8 @@ services:
       - "8081:8081"
     environment:
       - MONGO_URI
+      - MONGO_URL
+      - DATABASE_NAME
       - JWT_SECRET
       - REFRESH_TOKEN_SECRET
       - RABBITMQ_HOST
@@ -111,8 +150,16 @@ services:
       - RABBITMQ_USER
       - RABBITMQ_PASS
     depends_on:
-      - mongodb
-      - rabbitmq
+      mongodb:
+        condition: service_healthy  # Počakaj na MongoDB
+      rabbitmq:
+        condition: service_healthy  # Počakaj na RabbitMQ
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/transactions/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s  # Počaka, preden začne health check
     networks:
       - my_network
 
@@ -124,10 +171,19 @@ services:
       - "8083:8083"
     environment:
       - MONGO_URI
+      - MONGO_URL
+      - DATABASE_NAME
       - JWT_SECRET
       - REFRESH_TOKEN_SECRET
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy  # Pocakaj na MongoDB, da je zdrav
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/budget/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s  # Počaka, preden začne health check
     networks:
       - my_network
 
@@ -139,10 +195,19 @@ services:
       - "8086:8086"
     environment:
       - MONGO_URI
+      - MONGO_URL
+      - DATABASE_NAME
       - JWT_SECRET
       - REFRESH_TOKEN_SECRET
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/debts/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     networks:
       - my_network
 

@@ -23,6 +23,12 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import ss.finance.entities.Budget;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.BudgetBean;
@@ -41,6 +47,50 @@ public class BudgetApi {
     private JwtUtil jwtUtil;
 
     private static final Logger logger = Logger.getLogger(BudgetApi.class.getName());
+    private static final String MONGO_URI = System.getenv("MONGO_URL");
+    private static final String DATABASE_NAME = System.getenv("DATABASE_NAME");
+
+    @Operation(summary = "Health check", description = "Returns the health status of the Budget microservice.")
+    @APIResponse(
+            responseCode = "200",
+            description = "Service is up and running",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"status\": \"UP\", \"details\": {\"MongoDB\": \"UP\", \"Budget Service\": \"UP\"}}"))
+    )
+    @APIResponse(
+            responseCode = "503",
+            description = "Service is down",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(example = "{\"status\": \"DOWN\", \"details\": {\"MongoDB\": \"DOWN\", \"Budget Service\": \"UP\"}}"))
+    )
+    @GET
+    @Path("/health")
+    public Response healthCheck() {
+        boolean isMongoUp = checkMongoDB();
+        boolean isServiceUp = true;
+
+        JsonObject healthJson = Json.createObjectBuilder()
+            .add("status", isMongoUp ? "UP" : "DOWN")
+            .add("details", Json.createObjectBuilder()
+                .add("MongoDB", isMongoUp ? "UP" : "DOWN")
+                .add("Budget Service", isServiceUp ? "UP" : "DOWN")
+                .build())
+            .build();
+
+        logger.info("Health Check: " + healthJson);
+
+        int statusCode = isMongoUp ? Response.Status.OK.getStatusCode() : Response.Status.SERVICE_UNAVAILABLE.getStatusCode();
+        return Response.status(statusCode).entity(healthJson.toString()).build();
+    }
+
+    private boolean checkMongoDB() {
+        try (MongoClient mongoClient = MongoClients.create(MONGO_URI)) {
+            MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+            database.listCollectionNames().first();
+            return true;
+        } catch (Exception e) {
+            logger.severe("MongoDB health check failed: " + e.getMessage());
+            return false;
+        }
+    }
 
     @Operation(summary = "Add a new budget",
             description = "Creates a new budget for the authenticated user.")

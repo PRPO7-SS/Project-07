@@ -1,16 +1,17 @@
-# Use the official OpenJDK image
+# Uporabi uradni OpenJDK 17 slim image
 FROM openjdk:17-jdk-slim
 
-# Set working directory
+# Nastavi delovno mapo
 WORKDIR /app
 
-# Copy the re-packaged JAR from the build output
+# Kopiraj prepakiran JAR iz build output-a
 COPY target/savings-goal-service-1.0-SNAPSHOT.jar app.jar
 
+# Namesti curl za healthcheck (uporablja se v docker-compose)
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-
-# Expose the service port (adjust if needed)
+# Expose port za storitev
 EXPOSE 8084
 
-# Run the service
+# Zaženi aplikacijo
 ENTRYPOINT ["java", "-jar", "app.jar"]

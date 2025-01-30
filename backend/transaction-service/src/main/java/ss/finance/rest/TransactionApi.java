@@ -23,6 +23,12 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
 import ss.finance.entities.Transaction;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.TransactionBean;
@@ -41,6 +47,48 @@ public class TransactionApi {
     private JwtUtil jwtUtil;
 
     private static final Logger logger = Logger.getLogger(TransactionApi.class.getName());
+
+    private static final String MONGO_URI = System.getenv("MONGO_URL");
+    private static final String DATABASE_NAME = System.getenv("DATABASE_NAME");
+
+    @Operation(summary = "Health check", description = "Returns the health status of the Transaction microservice.")
+    @APIResponse(
+            responseCode = "200",
+            description = "Service is up and running"
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Service is down"
+    )
+    @GET
+    @Path("/health")
+    public Response healthCheck() {
+        boolean isMongoUp = checkMongoDB();
+        boolean isServiceUp = transactionBean != null;
+
+        JsonObjectBuilder healthBuilder = Json.createObjectBuilder()
+                .add("status", isMongoUp ? "UP" : "DOWN");
+
+        JsonObjectBuilder detailsBuilder = Json.createObjectBuilder()
+                .add("MongoDB", isMongoUp ? "UP" : "DOWN")
+                .add("Transaction Service", isServiceUp ? "UP" : "DOWN");
+
+        jakarta.json.JsonObject healthJson = healthBuilder.add("details", detailsBuilder.build()).build();
+
+        int statusCode = isMongoUp ? Response.Status.OK.getStatusCode() : Response.Status.SERVICE_UNAVAILABLE.getStatusCode();
+        return Response.status(statusCode).entity(healthJson.toString()).build();
+    }
+
+    private boolean checkMongoDB() {
+        try (MongoClient mongoClient = MongoClients.create(MONGO_URI)) {
+            MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+            database.listCollectionNames().first();
+            return true;
+        } catch (Exception e) {
+            logger.severe("MongoDB health check failed: " + e.getMessage());
+            return false;
+        }
+    }
 
     @Operation(summary = "Add a transaction", description = "Creates a new transaction for the authenticated user")
     @APIResponse(

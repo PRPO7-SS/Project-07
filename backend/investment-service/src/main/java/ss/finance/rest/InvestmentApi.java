@@ -25,6 +25,12 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import ss.finance.entities.Investment;
 import ss.finance.security.JwtUtil;
 import ss.finance.services.InvestmentBean;
@@ -43,6 +49,38 @@ public class InvestmentApi {
     private JwtUtil jwtUtil;
 
     private static final Logger logger = Logger.getLogger(InvestmentApi.class.getName());
+
+    private static final String MONGO_URI = System.getenv("MONGO_URL");
+    private static final String DATABASE_NAME = System.getenv("DATABASE_NAME");
+
+    @GET
+    @Path("/health")
+    public Response healthCheck() {
+        boolean isMongoUp = checkMongoDB();
+        boolean isServiceUp = true;
+
+        JsonObject healthJson = Json.createObjectBuilder()
+                .add("status", isMongoUp ? "UP" : "DOWN")
+                .add("details", Json.createObjectBuilder()
+                        .add("MongoDB", isMongoUp ? "UP" : "DOWN")
+                        .add("Investment Service", isServiceUp ? "UP" : "DOWN")
+                        .build())
+                .build();
+
+        int statusCode = isMongoUp ? Response.Status.OK.getStatusCode() : Response.Status.SERVICE_UNAVAILABLE.getStatusCode();
+        return Response.status(statusCode).entity(healthJson.toString()).build();
+    }
+
+    private boolean checkMongoDB() {
+        try (MongoClient mongoClient = MongoClients.create(MONGO_URI)) {
+            MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+            database.listCollectionNames().first();
+            return true;
+        } catch (Exception e) {
+            logger.severe("MongoDB health check failed: " + e.getMessage());
+            return false;
+        }
+    }
 
     @Operation(summary = "Get all investments",
             description = "Returns a list of all investments for the authenticated user")
