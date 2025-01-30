@@ -248,3 +248,144 @@ Dostopate lahko na naslednji poti, ko aplikacija deluje:
 Knjižnica: \
     - Chart.js \
     **Uporaba:** Ustvarjanje interaktivnih in odzivnih grafov za vizualizacijo podatkov.
+
+
+# Aplikacija FinanceBro - Dokumentacija
+
+## CI/CD Integracija
+
+Za avtomatizacijo razvoja in namestitve aplikacije **FinanceBro** je uvedena CI/CD (Continuous Integration / Continuous Deployment) pipeline.
+
+### Tehnologije in orodja
+
+- **CI/CD orodje:** GitHub Actions
+- **Gradnja in testiranje:** Maven (za Java backend)
+- **Kontejnerizacija:** Docker
+- **Orkestracija in Deploy:** Kubernetes
+- **Shranjevanje slik:** Docker Hub
+
+### Avtomatizirana naloga CI/CD
+
+Ob vsaki spremembi v glavni veji (`main`) pipeline izvede naslednje korake:
+
+1. **Preverjanje kode in testiranje**
+   - Gradnja backend projektov
+   - Izvajanje enotnih testov
+2. **Kontejnerizacija in Docker push**
+   - Gradnja in nalaganje vseh mikrostoritev na Docker Hub
+3. **Deploy na Kubernetes gručo**
+   - Uporaba `kubectl apply` za zagon storitev
+4. **Preverjanje zdravja storitev**
+   - Preveri, ali so storitve v stanju `Running` ali `Healthy`.
+
+#### Lokalno testiranje CI/CD pipeline-a:
+
+```bash
+# Ročna simulacija CI/CD korakov:
+mvn clean package
+docker-compose build
+docker-compose up -d
+kubectl apply -f k8s/
+```
+
+---
+
+## Preverjanje zdravja storitev
+
+Vsaka mikrostoritev ima implementirano **health check** končno točko, ki omogoča preverjanje njenega delovanja.
+
+### Tehnologije
+
+- **Health check endpointi:** `/health`
+- **Integracija s Kubernetes:** `livenessProbe` in `readinessProbe`
+- **Samodejno preverjanje v CI/CD:** Docker in Kubernetes Health Checks
+
+### Primer health check-a v mikrostoritvi:
+
+Mikrostoritve vračajo stanje v obliki JSON odgovora:
+
+```json
+{
+  "status": "UP",
+  "database": "Connected",
+  "queue": "Running"
+}
+```
+
+### Preverjanje zdravja storitev v Dockerju:
+
+```bash
+echo "Waiting for services to become healthy..."
+sleep 10  
+SERVICES=("user-service" "transaction-service" "savings-goal-service" "investment-service" "budget-service" "debt-tracking-service")
+for service in "${SERVICES[@]}"; do
+  STATUS=$(docker inspect --format='{{json .State.Health.Status}}' $(docker ps --filter "name=$service" -q) 2>/dev/null)
+  echo "Service: $service - Health: $STATUS"
+done
+echo "Health check completed!"
+```
+
+### Preverjanje zdravja storitev v Kubernetesu:
+
+```bash
+kubectl get pods --watch
+kubectl describe pod user-service
+kubectl logs deployment/user-service
+```
+
+---
+
+## Skalabilnost in obremenitveno uravnoteženje
+
+Aplikacija **FinanceBro** je oblikovana tako, da se lahko **horizontalno skalira** in porazdeli promet preko več instanc.
+
+### Tehnologije in strategije skaliranja
+
+- **Horizontal Pod Autoscaler (HPA)** za samodejno prilagajanje števila instanc
+- **Kubernetes Ingress Controller** za obremenitveno uravnoteženje
+- **Minikube (lokalno testno okolje)** za testiranje Kubernetes gruče
+
+### Konfiguracija HPA (Horizontal Pod Autoscaler)
+
+Primer HPA za `user-service`:
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: user-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: user-service
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+```
+
+### Lokalno testiranje skaliranja v Kubernetesu:
+
+1. Omogoči Ingress Controller:
+   ```bash
+   minikube addons enable ingress
+   ```
+2. Spremljanje podov:
+   ```bash
+   kubectl get pods --watch
+   ```
+3. Ročno skaliranje storitve:
+   ```bash
+   kubectl scale deployment user-service --replicas=3
+   ```
+4. Preverjanje distribucije prometa:
+   ```bash
+   kubectl describe service user-service
+   ```
+
